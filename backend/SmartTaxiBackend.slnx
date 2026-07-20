@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SmartTaxi.API/SmartTaxi.API.csproj" />
+    <Project Path="src/SmartTaxi.Application/SmartTaxi.Application.csproj" />
+    <Project Path="src/SmartTaxi.Domain/SmartTaxi.Domain.csproj" />
+    <Project Path="src/SmartTaxi.Infrastructure/SmartTaxi.Infrastructure.csproj" />
+  </Folder>
+</Solution>
