@@ -4,3 +4,36 @@ GET {{SmartTaxi.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+# Inscription valide -> attendu 201 Created
+POST {{SmartTaxi.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "P@ssword1"
+}
+
+###
+
+# Email déjà utilisé (rejouer la requête ci-dessus) -> attendu 409 Conflict
+POST {{SmartTaxi.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "P@ssword1"
+}
+
+###
+
+# Données invalides (email mal formé + mot de passe trop court) -> attendu 400 Bad Request
+POST {{SmartTaxi.API_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "not-an-email",
+  "password": "short"
+}
+
+###

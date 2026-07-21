@@ -30,18 +30,18 @@ public sealed class RegisterUserCommandHandler
         }
         catch (ArgumentException ex)
         {
-            return Result<RegisterUserResult>.Failure(ex.Message);
+            return Result<RegisterUserResult>.Failure(ex.Message, ErrorType.Validation);
         }
 
         if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
-            return Result<RegisterUserResult>.Failure("Un compte existe déjà avec cet email.");
+            return Result<RegisterUserResult>.Failure("Un compte existe déjà avec cet email.", ErrorType.Conflict);
         }
 
         if (string.IsNullOrWhiteSpace(command.Password) || command.Password.Length < MinPasswordLength)
         {
             return Result<RegisterUserResult>.Failure(
-                $"Le mot de passe doit contenir au moins {MinPasswordLength} caractères.");
+                $"Le mot de passe doit contenir au moins {MinPasswordLength} caractères.", ErrorType.Validation);
         }
 
         var hashedPassword = HashedPassword.Create(_passwordHasher.Hash(command.Password));
