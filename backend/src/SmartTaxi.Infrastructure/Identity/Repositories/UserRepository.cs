@@ -21,6 +21,12 @@ internal sealed class UserRepository : IUserRepository
             .AnyAsync(u => u.Email == email, cancellationToken);
     }
 
+    public async Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+    }
+
     public async Task AddAsync(User user, CancellationToken cancellationToken)
     {
         await _context.Users.AddAsync(user, cancellationToken);

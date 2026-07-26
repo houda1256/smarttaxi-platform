@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartTaxi.Application.Identity.Abstractions;
+using SmartTaxi.Infrastructure.Identity.Options;
 using SmartTaxi.Infrastructure.Identity.Repositories;
 using SmartTaxi.Infrastructure.Identity.Services;
 using SmartTaxi.Infrastructure.Persistence;
@@ -19,6 +20,9 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddSingleton<ITokenGenerator, JwtTokenGenerator>();
 
         return services;
     }
