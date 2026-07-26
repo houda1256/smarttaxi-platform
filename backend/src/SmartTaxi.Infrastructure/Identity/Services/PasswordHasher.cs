@@ -12,4 +12,10 @@ internal sealed class PasswordHasher : IPasswordHasher
     {
         return _hasher.HashPassword(default!, rawPassword);
     }
+
+    public bool Verify(string hashedPassword, string providedPassword)
+    {
+        var result = _hasher.VerifyHashedPassword(default!, hashedPassword, providedPassword);
+        return result != PasswordVerificationResult.Failed;
+    }
 }
