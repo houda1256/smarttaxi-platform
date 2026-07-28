@@ -32,4 +32,13 @@ internal sealed class UserRepository : IUserRepository
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
+    public class DemoService
+    {
+        private const string ApiKey = "MySuperSecretPassword123";
+
+        public string GetApiKey()
+        {
+            return ApiKey;
+        }
+    }
 }
