@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SmartTaxi.API.Endpoints.Identity;
 using SmartTaxi.API.ErrorHandling;
+using SmartTaxi.API.SecurityDemo;
 using SmartTaxi.Application.Identity.Commands.LoginUser;
 using SmartTaxi.Application.Identity.Commands.RegisterUser;
 using SmartTaxi.Infrastructure;
@@ -63,6 +64,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
+app.MapVulnerableSqlEndpoints(); // SECURITY DEMO ONLY — remove after CodeQL demo
 
 var summaries = new[]
 {
