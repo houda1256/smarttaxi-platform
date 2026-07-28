@@ -22,6 +22,14 @@ jobs:
     name: Analyze C# Code
     runs-on: ubuntu-latest
 
+    # Disables the Roslyn/MSBuild shared compilation server (VBCSCompiler).
+    # With build-mode: manual, CodeQL's tracer only sees compiler processes it
+    # directly launches; a reused shared-compilation server bypasses that
+    # tracing and silently drops compiled files from the CodeQL database,
+    # producing non-deterministic (sometimes empty) results for the same code.
+    env:
+      DOTNET_CLI_UseSharedCompilation: 'false'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
