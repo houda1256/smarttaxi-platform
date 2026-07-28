@@ -1,0 +1,30 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/identity-authentication
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: Build and Test Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore dependencies
+        run: dotnet restore backend/SmartTaxiBackend.slnx
+      - name: Build solution
+        run: dotnet build backend/SmartTaxiBackend.slnx --configuration Release --no-restore
+      - name: Run unit tests
+        run: dotnet test backend/SmartTaxiBackend.slnx --configuration Release --no-build
