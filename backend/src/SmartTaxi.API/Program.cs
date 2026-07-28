@@ -4,7 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SmartTaxi.API.Endpoints.Identity;
 using SmartTaxi.API.ErrorHandling;
-using SmartTaxi.API.SecurityDemo;
 using SmartTaxi.Application.Identity.Commands.LoginUser;
 using SmartTaxi.Application.Identity.Commands.RegisterUser;
 using SmartTaxi.Infrastructure;
@@ -14,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddControllers(); // SECURITY DEMO ONLY — required to host VulnerableSqlController; remove after CodeQL demo
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<RegisterUserCommandHandler>();
@@ -64,7 +64,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapAuthEndpoints();
-app.MapVulnerableSqlEndpoints(); // SECURITY DEMO ONLY — remove after CodeQL demo
+app.MapControllers(); // SECURITY DEMO ONLY — hosts VulnerableSqlController; remove after CodeQL demo
 
 var summaries = new[]
 {
