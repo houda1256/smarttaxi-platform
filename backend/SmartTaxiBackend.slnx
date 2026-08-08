@@ -5,4 +5,10 @@
     <Project Path="src/SmartTaxi.Domain/SmartTaxi.Domain.csproj" />
     <Project Path="src/SmartTaxi.Infrastructure/SmartTaxi.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SmartTaxi.Application.Tests/SmartTaxi.Application.Tests.csproj" />
+    <Project Path="tests/SmartTaxi.Domain.Tests/SmartTaxi.Domain.Tests.csproj" />
+    <Project Path="tests/SmartTaxi.Infrastructure.IntegrationTests/SmartTaxi.Infrastructure.IntegrationTests.csproj" />
+    <Project Path="tests/SmartTaxi.Infrastructure.Tests/SmartTaxi.Infrastructure.Tests.csproj" />
+  </Folder>
 </Solution>

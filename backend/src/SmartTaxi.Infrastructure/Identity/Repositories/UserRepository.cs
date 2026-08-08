@@ -27,18 +27,28 @@ internal sealed class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
     }
 
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
+    public async Task<User?> GetByReferralCodeAsync(string referralCode, CancellationToken cancellationToken)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.ReferralCode == referralCode, cancellationToken);
+    }
+
     public async Task AddAsync(User user, CancellationToken cancellationToken)
     {
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
-    public class DemoService
-    {
-        private const string ApiKey = "MySuperSecretPassword123";
 
-        public string GetApiKey()
-        {
-            return ApiKey;
-        }
+    public Task UpdateAsync(User user, CancellationToken cancellationToken)
+    {
+        // The user instance is already tracked by this scoped DbContext when it
+        // was loaded via GetByIdAsync, so mutations to it just need SaveChanges.
+        return _context.SaveChangesAsync(cancellationToken);
     }
 }

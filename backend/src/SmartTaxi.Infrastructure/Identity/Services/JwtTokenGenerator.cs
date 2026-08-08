@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartTaxi.Application.Identity.Abstractions;
+using SmartTaxi.Application.Identity.Authorization;
 using SmartTaxi.Domain.Identity.Entities;
 using SmartTaxi.Infrastructure.Identity.Options;
 
@@ -12,10 +13,12 @@ namespace SmartTaxi.Infrastructure.Identity.Services;
 internal sealed class JwtTokenGenerator : ITokenGenerator
 {
     private readonly JwtOptions _options;
+    private readonly IRolePermissionRepository _rolePermissionRepository;
 
-    public JwtTokenGenerator(IOptions<JwtOptions> options)
+    public JwtTokenGenerator(IOptions<JwtOptions> options, IRolePermissionRepository rolePermissionRepository)
     {
         _options = options.Value;
+        _rolePermissionRepository = rolePermissionRepository;
 
         if (string.IsNullOrWhiteSpace(_options.Key))
         {
@@ -24,15 +27,21 @@ internal sealed class JwtTokenGenerator : ITokenGenerator
         }
     }
 
-    public string GenerateToken(User user)
+    public async Task<string> GenerateToken(User user, Guid sessionId, CancellationToken cancellationToken)
     {
-        var claims = new[]
+        var permissions = await _rolePermissionRepository.GetPermissionsForRolesAsync(
+            user.Roles.ToList(), cancellationToken);
+
+        var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email.Value),
-            new Claim("role", user.Role.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email.Value),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new("sid", sessionId.ToString())
         };
+
+        claims.AddRange(user.Roles.Select(role => new Claim("role", role.ToString())));
+        claims.AddRange(permissions.Select(permission => new Claim(Permissions.ClaimType, permission)));
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
         var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);

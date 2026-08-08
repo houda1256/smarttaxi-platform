@@ -1,6 +1,6 @@
 namespace SmartTaxi.Infrastructure.Identity.Options;
 
-internal sealed class JwtOptions
+public sealed class JwtOptions
 {
     public const string SectionName = "Jwt";
 

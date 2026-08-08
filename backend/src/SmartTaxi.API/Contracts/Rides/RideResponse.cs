@@ -1,0 +1,57 @@
+using SmartTaxi.Application.Rides;
+
+namespace SmartTaxi.API.Contracts.Rides;
+
+public sealed record RideResponse(
+    Guid Id,
+    string RideNumber,
+    Guid CustomerId,
+    Guid? SelectedDriverId,
+    Guid? VehicleId,
+    string RideType,
+    string PickupAddress,
+    double PickupLatitude,
+    double PickupLongitude,
+    string DestinationAddress,
+    double DestinationLatitude,
+    double DestinationLongitude,
+    DateTime RequestedAt,
+    DateTime? ScheduledAt,
+    int PassengerCount,
+    int LuggageCount,
+    bool NeedsAirConditioning,
+    bool NeedsAccessibleVehicle,
+    bool HasChildSeatRequest,
+    bool HasPet,
+    string? PreferredVehicleCategory,
+    string PreferredPaymentMethod,
+    string? SpecialInstructions,
+    decimal? EstimatedDistanceKm,
+    decimal? ActualDistanceKm,
+    int? EstimatedDurationMinutes,
+    int? ActualDurationMinutes,
+    decimal? EstimatedFare,
+    decimal? FinalFare,
+    decimal? NegotiatedFinalFare,
+    string Currency,
+    string Status,
+    double? LastKnownLatitude,
+    double? LastKnownLongitude,
+    DateTime? LastLocationRecordedAt,
+    string? CancellationReason,
+    DateTime CreatedAt,
+    DateTime UpdatedAt)
+{
+    public static RideResponse FromSummary(RideSummary summary) => new(
+        summary.Id, summary.RideNumber, summary.CustomerId, summary.SelectedDriverId, summary.VehicleId,
+        summary.RideType.ToString(), summary.PickupAddress, summary.PickupLatitude, summary.PickupLongitude,
+        summary.DestinationAddress, summary.DestinationLatitude, summary.DestinationLongitude, summary.RequestedAt,
+        summary.ScheduledAt, summary.PassengerCount, summary.LuggageCount, summary.NeedsAirConditioning,
+        summary.NeedsAccessibleVehicle, summary.HasChildSeatRequest, summary.HasPet,
+        summary.PreferredVehicleCategory?.ToString(), summary.PreferredPaymentMethod.ToString(),
+        summary.SpecialInstructions, summary.EstimatedDistanceKm, summary.ActualDistanceKm,
+        summary.EstimatedDurationMinutes, summary.ActualDurationMinutes, summary.EstimatedFare, summary.FinalFare,
+        summary.NegotiatedFinalFare, summary.Currency, summary.Status.ToString(), summary.LastKnownLatitude,
+        summary.LastKnownLongitude, summary.LastLocationRecordedAt, summary.CancellationReason, summary.CreatedAt,
+        summary.UpdatedAt);
+}

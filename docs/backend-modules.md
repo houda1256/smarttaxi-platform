@@ -2,125 +2,126 @@
 
 ## 1. Objectif du document
 
-Ce document décrit les onze modules métier prévus pour le backend SmartTaxi. Chaque module est destiné à être organisé comme une unité cohérente au sein du monolithe modulaire, avec des frontières claires vis-à-vis des autres modules (voir [docs/backend-architecture.md](backend-architecture.md)).
+Ce document décrit les onze modules métier du backend SmartTaxi, chacun destiné à être organisé comme une unité cohérente au sein du monolithe modulaire, avec des frontières claires vis-à-vis des autres modules (voir [docs/backend-architecture.md](backend-architecture.md)).
 
-Aucun de ces modules n'est encore implémenté : ce document décrit leur périmètre prévu, à titre de préparation pour le développement à venir.
+**Cette liste est la liste canonique**, issue du SmartTaxi Master Prompt (Partie 3). Elle remplace une précédente version de ce document dont les noms de modules (Customers, Drivers, Rides, Vehicles, Payments, Rewards) ne correspondent plus à la spécification métier actuelle.
+
+Pour le détail complet de chaque module (entités, statuts, événements, règles métier précises), voir [docs/business-functional-specification.md](business-functional-specification.md), qui fait foi en cas de divergence avec ce document. Ce document-ci reste la carte concise des modules et de leurs interactions.
+
+Les modules **Identity**, **Fleet** et **Ride** sont implémentés à ce jour, et le module **Payment** l'est partiellement (voir [docs/backend-audit-report.md](backend-audit-report.md) pour l'état d'Identity ; le rapport final de la Phase 3 couvre l'implémentation de Fleet ; le rapport final de la Phase 4 couvre l'implémentation de Ride ; le rapport final de la Phase 5 couvre le sous-ensemble de Payment implémenté) : les autres modules — et le reste du périmètre de Payment — restent à l'état de spécification, en préparation du développement à venir.
 
 ## 2. Identity
 
 - **Objectif** : gérer l'identité et l'accès des utilisateurs de la plateforme, tous rôles confondus.
-- **Responsabilités** : authentification, gestion des comptes, gestion des rôles et permissions, émission et validation des tokens.
-- **Fonctionnalités futures** : inscription, connexion, réinitialisation de mot de passe, gestion des rôles (client, chauffeur, propriétaire, garage, assistance routière, annonceur, administrateur), authentification multi-facteurs.
-- **Données sensibles** : identifiants de connexion, mots de passe (hachés), tokens d'authentification, données personnelles d'identification.
+- **Responsabilités** : authentification, gestion des comptes, rôles multiples et permissions fines, émission/validation/rotation/révocation des tokens, vérification email/téléphone, 2FA, gestion de session, documents utilisateur, codes de parrainage.
+- **Rôles supportés** : Customer, Driver, TaxiOwner, GaragePartner, RoadsideAssistancePartner, Advertiser, AdvertiserAdmin, PlatformAdmin, SuperAdmin, SupportAgent, FinanceManager, FleetManager, OperationsManager, ContentModerator, SecurityOfficer — un même compte peut cumuler plusieurs rôles.
+- **Données sensibles** : identifiants de connexion, mots de passe (hachés), tokens, documents d'identité, données personnelles.
 - **Interactions** : module transverse, utilisé par tous les autres modules pour authentifier et autoriser les actions.
-- **Règles d'isolation** : aucun autre module ne doit stocker de logique d'authentification propre ; toute vérification d'identité passe par Identity.
+- **Règles d'isolation** : aucun autre module ne stocke de logique d'authentification propre ; toute vérification d'identité passe par Identity.
 
-## 3. Customers
+## 3. Subscription
 
-- **Objectif** : gérer les profils et le parcours des clients de la plateforme.
-- **Responsabilités** : profil client, préférences, historique des courses (référence), gestion des adresses favorites.
-- **Fonctionnalités futures** : gestion de profil, historique de courses, moyens de contact, préférences de trajet.
-- **Données sensibles** : coordonnées personnelles, historique de déplacement, préférences.
-- **Interactions** : Rides (demande de course), Payments (règlement des courses), Rewards (points de fidélité), Identity (authentification).
-- **Règles d'isolation** : Customers ne doit pas accéder directement aux données de facturation détaillées de Payments ; il consomme des interfaces dédiées.
+- **Objectif** : gérer les abonnements des acteurs éligibles (Customer, Driver, TaxiOwner, GaragePartner, RoadsideAssistancePartner, Advertiser, BusinessCustomer).
+- **Responsabilités** : plans configurables (prix, période de facturation, essai, fonctionnalités, limites), activation, renouvellement, suspension, annulation, expiration, upgrade/downgrade, périodes de grâce, entitlements.
+- **Données sensibles** : historique de facturation.
+- **Interactions** : Identity (rôle cible du plan), Payment (facturation), Fleet/Advertising/Maintenance/RoadsideAssistance (fonctionnalités conditionnées par abonnement).
+- **Règles d'isolation** : les vérifications d'accès à une fonctionnalité passent par un service d'entitlement dédié, jamais dispersées dans les contrôleurs.
 
-## 4. Drivers
+## 4. Ride
 
-- **Objectif** : gérer les profils et l'activité des chauffeurs.
-- **Responsabilités** : profil chauffeur, statut de disponibilité, historique des courses effectuées, documents professionnels.
-- **Fonctionnalités futures** : gestion de profil, disponibilité en temps réel, suivi des évaluations, gestion des documents (permis, assurance).
-- **Données sensibles** : pièces d'identité, documents professionnels, coordonnées bancaires (référence), localisation.
-- **Interactions** : Rides (affectation de courses), Vehicles (véhicule assigné), Payments (versements), Rewards, Identity.
-- **Règles d'isolation** : Drivers ne gère pas directement les règles de paiement ; il transmet les événements nécessaires à Payments.
+- **Objectif** : gérer le cycle de vie complet d'une course (immédiate, planifiée, négociée, partagée).
+- **Responsabilités** : recommandation de chauffeurs (score explicable), sélection manuelle obligatoire par le client, réponse du chauffeur, transitions de statut contrôlées, chat temporaire, suivi de localisation, annulation, complétion, SOS, notation.
+- **Règle absolue** : le client choisit toujours manuellement son chauffeur ; le backend ne doit jamais assigner automatiquement un chauffeur.
+- **Données sensibles** : géolocalisation, itinéraire, horodatage, contenu du chat.
+- **Interactions** : Identity (client/chauffeur), Fleet (véhicule), Payment (règlement), Loyalty (gains de points), Notifications (alertes), Administration (SOS/litiges).
+- **Règles d'isolation** : Ride orchestre le processus métier sans dupliquer les données détenues par Identity ou Fleet.
+- **État d'implémentation** : implémenté (Domain/Application/Infrastructure/API + hub SignalR + migrations + tests unitaires et d'intégration Postgres). Détails complets, écarts assumés par rapport à la spécification et limitations connues dans le rapport final de la Phase 4 et dans `docs/business-functional-specification.md` (Module 3). Payment/Loyalty/Notifications n'existant pas encore, Ride prépare uniquement les points d'intégration (`AwaitingPayment`, événements documentés) sans écriture financière réelle.
 
-## 5. Rides
+## 5. Fleet
 
-- **Objectif** : gérer le cycle de vie complet d'une course.
-- **Responsabilités** : création de la demande, affectation d'un chauffeur, suivi du trajet, clôture de la course.
-- **Fonctionnalités futures** : réservation immédiate ou planifiée, suivi en temps réel, historique, gestion des annulations.
-- **Données sensibles** : géolocalisation du client et du chauffeur, itinéraire, horodatage des trajets.
-- **Interactions** : Customers (demandeur), Drivers (exécutant), Vehicles (véhicule utilisé), Payments (règlement), Rewards (gains de points).
-- **Règles d'isolation** : Rides orchestre le processus métier de la course sans dupliquer les données détenues par Customers, Drivers ou Vehicles.
-
-## 6. Vehicles
-
-- **Objectif** : gérer le référentiel des véhicules exploités sur la plateforme.
-- **Responsabilités** : fiche véhicule, association à un propriétaire et/ou un chauffeur, statut opérationnel.
-- **Fonctionnalités futures** : enregistrement de véhicule, documents (carte grise, assurance, contrôle technique), historique d'affectation.
+- **Objectif** : gérer le référentiel des propriétaires, flottes, véhicules et chauffeurs, ainsi que leurs affectations et contrats.
+- **Responsabilités** : fiche véhicule, documents véhicule, affectations chauffeur-véhicule (avec historique et détection de conflits), contrats propriétaire-chauffeur, partage de revenus configurable, dépenses de flotte.
 - **Données sensibles** : immatriculation, documents administratifs, identité du propriétaire.
-- **Interactions** : Drivers (chauffeur assigné), Maintenance (suivi technique), Rides (véhicule utilisé pour une course).
-- **Règles d'isolation** : Vehicles est la source de vérité unique pour les données d'un véhicule ; les autres modules la référencent par identifiant.
+- **Interactions** : Identity (chauffeur/propriétaire), Ride (véhicule utilisé), Maintenance (suivi technique), Payment (partage de revenus, dépenses).
+- **Règles d'isolation** : Fleet est la source de vérité unique pour les données d'un véhicule ; les autres modules la référencent par identifiant. Un document véhicule expiré peut suspendre automatiquement le véhicule.
+- **État d'implémentation** : implémenté (Domain/Application/Infrastructure/API + migrations + tests unitaires et d'intégration Postgres). Détails complets, limitations connues et décisions de sécurité dans le rapport final de la Phase 3. Le rattachement automatique d'un document véhicule expiré à la suspension du véhicule (ligne ci-dessus) n'est pas encore câblé en tâche planifiée — seul le balayage manuel (`expire-sweep`) existe à ce jour.
 
-## 7. Maintenance
+## 6. Maintenance
 
-- **Objectif** : gérer le suivi technique et l'entretien des véhicules.
-- **Responsabilités** : planification des entretiens, historique des interventions, gestion des garages partenaires.
-- **Fonctionnalités futures** : prise de rendez-vous, suivi des réparations, alertes d'entretien préventif.
+- **Objectif** : gérer le suivi technique et l'entretien des véhicules via des garages partenaires.
+- **Responsabilités** : recommandation de garage (score explicable, sélection manuelle obligatoire), rendez-vous, devis, interventions, carnet d'entretien numérique (immuable sauf correction auditée), recommandations d'entretien (moteur à règles, pas de ML).
 - **Données sensibles** : historique technique du véhicule, coûts d'intervention.
-- **Interactions** : Vehicles (véhicule concerné), RoadsideAssistance (suite d'une intervention d'urgence), Payments (facturation des interventions).
-- **Règles d'isolation** : Maintenance ne modifie jamais directement les données d'identité du véhicule détenues par Vehicles ; elle référence le véhicule par identifiant.
+- **Interactions** : Fleet (véhicule concerné), RoadsideAssistance (suite d'une intervention d'urgence), Payment (facturation).
+- **Règles d'isolation** : Maintenance ne modifie jamais directement les données d'identité du véhicule détenues par Fleet.
 
-## 8. RoadsideAssistance
+## 7. Roadside Assistance
 
 - **Objectif** : gérer les interventions d'urgence en cas de panne ou d'incident sur la route.
-- **Responsabilités** : réception des demandes d'assistance, affectation d'un prestataire, suivi de l'intervention.
-- **Fonctionnalités futures** : déclenchement d'une demande d'urgence, géolocalisation de l'incident, suivi du prestataire.
+- **Responsabilités** : réception des demandes, recommandation de partenaire (score explicable, sélection manuelle obligatoire), suivi de l'intervention, création d'incident pour les événements graves.
+- **Règle absolue** : jamais d'assignation automatique d'un partenaire d'assistance.
 - **Données sensibles** : géolocalisation en temps réel, données de sécurité liées à l'incident.
-- **Interactions** : Rides (course en cours interrompue), Vehicles (véhicule concerné), Maintenance (transfert éventuel vers un entretien).
-- **Règles d'isolation** : RoadsideAssistance ne prend pas en charge la facturation elle-même ; elle transmet les événements pertinents à Payments.
+- **Interactions** : Ride (course interrompue), Fleet (véhicule concerné), Maintenance (transfert éventuel), Support (création d'incident).
+- **Règles d'isolation** : RoadsideAssistance ne gère pas la facturation elle-même ; elle transmet les événements pertinents à Payment.
 
-## 9. Payments
+## 8. Loyalty
 
-- **Objectif** : gérer les transactions financières de la plateforme.
-- **Responsabilités** : facturation des courses, versements aux chauffeurs, facturation des interventions de maintenance ou d'assistance.
-- **Fonctionnalités futures** : intégration d'un prestataire de paiement, gestion des factures, gestion des remboursements.
-- **Données sensibles** : données de paiement, informations bancaires, historique des transactions.
-- **Interactions** : Customers (paiement client), Drivers (versement), Rides, Maintenance, RoadsideAssistance, Advertising (facturation des campagnes).
-- **Règles d'isolation** : Payments est le seul module autorisé à manipuler des données financières ; aucun autre module ne doit stocker de données de paiement.
-
-## 10. Rewards
-
-- **Objectif** : gérer le programme de fidélité de la plateforme.
-- **Responsabilités** : attribution de points, gestion des avantages, historique de fidélité.
-- **Fonctionnalités futures** : accumulation de points par course, échange de points contre des avantages, paliers de fidélité.
+- **Objectif** : gérer la fidélité, les promotions et les parrainages.
+- **Responsabilités** : deux types de points distincts (RewardPoints redeemables, StatusPoints déterminant le palier Bronze/Silver/Gold/Platinum), grand livre de points immuable, catalogue de récompenses, coupons/promotions, challenges, récompenses de parrainage.
+- **Explicitement hors périmètre** : badges, portefeuille cashback, solde de crédit promotionnel.
 - **Données sensibles** : historique de consommation associé à un profil utilisateur.
-- **Interactions** : Customers, Drivers (le cas échéant), Rides (déclencheur de gains de points).
-- **Règles d'isolation** : Rewards ne doit pas dupliquer les données de profil détenues par Customers ou Drivers ; il les référence par identifiant.
+- **Interactions** : Identity, Ride (déclencheur de gains), Payment (aucun solde mutable sans écriture au grand livre).
+- **Règles d'isolation** : toute opération de points passe par le grand livre immuable ; jamais d'écrasement direct d'un solde.
 
-## 11. Advertising
+## 9. Payment (Finance, Invoicing, Cash Register)
 
-- **Objectif** : gérer les campagnes publicitaires diffusées sur la plateforme.
-- **Responsabilités** : gestion des annonceurs, gestion des campagnes, diffusion des annonces.
-- **Fonctionnalités futures** : création de campagnes, ciblage, suivi de diffusion, facturation des annonceurs.
-- **Données sensibles** : données contractuelles des annonceurs, données de facturation.
-- **Interactions** : Payments (facturation des campagnes), Administration (validation des campagnes).
-- **Règles d'isolation** : Advertising ne doit pas accéder aux données personnelles des clients ou chauffeurs ; le ciblage, si prévu, s'appuie sur des données agrégées et anonymisées.
+- **Objectif** : fournir la fondation financière complète de la plateforme.
+- **Responsabilités** : paiements (passerelle mock configurable), commissions configurables, partage de revenus chauffeur-propriétaire, comptes financiers internes, grand livre comptable immuable, remboursements, versements (payouts), factures, taxes, encaissements espèces, sessions de caisse, déclarations de caisse chauffeur, clients professionnels, litiges financiers, rapports.
+- **Devise par défaut** : TND.
+- **Données sensibles** : données de paiement, informations bancaires, historique des transactions.
+- **Interactions** : quasiment tous les modules (Ride, Fleet, Maintenance, RoadsideAssistance, Subscription, Loyalty, Advertising) déclenchent des écritures financières.
+- **Règles d'isolation** : Payment est le seul module autorisé à manipuler des données financières ; toute correction utilise une écriture d'extourne, jamais une suppression.
+- **État d'implémentation** : un sous-ensemble ciblé est implémenté (Phase 5) — paiement de course (Cash/Card/CashAtAgency), statuts, facture et reçu générés à la confirmation, partage de revenus chauffeur-propriétaire basé sur les contrats Fleet, commission plateforme configurable, remboursements (total/partiel/annulation) audités, historique de transaction immuable, rapports de revenus. **Hors périmètre de la Phase 5** (non implémenté) : passerelle de paiement réelle, grand livre comptable général, comptes financiers internes, versements (payouts), sessions de caisse, déclarations de caisse chauffeur, clients professionnels, litiges financiers — ces éléments restent des spécifications pour une phase ultérieure. Détails complets dans le rapport final de la Phase 5 et dans `docs/business-functional-specification.md` (Module 9).
 
-## 12. Administration
+## 10. Advertising
 
-- **Objectif** : fournir aux administrateurs les outils de supervision de la plateforme.
-- **Responsabilités** : supervision des utilisateurs, des courses, des véhicules et des campagnes ; gestion des règles de la plateforme.
-- **Fonctionnalités futures** : tableaux de bord, gestion des litiges, modération des comptes, configuration de la plateforme.
-- **Données sensibles** : accès transverse à des données sensibles de plusieurs modules, nécessitant un contrôle d'accès strict.
-- **Interactions** : potentiellement tous les modules, en lecture principalement, via des interfaces dédiées.
-- **Règles d'isolation** : Administration ne doit pas contourner les règles métier des autres modules ; toute action de supervision passe par les cas d'utilisation exposés par chaque module.
+- **Objectif** : gérer les campagnes publicitaires diffusées sur la plateforme (véhicules, écrans embarqués).
+- **Responsabilités** : gestion des annonceurs et agences, campagnes, ciblage agrégé, validation des médias (scanner de sécurité mock), consentement propriétaire/chauffeur, sélection de véhicules, contrats et devis, installation et inspection, moteur de diffusion interne, partage de revenus, analytics agrégées, détection de fraude.
+- **Données sensibles** : données contractuelles et de facturation des annonceurs ; jamais d'exposition de l'identité individuelle des passagers.
+- **Interactions** : Payment (facturation, partage de revenus), Fleet (véhicules et consentement), Administration (validation des campagnes).
+- **Règles d'isolation** : le ciblage et les analytics restent agrégés et privacy-aware.
+
+## 11. Notifications, Communication, Support et Incidents
+
+- **Objectif** : gérer les notifications, le support utilisateur et la gestion des incidents.
+- **Responsabilités** : notifications in-app/email/SMS/push (abstractions) et SignalR, templates par événement/canal/langue/rôle, tickets de support (avec SLA, escalade, notes internes jamais visibles du demandeur), incidents (sévérité, investigation, preuves), escalade ticket → incident, réclamations.
+- **Données sensibles** : contenu des tickets/incidents, preuves associées.
+- **Interactions** : tous les modules peuvent déclencher une notification ou un ticket ; RoadsideAssistance/Ride (SOS) peuvent créer un incident directement.
+- **Règles d'isolation** : les notes internes de support ne sont jamais exposées au demandeur ; les notifications de sécurité critiques ne sont jamais désactivables.
+
+## 12. Administration, Audit, Configuration et Analytics
+
+- **Objectif** : fournir aux administrateurs les outils de supervision, d'audit et de configuration de la plateforme.
+- **Responsabilités** : rôles administratifs à moindre privilège (SuperAdmin, PlatformAdmin, SupportAgent, FinanceManager, AdvertiserAdmin, FleetManager, OperationsManager, ContentModerator, SecurityOfficer), actions sensibles nécessitant confirmation renforcée, tableaux de bord spécialisés par rôle, journal d'audit immuable, historique métier, paramètres système centralisés (`SystemSetting`), feature flags, références géographiques, règles de rétention, requêtes de données personnelles, analytics agrégées, rapports planifiés, exports, mode maintenance, endpoints de santé applicative.
+- **Données sensibles** : accès transverse à des données sensibles de plusieurs modules — contrôle d'accès strict et journalisé.
+- **Interactions** : potentiellement tous les modules, principalement en lecture, via des interfaces dédiées.
+- **Règles d'isolation** : Administration ne contourne jamais les règles métier des autres modules ; toute action de supervision passe par les cas d'utilisation exposés par chaque module. Aucune infrastructure de monitoring externe n'est implémentée (Prometheus/Grafana/OpenTelemetry restent hors périmètre, réservés à une phase DevSecOps séparée).
 
 ## 13. Matrice des interactions entre modules
 
 Lecture : une case cochée indique que le module en ligne interagit avec le module en colonne (dans le sens prévu des échanges).
 
-| Module \ vers → | Identity | Customers | Drivers | Rides | Vehicles | Maintenance | RoadsideAssistance | Payments | Rewards | Advertising | Administration |
+| Module \ vers → | Identity | Subscription | Ride | Fleet | Maintenance | RoadsideAssistance | Loyalty | Payment | Advertising | Support | Administration |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Identity | — | | | | | | | | | | |
-| Customers | ✓ | — | | ✓ | | | | ✓ | ✓ | | |
-| Drivers | ✓ | | — | ✓ | ✓ | | | ✓ | ✓ | | |
-| Rides | | ✓ | ✓ | — | ✓ | | ✓ | ✓ | ✓ | | |
-| Vehicles | | | ✓ | | — | ✓ | ✓ | | | | |
-| Maintenance | | | | | ✓ | — | ✓ | ✓ | | | |
-| RoadsideAssistance | | | | ✓ | ✓ | ✓ | — | ✓ | | | |
-| Payments | | | | | | | | — | | | |
-| Rewards | | | | | | | | | — | | |
-| Advertising | | | | | | | | ✓ | | — | |
-| Administration | | | | | | | | | | ✓ | — |
+| Subscription | ✓ | — | | ✓ | ✓ | ✓ | | ✓ | ✓ | | |
+| Ride | ✓ | | — | ✓ | | ✓ | ✓ | ✓ | | ✓ | |
+| Fleet | ✓ | | ✓ | — | ✓ | ✓ | | ✓ | ✓ | | |
+| Maintenance | | | | ✓ | — | ✓ | | ✓ | | | |
+| RoadsideAssistance | | | ✓ | ✓ | ✓ | — | | ✓ | | ✓ | |
+| Loyalty | ✓ | | ✓ | | | | — | ✓ | | | |
+| Payment | | | | | | | | — | | | |
+| Advertising | | | | ✓ | | | | ✓ | — | | ✓ |
+| Support | ✓ | | ✓ | | | ✓ | | | | — | ✓ |
+| Administration | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 
-Cette matrice sera affinée au fur et à mesure de l'implémentation effective des modules.
+Cette matrice sera affinée au fur et à mesure de l'implémentation effective des modules ; voir [docs/business-functional-specification.md](business-functional-specification.md) pour la liste complète des événements métier inter-modules.

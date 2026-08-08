@@ -9,5 +9,11 @@ public interface IUserRepository
 
     Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken);
 
+    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<User?> GetByReferralCodeAsync(string referralCode, CancellationToken cancellationToken);
+
     Task AddAsync(User user, CancellationToken cancellationToken);
+
+    Task UpdateAsync(User user, CancellationToken cancellationToken);
 }

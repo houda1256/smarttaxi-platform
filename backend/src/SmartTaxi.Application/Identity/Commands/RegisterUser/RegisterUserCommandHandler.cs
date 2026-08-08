@@ -23,14 +23,9 @@ public sealed class RegisterUserCommandHandler
 
     public async Task<Result<RegisterUserResult>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        Email email;
-        try
+        if (!Email.TryCreate(command.Email, out var email, out var emailError))
         {
-            email = Email.Create(command.Email);
-        }
-        catch (ArgumentException ex)
-        {
-            return Result<RegisterUserResult>.Failure(ex.Message, ErrorType.Validation);
+            return Result<RegisterUserResult>.Failure(emailError, ErrorType.Validation);
         }
 
         if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))

@@ -1,3 +1,3 @@
 namespace SmartTaxi.API.Contracts.Identity;
 
-public sealed record LoginRequest(string Email, string Password);
+public sealed record LoginRequest(string Email, string Password, string? DeviceLabel = null);

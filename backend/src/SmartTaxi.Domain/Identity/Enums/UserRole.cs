@@ -4,5 +4,10 @@ public enum UserRole
 {
     Customer,
     Driver,
-    Admin
+    Admin,
+    TaxiOwner,
+    GaragePartner,
+    RoadsideAssistancePartner,
+    Advertiser,
+    BusinessCustomer
 }
