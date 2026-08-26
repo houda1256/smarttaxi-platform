@@ -35,7 +35,7 @@ public class DisableTwoFactorCommandHandlerTests
     private async Task<(Guid UserId, string Secret)> RegisterAndEnableTwoFactorAsync(
         string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         var userId = registerResult.Value!.UserId;
 

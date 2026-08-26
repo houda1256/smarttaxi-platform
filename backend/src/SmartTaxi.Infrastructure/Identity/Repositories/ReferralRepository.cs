@@ -48,6 +48,11 @@ internal sealed class ReferralRepository : IReferralRepository
             .Where(referral => referral.Status == ReferralStatus.PendingActivation)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyCollection<Referral>> GetRewardEligibleAsync(CancellationToken cancellationToken) =>
+        await _context.Referrals
+            .Where(referral => referral.Status == ReferralStatus.RewardEligible)
+            .ToListAsync(cancellationToken);
+
     public async Task<bool> TryActivateAsync(Guid referralId, DateTime utcNow, CancellationToken cancellationToken)
     {
         var rows = await _context.Referrals

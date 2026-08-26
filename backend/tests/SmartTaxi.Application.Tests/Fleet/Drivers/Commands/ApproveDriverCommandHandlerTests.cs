@@ -13,11 +13,12 @@ public class ApproveDriverCommandHandlerTests
 {
     private readonly FakeDriverProfileRepository _repository = new();
     private readonly FakeUserDocumentRepository _documentRepository = new();
+    private readonly FakeNotificationDispatcher _notificationDispatcher = new();
     private readonly ApproveDriverCommandHandler _handler;
 
     public ApproveDriverCommandHandlerTests()
     {
-        _handler = new ApproveDriverCommandHandler(_repository, new DocumentEligibilityChecker(_documentRepository));
+        _handler = new ApproveDriverCommandHandler(_repository, new DocumentEligibilityChecker(_documentRepository), _notificationDispatcher);
     }
 
     private async Task<DriverProfile> CreateUnderReviewProfileAsync(Guid userId)
@@ -50,6 +51,7 @@ public class ApproveDriverCommandHandlerTests
         Assert.True(result.IsSuccess);
         var reloaded = await _repository.GetByIdAsync(profile.Id, CancellationToken.None);
         Assert.Equal(DriverVerificationStatus.Approved, reloaded!.VerificationStatus);
+        Assert.Single(_notificationDispatcher.DispatchedRequests, request => request.RecipientUserId == userId);
     }
 
     [Fact]

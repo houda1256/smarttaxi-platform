@@ -1,9 +1,15 @@
 using SmartTaxi.Application.Common;
 using SmartTaxi.Application.Common.Messaging;
 using SmartTaxi.Application.Fleet.Drivers.Abstractions;
+using SmartTaxi.Application.Loyalty.Abstractions;
+using SmartTaxi.Application.Loyalty.Contracts;
+using SmartTaxi.Application.Notifications.Abstractions;
+using SmartTaxi.Application.Notifications.Contracts;
 using SmartTaxi.Application.Payments.Abstractions;
 using SmartTaxi.Application.Payments.Ledger.Abstractions;
 using SmartTaxi.Application.Rides.Abstractions;
+using SmartTaxi.Domain.Identity.Enums;
+using SmartTaxi.Domain.Notifications.Enums;
 using SmartTaxi.Domain.Payments;
 using SmartTaxi.Domain.Payments.Entities;
 using SmartTaxi.Domain.Payments.Enums;
@@ -37,12 +43,15 @@ public sealed class ConfirmPaymentCommandHandler : ICommandHandler<ConfirmPaymen
     private readonly IReceiptPdfGenerator _receiptPdfGenerator;
     private readonly IInvoiceTaxPolicy _taxPolicy;
     private readonly ILedgerPostingService _ledgerPostingService;
+    private readonly INotificationDispatcher _notificationDispatcher;
+    private readonly ILoyaltyEarningDispatcher _loyaltyEarningDispatcher;
 
     public ConfirmPaymentCommandHandler(
         IPaymentRepository paymentRepository, IDriverProfileRepository driverRepository,
         IRevenueSharingCalculator revenueSharingCalculator, IRideRepository rideRepository,
         IInvoiceRepository invoiceRepository, IReceiptRepository receiptRepository, IInvoicePdfGenerator invoicePdfGenerator,
-        IReceiptPdfGenerator receiptPdfGenerator, IInvoiceTaxPolicy taxPolicy, ILedgerPostingService ledgerPostingService)
+        IReceiptPdfGenerator receiptPdfGenerator, IInvoiceTaxPolicy taxPolicy, ILedgerPostingService ledgerPostingService,
+        INotificationDispatcher notificationDispatcher, ILoyaltyEarningDispatcher loyaltyEarningDispatcher)
     {
         _paymentRepository = paymentRepository;
         _driverRepository = driverRepository;
@@ -54,6 +63,8 @@ public sealed class ConfirmPaymentCommandHandler : ICommandHandler<ConfirmPaymen
         _receiptPdfGenerator = receiptPdfGenerator;
         _taxPolicy = taxPolicy;
         _ledgerPostingService = ledgerPostingService;
+        _notificationDispatcher = notificationDispatcher;
+        _loyaltyEarningDispatcher = loyaltyEarningDispatcher;
     }
 
     public async Task<Result<decimal>> Handle(ConfirmPaymentCommand command, CancellationToken cancellationToken)
@@ -111,6 +122,23 @@ public sealed class ConfirmPaymentCommandHandler : ICommandHandler<ConfirmPaymen
         await _ledgerPostingService.PostPaymentConfirmedAsync(
             payment.Id, driver.UserId, payment.OwnerId, payment.FinalFareAmount, split.PlatformCommissionAmount,
             split.DriverAmount, split.OwnerAmount, payment.Currency, command.RequestingUserId, utcNow, cancellationToken);
+
+        // Financial confirmation is mandatory/never-disableable — see INotificationPreferencePolicy.
+        await _notificationDispatcher.DispatchAsync(
+            new NotificationRequest(
+                payment.CustomerId, NotificationCategory.Payment, "payment.confirmed",
+                new Dictionary<string, string> { ["Amount"] = payment.FinalFareAmount.ToString("F2"), ["Currency"] = payment.Currency },
+                IsMandatory: true, SourceType: "Payment", SourceId: payment.Id),
+            cancellationToken);
+
+        // The one safe Loyalty earning trigger (see the Module 7 audit) — never Ride completion, only a
+        // confirmed Payment. Both the payer and the driver are eligible actors for the same paid ride;
+        // each award is independently idempotent (the ledger's idempotency key includes UserId), so
+        // dispatching for a role with no configured earning rule is a harmless no-op.
+        await _loyaltyEarningDispatcher.AwardForPaymentAsync(
+            new LoyaltyPaymentAwardRequest(payment.CustomerId, UserRole.Customer, payment.Id, payment.FinalFareAmount), cancellationToken);
+        await _loyaltyEarningDispatcher.AwardForPaymentAsync(
+            new LoyaltyPaymentAwardRequest(driver.UserId, UserRole.Driver, payment.Id, payment.FinalFareAmount), cancellationToken);
 
         return Result<decimal>.Success(payment.FinalFareAmount);
     }

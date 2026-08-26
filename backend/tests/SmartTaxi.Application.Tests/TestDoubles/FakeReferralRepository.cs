@@ -38,6 +38,13 @@ public sealed class FakeReferralRepository : IReferralRepository
         return Task.FromResult(referrals);
     }
 
+    public Task<IReadOnlyCollection<Referral>> GetRewardEligibleAsync(CancellationToken cancellationToken)
+    {
+        IReadOnlyCollection<Referral> referrals =
+            _referralsById.Values.Where(r => r.Status == ReferralStatus.RewardEligible).ToList();
+        return Task.FromResult(referrals);
+    }
+
     public Task<bool> TryActivateAsync(Guid referralId, DateTime utcNow, CancellationToken cancellationToken)
     {
         if (!_referralsById.TryGetValue(referralId, out var referral) || referral.Status != ReferralStatus.PendingActivation)

@@ -7,6 +7,7 @@ public enum VehicleOperationalStatus
     Assigned,
     InService,
     UnderMaintenance,
+    UnderRoadsideAssistance,
     Unavailable,
     Suspended,
     Retired,

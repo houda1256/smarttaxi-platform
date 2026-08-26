@@ -32,7 +32,7 @@ public class RegenerateRecoveryCodesCommandHandlerTests
 
     private async Task<Guid> RegisterAndEnableTwoFactorAsync(string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         var userId = registerResult.Value!.UserId;
 
@@ -63,7 +63,7 @@ public class RegenerateRecoveryCodesCommandHandlerTests
     [Fact]
     public async Task Handle_WithoutTwoFactorEnabled_ReturnsValidationError()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(
             new RegisterUserCommand("no2fa@example.com", "correct-password"), CancellationToken.None);
 

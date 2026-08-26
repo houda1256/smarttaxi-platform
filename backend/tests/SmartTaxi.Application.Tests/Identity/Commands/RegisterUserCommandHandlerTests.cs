@@ -8,11 +8,12 @@ public class RegisterUserCommandHandlerTests
 {
     private readonly FakeUserRepository _userRepository = new();
     private readonly FakePasswordHasher _passwordHasher = new();
+    private readonly FakeNotificationDispatcher _notificationDispatcher = new();
     private readonly RegisterUserCommandHandler _handler;
 
     public RegisterUserCommandHandlerTests()
     {
-        _handler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        _handler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, _notificationDispatcher);
     }
 
     [Fact]
@@ -25,6 +26,7 @@ public class RegisterUserCommandHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Equal("new.user@example.com", result.Value!.Email);
         Assert.NotEqual(Guid.Empty, result.Value.UserId);
+        Assert.Single(_notificationDispatcher.DispatchedRequests, request => request.SourceId == result.Value.UserId);
     }
 
     [Fact]

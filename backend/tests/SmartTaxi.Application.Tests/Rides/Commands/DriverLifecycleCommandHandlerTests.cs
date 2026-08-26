@@ -46,7 +46,7 @@ public class DriverLifecycleCommandHandlerTests
         _arrivedHandler = new DriverArrivedCommandHandler(_rideRepository, _driverRepository);
         _onBoardHandler = new PassengerOnBoardCommandHandler(_rideRepository, _driverRepository);
         _startHandler = new StartRideCommandHandler(_rideRepository, _driverRepository);
-        _completeHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider);
+        _completeHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider, new FakeNotificationDispatcher());
     }
 
     private async Task<(Guid CustomerId, Guid RideId, Guid DriverUserId, Guid VehicleId)> CreateAcceptedRideAsync()

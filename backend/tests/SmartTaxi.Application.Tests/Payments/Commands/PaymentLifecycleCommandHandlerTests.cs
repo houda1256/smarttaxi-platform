@@ -46,6 +46,8 @@ public class PaymentLifecycleCommandHandlerTests
     private readonly FakeInvoiceTaxPolicy _taxPolicy = new();
     private readonly FakeFinancialAccountRepository _accountRepository = new();
     private readonly FakeFinancialLedgerRepository _ledgerRepository;
+    private readonly FakeNotificationDispatcher _notificationDispatcher = new();
+    private readonly FakeLoyaltyEarningDispatcher _loyaltyEarningDispatcher = new();
 
     private readonly CreateRideCommandHandler _createRideHandler;
     private readonly SelectDriverCommandHandler _selectDriverHandler;
@@ -73,7 +75,7 @@ public class PaymentLifecycleCommandHandlerTests
         _arrivedHandler = new DriverArrivedCommandHandler(_rideRepository, _driverRepository);
         _passengerOnBoardHandler = new PassengerOnBoardCommandHandler(_rideRepository, _driverRepository);
         _startHandler = new StartRideCommandHandler(_rideRepository, _driverRepository);
-        _completeRideHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider);
+        _completeRideHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider, _notificationDispatcher);
 
         _revenueSharingCalculator = new RevenueSharingCalculator(_contractRepository, _commissionPolicy);
         _createPaymentHandler = new CreateRidePaymentCommandHandler(_paymentRepository, _rideRepository, _driverRepository, _vehicleRepository);
@@ -81,9 +83,10 @@ public class PaymentLifecycleCommandHandlerTests
         var ledgerPostingService = new LedgerPostingService(_accountRepository, _ledgerRepository);
         _confirmHandler = new ConfirmPaymentCommandHandler(
             _paymentRepository, _driverRepository, _revenueSharingCalculator, _rideRepository, _invoiceRepository,
-            _receiptRepository, _invoicePdfGenerator, _receiptPdfGenerator, _taxPolicy, ledgerPostingService);
+            _receiptRepository, _invoicePdfGenerator, _receiptPdfGenerator, _taxPolicy, ledgerPostingService, _notificationDispatcher,
+            _loyaltyEarningDispatcher);
         _cancelHandler = new CancelPaymentCommandHandler(_paymentRepository, _driverRepository);
-        _failHandler = new FailPaymentCommandHandler(_paymentRepository);
+        _failHandler = new FailPaymentCommandHandler(_paymentRepository, _notificationDispatcher);
     }
 
     private async Task<(Guid CustomerId, Guid RideId, Guid DriverUserId, Guid OwnerId, Guid VehicleId)> CreateRideAwaitingPaymentAsync(
@@ -179,6 +182,14 @@ public class PaymentLifecycleCommandHandlerTests
         Assert.Equal(expectedCommission, payment.PlatformCommissionAmount);
         Assert.Equal(payment.FinalFareAmount - expectedCommission, payment.DriverAmount);
         Assert.Equal(0m, payment.OwnerAmount);
+
+        // Cross-module: confirming a payment notifies the customer, and the ride's own completion already notified them too.
+        Assert.Contains(_notificationDispatcher.DispatchedRequests, request => request.SourceType == "Payment" && request.IsMandatory);
+        Assert.Contains(_notificationDispatcher.DispatchedRequests, request => request.SourceType == "Ride");
+
+        // Cross-module: confirming a payment awards Loyalty points for both the payer and the driver — never at ride completion.
+        Assert.Contains(_loyaltyEarningDispatcher.AwardedRequests, request => request.PayerUserId == customerId);
+        Assert.Contains(_loyaltyEarningDispatcher.AwardedRequests, request => request.PaymentId == createResult.Value);
     }
 
     [Fact]
@@ -276,5 +287,8 @@ public class PaymentLifecycleCommandHandlerTests
         Assert.True(result.IsSuccess);
         var payment = await _paymentRepository.GetByIdAsync(createResult.Value, CancellationToken.None);
         Assert.Equal(PaymentStatus.Failed, payment!.Status);
+        Assert.Contains(
+            _notificationDispatcher.DispatchedRequests,
+            request => request.SourceType == "Payment" && request.TemplateKey == "payment.failed" && request.IsMandatory);
     }
 }

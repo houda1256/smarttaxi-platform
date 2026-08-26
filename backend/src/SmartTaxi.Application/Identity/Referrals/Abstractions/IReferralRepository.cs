@@ -20,6 +20,15 @@ public interface IReferralRepository
 
     Task<IReadOnlyCollection<Referral>> GetPendingActivationAsync(CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Referrals Identity has already marked RewardEligible — added for Module 7
+    /// (Loyalty) so it can sweep for referrals to reward without ever reading
+    /// Identity's Referral table directly through anything but this repository
+    /// interface. Identity's own referral business rules are unchanged; this is
+    /// purely an additional read.
+    /// </summary>
+    Task<IReadOnlyCollection<Referral>> GetRewardEligibleAsync(CancellationToken cancellationToken);
+
     Task<bool> TryActivateAsync(Guid referralId, DateTime utcNow, CancellationToken cancellationToken);
 
     Task<bool> TryInvalidateAsync(Guid referralId, DateTime utcNow, CancellationToken cancellationToken);

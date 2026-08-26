@@ -18,6 +18,8 @@ public sealed class FakeFleetExpenseRepository : IFleetExpenseRepository
     public Task<FleetExpense?> GetByIdAsync(Guid expenseId, CancellationToken cancellationToken) =>
         Task.FromResult(_expensesById.GetValueOrDefault(expenseId));
 
+    public IReadOnlyCollection<FleetExpense> GetAllForTest() => _expensesById.Values.ToList();
+
     public Task<PagedResult<FleetExpense>> SearchAsync(
         FleetExpenseFilter filter, int pageNumber, int pageSize, CancellationToken cancellationToken)
     {

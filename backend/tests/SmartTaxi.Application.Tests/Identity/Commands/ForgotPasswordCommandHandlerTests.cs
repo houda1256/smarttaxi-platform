@@ -23,7 +23,7 @@ public class ForgotPasswordCommandHandlerTests
     [Fact]
     public async Task Handle_ForRegisteredUser_IssuesTokenAndReturnsGenericSuccess()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         await registerHandler.Handle(new RegisterUserCommand("user@example.com", "correct-password"), CancellationToken.None);
 
         var result = await _handler.Handle(new ForgotPasswordCommand("user@example.com"), CancellationToken.None);
@@ -45,7 +45,7 @@ public class ForgotPasswordCommandHandlerTests
 
     private async Task<SmartTaxi.Application.Common.Result> RunWithRegisteredUserAsync()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         await registerHandler.Handle(new RegisterUserCommand("known@example.com", "correct-password"), CancellationToken.None);
         return await _handler.Handle(new ForgotPasswordCommand("known@example.com"), CancellationToken.None);
     }
@@ -53,7 +53,7 @@ public class ForgotPasswordCommandHandlerTests
     [Fact]
     public async Task Handle_ForDeactivatedUser_ReturnsSameGenericSuccessAndSendsNothing()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand("user@example.com", "correct-password"), CancellationToken.None);
         var user = await _userRepository.GetByIdAsync(registerResult.Value!.UserId, CancellationToken.None);
         user!.Deactivate();

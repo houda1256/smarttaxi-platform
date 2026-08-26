@@ -54,7 +54,7 @@ public class RideConversationCommandHandlerTests
         _arrivedHandler = new DriverArrivedCommandHandler(_rideRepository, _driverRepository);
         _passengerOnBoardHandler = new PassengerOnBoardCommandHandler(_rideRepository, _driverRepository);
         _startHandler = new StartRideCommandHandler(_rideRepository, _driverRepository);
-        _completeHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider);
+        _completeHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider, new FakeNotificationDispatcher());
         _sendMessageHandler = new SendRideMessageCommandHandler(_rideRepository, _driverRepository, _conversationRepository, _messageRepository, _servicePolicy);
         _getMessagesHandler = new GetRideMessagesQueryHandler(_rideRepository, _driverRepository, _conversationRepository, _messageRepository);
         _reportMessageHandler = new ReportRideMessageCommandHandler(_rideRepository, _driverRepository, _messageRepository);

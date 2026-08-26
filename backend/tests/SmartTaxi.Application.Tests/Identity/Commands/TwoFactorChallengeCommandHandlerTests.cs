@@ -49,7 +49,7 @@ public class TwoFactorChallengeCommandHandlerTests
     private async Task<(Guid UserId, string ChallengeToken, string Secret, IReadOnlyCollection<string> RecoveryCodes)> RegisterEnrollAndLoginAsync(
         string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         var userId = registerResult.Value!.UserId;
 

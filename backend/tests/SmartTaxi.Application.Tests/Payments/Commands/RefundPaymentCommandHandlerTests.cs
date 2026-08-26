@@ -66,14 +66,14 @@ public class RefundPaymentCommandHandlerTests
         _arrivedHandler = new DriverArrivedCommandHandler(_rideRepository, _driverRepository);
         _passengerOnBoardHandler = new PassengerOnBoardCommandHandler(_rideRepository, _driverRepository);
         _startHandler = new StartRideCommandHandler(_rideRepository, _driverRepository);
-        _completeRideHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider);
+        _completeRideHandler = new CompleteRideCommandHandler(_rideRepository, _driverRepository, _vehicleRepository, _fareCalculator, _dynamicPricingProvider, new FakeNotificationDispatcher());
 
         var revenueSharingCalculator = new RevenueSharingCalculator(_contractRepository, _commissionPolicy);
         var ledgerPostingService = new LedgerPostingService(_accountRepository, _ledgerRepository);
         _createPaymentHandler = new CreateRidePaymentCommandHandler(_paymentRepository, _rideRepository, _driverRepository, _vehicleRepository);
         _confirmHandler = new ConfirmPaymentCommandHandler(
             _paymentRepository, _driverRepository, revenueSharingCalculator, _rideRepository, _invoiceRepository,
-            _receiptRepository, _invoicePdfGenerator, _receiptPdfGenerator, _taxPolicy, ledgerPostingService);
+            _receiptRepository, _invoicePdfGenerator, _receiptPdfGenerator, _taxPolicy, ledgerPostingService, new FakeNotificationDispatcher(), new FakeLoyaltyEarningDispatcher());
         _refundHandler = new RefundPaymentCommandHandler(_paymentRepository, _refundRecordRepository, ledgerPostingService);
     }
 

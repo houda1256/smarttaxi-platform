@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SmartTaxi.Application.Advertising;
+using SmartTaxi.Application.Advertising.Abstractions;
 using SmartTaxi.Application.Fleet.Alerts.Abstractions;
 using SmartTaxi.Application.Fleet.Assignments.Abstractions;
 using SmartTaxi.Application.Fleet.Common.Abstractions;
@@ -22,6 +24,13 @@ using SmartTaxi.Application.Identity.Preferences.Abstractions;
 using SmartTaxi.Application.Identity.Professional.Abstractions;
 using SmartTaxi.Application.Identity.Referrals.Abstractions;
 using SmartTaxi.Application.Identity.Sessions;
+using SmartTaxi.Application.Loyalty.Abstractions;
+using SmartTaxi.Application.Maintenance;
+using SmartTaxi.Application.Maintenance.Abstractions;
+using SmartTaxi.Application.RoadsideAssistance;
+using SmartTaxi.Application.RoadsideAssistance.Abstractions;
+using SmartTaxi.Application.Notifications;
+using SmartTaxi.Application.Notifications.Abstractions;
 using SmartTaxi.Application.Payments;
 using SmartTaxi.Application.Payments.Abstractions;
 using SmartTaxi.Application.Payments.BusinessCustomers.Abstractions;
@@ -33,13 +42,31 @@ using SmartTaxi.Application.Payments.Ledger;
 using SmartTaxi.Application.Payments.Ledger.Abstractions;
 using SmartTaxi.Application.Payments.Payouts.Abstractions;
 using SmartTaxi.Application.Payments.Reports.Abstractions;
+using SmartTaxi.Application.Payments.SubscriptionCharges.Abstractions;
 using SmartTaxi.Application.Payments.Taxes.Abstractions;
 using SmartTaxi.Application.Rides;
 using SmartTaxi.Application.Rides.Abstractions;
+using SmartTaxi.Application.Subscriptions;
+using SmartTaxi.Application.Subscriptions.Abstractions;
+using SmartTaxi.Infrastructure.Advertising.Options;
+using SmartTaxi.Infrastructure.Advertising.Repositories;
+using SmartTaxi.Infrastructure.Advertising.Services;
 using SmartTaxi.Infrastructure.Fleet.Repositories;
 using SmartTaxi.Infrastructure.Identity.Options;
 using SmartTaxi.Infrastructure.Identity.Repositories;
 using SmartTaxi.Infrastructure.Identity.Services;
+using SmartTaxi.Infrastructure.Loyalty;
+using SmartTaxi.Infrastructure.Loyalty.Options;
+using SmartTaxi.Infrastructure.Loyalty.Policies;
+using SmartTaxi.Infrastructure.Loyalty.Repositories;
+using SmartTaxi.Infrastructure.Maintenance.Repositories;
+using SmartTaxi.Infrastructure.RoadsideAssistance.Policies;
+using SmartTaxi.Infrastructure.RoadsideAssistance.Repositories;
+using SmartTaxi.Infrastructure.Notifications;
+using SmartTaxi.Infrastructure.Notifications.Options;
+using SmartTaxi.Infrastructure.Notifications.Policies;
+using SmartTaxi.Infrastructure.Notifications.Repositories;
+using SmartTaxi.Infrastructure.Notifications.Services;
 using SmartTaxi.Infrastructure.Payments.Options;
 using SmartTaxi.Infrastructure.Payments.Policies;
 using SmartTaxi.Infrastructure.Payments.Repositories;
@@ -49,6 +76,7 @@ using SmartTaxi.Infrastructure.Rides.Options;
 using SmartTaxi.Infrastructure.Rides.Policies;
 using SmartTaxi.Infrastructure.Rides.Repositories;
 using SmartTaxi.Infrastructure.Rides.Services;
+using SmartTaxi.Infrastructure.Subscriptions.Repositories;
 
 namespace SmartTaxi.Infrastructure;
 
@@ -210,6 +238,13 @@ public static class DependencyInjection
 
         services.AddScoped<ITaxRuleRepository, TaxRuleRepository>();
 
+        services.AddScoped<ISubscriptionChargeRepository, SubscriptionChargeRepository>();
+        services.AddScoped<ISubscriptionChargeCollector, DevSubscriptionChargeCollector>();
+
+        services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<ISubscriptionEntitlementService, SubscriptionEntitlementService>();
+
         services.AddScoped<IGroupedInvoiceRepository, GroupedInvoiceRepository>();
         services.AddScoped<IGroupedInvoiceLineRepository, GroupedInvoiceLineRepository>();
 
@@ -217,6 +252,70 @@ public static class DependencyInjection
 
         services.AddScoped<IFinancialReportRepository, FinancialReportRepository>();
         services.AddSingleton<IReportExporter, DevReportExporter>();
+
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationDeliveryAttemptRepository, NotificationDeliveryAttemptRepository>();
+        services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();
+        services.AddScoped<IScheduledNotificationRepository, ScheduledNotificationRepository>();
+        services.AddScoped<IDeviceTokenRepository, DeviceTokenRepository>();
+
+        services.Configure<NotificationOptions>(configuration.GetSection(NotificationOptions.SectionName));
+        services.AddScoped<INotificationPreferencePolicy, NotificationPreferencePolicy>();
+        services.AddSingleton<INotificationRetryPolicy, NotificationRetryPolicy>();
+        services.AddSingleton<IPushNotificationSender, LoggingPushNotificationSender>();
+        services.AddScoped<INotificationTemplateRenderer, NotificationTemplateRenderer>();
+        services.AddScoped<INotificationDispatcher, NotificationDispatcher>();
+
+        services.AddScoped<ILoyaltyAccountRepository, LoyaltyAccountRepository>();
+        services.AddScoped<ILoyaltyPointLedgerRepository, LoyaltyPointLedgerRepository>();
+        services.AddScoped<ILoyaltyEarningRuleRepository, LoyaltyEarningRuleRepository>();
+        services.AddScoped<ILoyaltyTierThresholdRepository, LoyaltyTierThresholdRepository>();
+        services.AddScoped<ILoyaltyRewardRepository, LoyaltyRewardRepository>();
+        services.AddScoped<ILoyaltyRedemptionRepository, LoyaltyRedemptionRepository>();
+        services.AddScoped<ILoyaltyRedemptionTransactionRepository, LoyaltyRedemptionTransactionRepository>();
+        services.AddScoped<ILoyaltyReferralRewardRepository, LoyaltyReferralRewardRepository>();
+        services.AddScoped<ILoyaltyReferralGrantRepository, LoyaltyReferralGrantRepository>();
+        services.AddScoped<ILoyaltyChallengeRepository, LoyaltyChallengeRepository>();
+        services.AddScoped<ILoyaltyChallengeProgressRepository, LoyaltyChallengeProgressRepository>();
+
+        services.Configure<LoyaltyOptions>(configuration.GetSection(LoyaltyOptions.SectionName));
+        services.AddScoped<ILoyaltyReferralRewardPolicy, LoyaltyReferralRewardPolicy>();
+        services.AddScoped<ILoyaltyPointExpirationPolicy, LoyaltyPointExpirationPolicy>();
+        services.AddScoped<ILoyaltyEarningDispatcher, LoyaltyEarningDispatcher>();
+
+        services.AddScoped<IAdvertiserProfileRepository, AdvertiserProfileRepository>();
+        services.AddScoped<IAdvertisingPlacementRepository, AdvertisingPlacementRepository>();
+        services.AddScoped<IAdCampaignRepository, AdCampaignRepository>();
+        services.AddScoped<ICampaignCreativeRepository, CampaignCreativeRepository>();
+        services.AddScoped<IAdCampaignReviewHistoryRepository, AdCampaignReviewHistoryRepository>();
+        services.AddScoped<IAdvertisingImpressionRepository, AdvertisingImpressionRepository>();
+        services.AddScoped<IAdvertisingClickRepository, AdvertisingClickRepository>();
+        services.AddScoped<IAdvertisingBillingService, AdvertisingBillingService>();
+
+        services.Configure<AdvertisingOptions>(configuration.GetSection(AdvertisingOptions.SectionName));
+        services.AddScoped<IAdvertisingMediaUploadPolicy, AdvertisingMediaUploadPolicy>();
+        services.AddScoped<CampaignMediaUploadValidator>();
+        services.AddScoped<IFileSecurityScanner, DevFileSecurityScanner>();
+        services.AddSingleton<IAdvertisingDeliveryTokenPolicy, AdvertisingDeliveryTokenPolicy>();
+        services.AddSingleton<IAdDeliveryTokenService, AdDeliveryTokenService>();
+        services.AddSingleton<IAdvertisingMediaStorageCleaner, AdvertisingMediaStorageCleaner>();
+
+        services.AddScoped<IGarageProfileRepository, GarageProfileRepository>();
+        services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+        services.AddScoped<IMaintenanceRecordRepository, MaintenanceRecordRepository>();
+        services.AddScoped<IMaintenanceWorkStartRepository, MaintenanceWorkStartRepository>();
+        services.AddScoped<IMaintenanceCompletionRepository, MaintenanceCompletionRepository>();
+        services.AddScoped<IMaintenanceForceCancelRepository, MaintenanceForceCancelRepository>();
+        services.AddScoped<IMaintenanceBillingService, MaintenanceBillingService>();
+
+        services.AddScoped<IRoadsidePartnerProfileRepository, RoadsidePartnerProfileRepository>();
+        services.AddScoped<IRoadsideAssistanceRequestRepository, RoadsideAssistanceRequestRepository>();
+        services.AddScoped<IRoadsideWorkStartRepository, RoadsideWorkStartRepository>();
+        services.AddScoped<IRoadsideCompletionRepository, RoadsideCompletionRepository>();
+        services.AddScoped<IRoadsideForceCancelRepository, RoadsideForceCancelRepository>();
+        services.AddScoped<IRoadsideEscalationRepository, RoadsideEscalationRepository>();
+        services.AddScoped<IRoadsideAssistanceBillingService, RoadsideAssistanceBillingService>();
+        services.AddSingleton<IRoadsideExpiryPolicy, RoadsideExpiryPolicy>();
 
         return services;
     }

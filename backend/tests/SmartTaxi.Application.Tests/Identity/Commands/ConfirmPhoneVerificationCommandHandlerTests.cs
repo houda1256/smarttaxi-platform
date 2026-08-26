@@ -27,7 +27,7 @@ public class ConfirmPhoneVerificationCommandHandlerTests
 
     private async Task<Guid> RegisterAndRequestOtpAsync()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var result = await registerHandler.Handle(new RegisterUserCommand("user@example.com", "correct-password"), CancellationToken.None);
         var userId = result.Value!.UserId;
         await _requestHandler.Handle(new RequestPhoneVerificationCommand(userId, "+21612345678"), CancellationToken.None);

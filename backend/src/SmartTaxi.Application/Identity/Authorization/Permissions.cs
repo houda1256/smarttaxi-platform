@@ -80,6 +80,59 @@ public static class Permissions
     public const string FinanceDisputesManage = "finance.disputes.manage";
     public const string FinanceReportsRead = "finance.reports.read";
 
+    public const string SubscriptionPlansRead = "subscription.plans.read";
+    public const string SubscriptionPlansManage = "subscription.plans.manage";
+    public const string SubscriptionReadOwn = "subscription.read.own";
+    public const string SubscriptionCreate = "subscription.create";
+    public const string SubscriptionRenewOwn = "subscription.renew.own";
+    public const string SubscriptionCancelOwn = "subscription.cancel.own";
+    public const string SubscriptionManage = "subscription.manage";
+
+    public const string NotificationsReadOwn = "notifications.read.own";
+    public const string NotificationsPreferencesManageOwn = "notifications.preferences.manage.own";
+    public const string NotificationsDeviceTokensManageOwn = "notifications.device-tokens.manage.own";
+    public const string NotificationsTemplatesManage = "notifications.templates.manage";
+    public const string NotificationsDeliveryRead = "notifications.delivery.read";
+    public const string NotificationsDeliveryManage = "notifications.delivery.manage";
+
+    public const string LoyaltyAccountReadOwn = "loyalty.account.read.own";
+    public const string LoyaltyRewardsRead = "loyalty.rewards.read";
+    public const string LoyaltyRedemptionCreateOwn = "loyalty.redemption.create.own";
+    public const string LoyaltyChallengesRead = "loyalty.challenges.read";
+    public const string LoyaltyRulesManage = "loyalty.rules.manage";
+    public const string LoyaltyCatalogManage = "loyalty.catalog.manage";
+    public const string LoyaltyAdjustmentsManage = "loyalty.adjustments.manage";
+
+    public const string AdvertisingProfileManageOwn = "advertising.profile.manage.own";
+    public const string AdvertisingCampaignsReadOwn = "advertising.campaigns.read.own";
+    public const string AdvertisingCampaignsManageOwn = "advertising.campaigns.manage.own";
+    public const string AdvertisingCampaignsSubmitOwn = "advertising.campaigns.submit.own";
+    public const string AdvertisingPerformanceReadOwn = "advertising.performance.read.own";
+
+    /// <summary>Granted to Customer/Driver, never Advertiser/Admin — this is the consumer-side app (rider/driver) actually viewing/clicking a served ad, not the advertiser managing the campaign.</summary>
+    public const string AdvertisingTrackingRecord = "advertising.tracking.record";
+    public const string AdvertisingCampaignsReview = "advertising.campaigns.review";
+    public const string AdvertisingCampaignsReadAll = "advertising.campaigns.read.all";
+    public const string AdvertisingPlacementsManage = "advertising.placements.manage";
+    public const string AdvertisingPerformanceReadAll = "advertising.performance.read.all";
+
+    public const string MaintenanceGarageProfileManageOwn = "maintenance.garage-profile.manage.own";
+    public const string MaintenanceRequestsCreateOwn = "maintenance.requests.create.own";
+    public const string MaintenanceRequestsReadOwn = "maintenance.requests.read.own";
+    public const string MaintenanceRequestsManageOwn = "maintenance.requests.manage.own";
+    public const string MaintenanceJobsManageOwn = "maintenance.jobs.manage.own";
+    public const string MaintenanceRecordsReadOwn = "maintenance.records.read.own";
+    public const string MaintenanceReadAll = "maintenance.read.all";
+    public const string MaintenanceManageAll = "maintenance.manage.all";
+
+    public const string RoadsidePartnerProfileManageOwn = "roadside.partner-profile.manage.own";
+    public const string RoadsideRequestsCreateOwn = "roadside.requests.create.own";
+    public const string RoadsideRequestsReadOwn = "roadside.requests.read.own";
+    public const string RoadsideRequestsManageOwn = "roadside.requests.manage.own";
+    public const string RoadsideJobsManageOwn = "roadside.jobs.manage.own";
+    public const string RoadsideReadAll = "roadside.read.all";
+    public const string RoadsideManageAll = "roadside.manage.all";
+
     public static readonly IReadOnlyCollection<string> All =
     [
         UsersRead,
@@ -150,6 +203,51 @@ public static class Permissions
         FinanceTaxManage,
         FinanceDisputesOpenOwn,
         FinanceDisputesManage,
-        FinanceReportsRead
+        FinanceReportsRead,
+        SubscriptionPlansRead,
+        SubscriptionPlansManage,
+        SubscriptionReadOwn,
+        SubscriptionCreate,
+        SubscriptionRenewOwn,
+        SubscriptionCancelOwn,
+        SubscriptionManage,
+        NotificationsReadOwn,
+        NotificationsPreferencesManageOwn,
+        NotificationsDeviceTokensManageOwn,
+        NotificationsTemplatesManage,
+        NotificationsDeliveryRead,
+        NotificationsDeliveryManage,
+        LoyaltyAccountReadOwn,
+        LoyaltyRewardsRead,
+        LoyaltyRedemptionCreateOwn,
+        LoyaltyChallengesRead,
+        LoyaltyRulesManage,
+        LoyaltyCatalogManage,
+        LoyaltyAdjustmentsManage,
+        AdvertisingProfileManageOwn,
+        AdvertisingCampaignsReadOwn,
+        AdvertisingCampaignsManageOwn,
+        AdvertisingCampaignsSubmitOwn,
+        AdvertisingPerformanceReadOwn,
+        AdvertisingTrackingRecord,
+        AdvertisingCampaignsReview,
+        AdvertisingCampaignsReadAll,
+        AdvertisingPlacementsManage,
+        AdvertisingPerformanceReadAll,
+        MaintenanceGarageProfileManageOwn,
+        MaintenanceRequestsCreateOwn,
+        MaintenanceRequestsReadOwn,
+        MaintenanceRequestsManageOwn,
+        MaintenanceJobsManageOwn,
+        MaintenanceRecordsReadOwn,
+        MaintenanceReadAll,
+        MaintenanceManageAll,
+        RoadsidePartnerProfileManageOwn,
+        RoadsideRequestsCreateOwn,
+        RoadsideRequestsReadOwn,
+        RoadsideRequestsManageOwn,
+        RoadsideJobsManageOwn,
+        RoadsideReadAll,
+        RoadsideManageAll
     ];
 }

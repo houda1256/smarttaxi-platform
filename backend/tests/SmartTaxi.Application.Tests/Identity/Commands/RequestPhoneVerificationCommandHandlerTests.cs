@@ -23,7 +23,7 @@ public class RequestPhoneVerificationCommandHandlerTests
 
     private async Task<Guid> RegisterUserAsync()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var result = await registerHandler.Handle(new RegisterUserCommand("user@example.com", "correct-password"), CancellationToken.None);
         return result.Value!.UserId;
     }

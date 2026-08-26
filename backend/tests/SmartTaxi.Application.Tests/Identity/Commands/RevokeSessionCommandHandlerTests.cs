@@ -28,7 +28,7 @@ public class RevokeSessionCommandHandlerTests
 
     private async Task<(Guid UserId, Guid SessionId)> RegisterAndLoginAsync(string email)
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand(email, "correct-password"), CancellationToken.None);
         await _loginHandler.Handle(new LoginUserCommand(email, "correct-password"), CancellationToken.None);
 

@@ -37,7 +37,7 @@ public class ResetPasswordCommandHandlerTests
 
     private async Task<Guid> RegisterAndRequestResetAsync(string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         await _forgotHandler.Handle(new ForgotPasswordCommand(email), CancellationToken.None);
         return registerResult.Value!.UserId;

@@ -28,7 +28,7 @@ public class LogoutCommandHandlerTests
     [Fact]
     public async Task Handle_RevokesTheCurrentSession()
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var registerResult = await registerHandler.Handle(new RegisterUserCommand("user@example.com", "correct-password"), CancellationToken.None);
         await _loginHandler.Handle(new LoginUserCommand("user@example.com", "correct-password"), CancellationToken.None);
 

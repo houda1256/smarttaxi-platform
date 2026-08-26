@@ -27,7 +27,7 @@ public class ConfirmEmailVerificationCommandHandlerTests
 
     private async Task<string> RegisterAndRequestVerificationAsync(string email = "user@example.com")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         await registerHandler.Handle(new RegisterUserCommand(email, "correct-password"), CancellationToken.None);
         await _requestHandler.Handle(new RequestEmailVerificationCommand(email), CancellationToken.None);
         return _tokenGenerator.LastGenerated!;

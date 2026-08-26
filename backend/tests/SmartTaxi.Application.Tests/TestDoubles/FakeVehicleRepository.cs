@@ -98,6 +98,54 @@ public sealed class FakeVehicleRepository : IVehicleRepository
         return Task.FromResult(true);
     }
 
+    public Task<bool> TryMarkUnderMaintenanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        if (!_vehiclesById.TryGetValue(vehicleId, out var vehicle) || vehicle.OperationalStatus != VehicleOperationalStatus.Active)
+        {
+            return Task.FromResult(false);
+        }
+
+        SetProperty(vehicle, nameof(Vehicle.OperationalStatus), VehicleOperationalStatus.UnderMaintenance);
+        SetProperty(vehicle, nameof(Vehicle.UpdatedAt), utcNow);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> TryReleaseFromMaintenanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        if (!_vehiclesById.TryGetValue(vehicleId, out var vehicle) || vehicle.OperationalStatus != VehicleOperationalStatus.UnderMaintenance)
+        {
+            return Task.FromResult(false);
+        }
+
+        SetProperty(vehicle, nameof(Vehicle.OperationalStatus), VehicleOperationalStatus.Active);
+        SetProperty(vehicle, nameof(Vehicle.UpdatedAt), utcNow);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> TryMarkUnderRoadsideAssistanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        if (!_vehiclesById.TryGetValue(vehicleId, out var vehicle) || vehicle.OperationalStatus != VehicleOperationalStatus.Active)
+        {
+            return Task.FromResult(false);
+        }
+
+        SetProperty(vehicle, nameof(Vehicle.OperationalStatus), VehicleOperationalStatus.UnderRoadsideAssistance);
+        SetProperty(vehicle, nameof(Vehicle.UpdatedAt), utcNow);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> TryReleaseFromRoadsideAssistanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        if (!_vehiclesById.TryGetValue(vehicleId, out var vehicle) || vehicle.OperationalStatus != VehicleOperationalStatus.UnderRoadsideAssistance)
+        {
+            return Task.FromResult(false);
+        }
+
+        SetProperty(vehicle, nameof(Vehicle.OperationalStatus), VehicleOperationalStatus.Active);
+        SetProperty(vehicle, nameof(Vehicle.UpdatedAt), utcNow);
+        return Task.FromResult(true);
+    }
+
     private static void SetProperty(Vehicle vehicle, string propertyName, object? value) =>
         typeof(Vehicle).GetProperty(propertyName)!.SetValue(vehicle, value);
 }

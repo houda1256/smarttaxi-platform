@@ -23,7 +23,7 @@ public class RequestEmailVerificationCommandHandlerTests
 
     private async Task RegisterUserAsync(string email = "user@example.com")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         await registerHandler.Handle(new RegisterUserCommand(email, "correct-password"), CancellationToken.None);
     }
 

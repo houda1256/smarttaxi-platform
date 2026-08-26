@@ -36,6 +36,18 @@ internal sealed class LocalFileStorageService : IFileStorageService
         return Task.FromResult(stream);
     }
 
+    public Task DeleteAsync(string storageKey, CancellationToken cancellationToken)
+    {
+        var fullPath = ResolvePath(storageKey);
+
+        if (File.Exists(fullPath))
+        {
+            File.Delete(fullPath);
+        }
+
+        return Task.CompletedTask;
+    }
+
     // Storage keys are always server-generated (never client input), but this
     // guard is kept anyway as defense in depth against path traversal.
     private string ResolvePath(string storageKey)

@@ -31,7 +31,7 @@ public class RefreshTokenCommandHandlerTests
 
     private async Task<string> RegisterAndLoginAsync(string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
 
         var loginResult = await _loginHandler.Handle(new LoginUserCommand(email, password), CancellationToken.None);
@@ -114,7 +114,7 @@ public class RefreshTokenCommandHandlerTests
 
     private async Task<Guid> RegisterUserAndGetIdAsync(string email = "id-lookup@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var result = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         Assert.True(result.IsSuccess);
         return result.Value!.UserId;

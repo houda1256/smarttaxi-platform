@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartTaxi.Domain.Advertising.Entities;
 using SmartTaxi.Domain.Fleet.Alerts.Entities;
 using SmartTaxi.Domain.Fleet.Assignments.Entities;
 using SmartTaxi.Domain.Fleet.Contracts.Entities;
@@ -15,6 +16,10 @@ using SmartTaxi.Domain.Identity.Entities;
 using SmartTaxi.Domain.Identity.Preferences.Entities;
 using SmartTaxi.Domain.Identity.Professional.Entities;
 using SmartTaxi.Domain.Identity.Referrals.Entities;
+using SmartTaxi.Domain.Loyalty.Entities;
+using SmartTaxi.Domain.Maintenance.Entities;
+using SmartTaxi.Domain.RoadsideAssistance.Entities;
+using SmartTaxi.Domain.Notifications.Entities;
 using SmartTaxi.Domain.Payments.Accounts.Entities;
 using SmartTaxi.Domain.Payments.BusinessCustomers.Entities;
 using SmartTaxi.Domain.Payments.CashDeclarations.Entities;
@@ -24,8 +29,10 @@ using SmartTaxi.Domain.Payments.Entities;
 using SmartTaxi.Domain.Payments.GroupedInvoicing.Entities;
 using SmartTaxi.Domain.Payments.Ledger.Entities;
 using SmartTaxi.Domain.Payments.Payouts.Entities;
+using SmartTaxi.Domain.Payments.SubscriptionCharges.Entities;
 using SmartTaxi.Domain.Payments.Taxes.Entities;
 using SmartTaxi.Domain.Rides.Entities;
+using SmartTaxi.Domain.Subscriptions.Entities;
 using SmartTaxi.Infrastructure.Persistence.Entities;
 
 namespace SmartTaxi.Infrastructure.Persistence;
@@ -145,11 +152,71 @@ public sealed class ApplicationDbContext : DbContext
 
     public DbSet<TaxRule> TaxRules => Set<TaxRule>();
 
+    public DbSet<SubscriptionCharge> SubscriptionCharges => Set<SubscriptionCharge>();
+
+    public DbSet<SubscriptionPlan> SubscriptionPlans => Set<SubscriptionPlan>();
+
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+
     public DbSet<GroupedInvoice> GroupedInvoices => Set<GroupedInvoice>();
 
     public DbSet<GroupedInvoiceLine> GroupedInvoiceLines => Set<GroupedInvoiceLine>();
 
     public DbSet<FinancialDispute> FinancialDisputes => Set<FinancialDispute>();
+
+    public DbSet<Notification> Notifications => Set<Notification>();
+
+    public DbSet<NotificationDeliveryAttempt> NotificationDeliveryAttempts => Set<NotificationDeliveryAttempt>();
+
+    public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
+
+    public DbSet<ScheduledNotification> ScheduledNotifications => Set<ScheduledNotification>();
+
+    public DbSet<DeviceToken> DeviceTokens => Set<DeviceToken>();
+
+    public DbSet<LoyaltyAccount> LoyaltyAccounts => Set<LoyaltyAccount>();
+
+    public DbSet<LoyaltyPointLedgerEntry> LoyaltyPointLedgerEntries => Set<LoyaltyPointLedgerEntry>();
+
+    public DbSet<LoyaltyEarningRule> LoyaltyEarningRules => Set<LoyaltyEarningRule>();
+
+    public DbSet<LoyaltyTierThreshold> LoyaltyTierThresholds => Set<LoyaltyTierThreshold>();
+
+    public DbSet<LoyaltyReward> LoyaltyRewards => Set<LoyaltyReward>();
+
+    public DbSet<LoyaltyRedemption> LoyaltyRedemptions => Set<LoyaltyRedemption>();
+
+    public DbSet<LoyaltyReferralReward> LoyaltyReferralRewards => Set<LoyaltyReferralReward>();
+
+    public DbSet<LoyaltyChallenge> LoyaltyChallenges => Set<LoyaltyChallenge>();
+
+    public DbSet<LoyaltyChallengeProgress> LoyaltyChallengeProgresses => Set<LoyaltyChallengeProgress>();
+
+    public DbSet<AdvertiserProfile> AdvertiserProfiles => Set<AdvertiserProfile>();
+
+    public DbSet<AdvertisingPlacement> AdvertisingPlacements => Set<AdvertisingPlacement>();
+
+    public DbSet<AdCampaign> AdCampaigns => Set<AdCampaign>();
+
+    public DbSet<CampaignCreative> CampaignCreatives => Set<CampaignCreative>();
+
+    public DbSet<AdCampaignReviewHistoryEntry> AdCampaignReviewHistoryEntries => Set<AdCampaignReviewHistoryEntry>();
+
+    public DbSet<AdvertisingImpression> AdvertisingImpressions => Set<AdvertisingImpression>();
+
+    public DbSet<AdvertisingClick> AdvertisingClicks => Set<AdvertisingClick>();
+
+    public DbSet<GarageProfile> GarageProfiles => Set<GarageProfile>();
+
+    public DbSet<MaintenanceRequest> MaintenanceRequests => Set<MaintenanceRequest>();
+
+    public DbSet<MaintenanceRecord> MaintenanceRecords => Set<MaintenanceRecord>();
+
+    public DbSet<RoadsidePartnerProfile> RoadsidePartnerProfiles => Set<RoadsidePartnerProfile>();
+
+    public DbSet<RoadsideAssistanceRequest> RoadsideAssistanceRequests => Set<RoadsideAssistanceRequest>();
+
+    public DbSet<RoadsidePartnerSelectionHistory> RoadsidePartnerSelectionHistories => Set<RoadsidePartnerSelectionHistory>();
 
     internal DbSet<RolePermissionRecord> RolePermissions => Set<RolePermissionRecord>();
 

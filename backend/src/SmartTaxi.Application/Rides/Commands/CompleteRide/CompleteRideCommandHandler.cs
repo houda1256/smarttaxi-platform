@@ -2,8 +2,11 @@ using SmartTaxi.Application.Common;
 using SmartTaxi.Application.Common.Messaging;
 using SmartTaxi.Application.Fleet.Drivers.Abstractions;
 using SmartTaxi.Application.Fleet.Vehicles.Abstractions;
+using SmartTaxi.Application.Notifications.Abstractions;
+using SmartTaxi.Application.Notifications.Contracts;
 using SmartTaxi.Application.Rides.Abstractions;
 using SmartTaxi.Domain.Fleet.Drivers.Enums;
+using SmartTaxi.Domain.Notifications.Enums;
 using SmartTaxi.Domain.Rides.Enums;
 
 namespace SmartTaxi.Application.Rides.Commands.CompleteRide;
@@ -26,16 +29,18 @@ public sealed class CompleteRideCommandHandler : ICommandHandler<CompleteRideCom
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IFareCalculator _fareCalculator;
     private readonly IDynamicPricingProvider _dynamicPricingProvider;
+    private readonly INotificationDispatcher _notificationDispatcher;
 
     public CompleteRideCommandHandler(
         IRideRepository rideRepository, IDriverProfileRepository driverRepository, IVehicleRepository vehicleRepository,
-        IFareCalculator fareCalculator, IDynamicPricingProvider dynamicPricingProvider)
+        IFareCalculator fareCalculator, IDynamicPricingProvider dynamicPricingProvider, INotificationDispatcher notificationDispatcher)
     {
         _rideRepository = rideRepository;
         _driverRepository = driverRepository;
         _vehicleRepository = vehicleRepository;
         _fareCalculator = fareCalculator;
         _dynamicPricingProvider = dynamicPricingProvider;
+        _notificationDispatcher = notificationDispatcher;
     }
 
     public async Task<Result<decimal>> Handle(CompleteRideCommand command, CancellationToken cancellationToken)
@@ -100,6 +105,13 @@ public sealed class CompleteRideCommandHandler : ICommandHandler<CompleteRideCom
 
         driver.SetAvailability(DriverAvailabilityStatus.Available, utcNow);
         await _driverRepository.UpdateAsync(driver, cancellationToken);
+
+        await _notificationDispatcher.DispatchAsync(
+            new NotificationRequest(
+                ride.CustomerId, NotificationCategory.Ride, "ride.completed",
+                new Dictionary<string, string> { ["FinalFare"] = finalFare.ToString("F2") },
+                IsMandatory: false, SourceType: "Ride", SourceId: ride.Id),
+            cancellationToken);
 
         return Result<decimal>.Success(finalFare);
     }

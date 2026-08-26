@@ -85,4 +85,48 @@ internal sealed class VehicleRepository : IVehicleRepository
 
         return rows == 1;
     }
+
+    public async Task<bool> TryMarkUnderMaintenanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        var rows = await _context.Vehicles
+            .Where(vehicle => vehicle.Id == vehicleId && vehicle.OperationalStatus == VehicleOperationalStatus.Active)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(vehicle => vehicle.OperationalStatus, VehicleOperationalStatus.UnderMaintenance)
+                .SetProperty(vehicle => vehicle.UpdatedAt, utcNow), cancellationToken);
+
+        return rows == 1;
+    }
+
+    public async Task<bool> TryReleaseFromMaintenanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        var rows = await _context.Vehicles
+            .Where(vehicle => vehicle.Id == vehicleId && vehicle.OperationalStatus == VehicleOperationalStatus.UnderMaintenance)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(vehicle => vehicle.OperationalStatus, VehicleOperationalStatus.Active)
+                .SetProperty(vehicle => vehicle.UpdatedAt, utcNow), cancellationToken);
+
+        return rows == 1;
+    }
+
+    public async Task<bool> TryMarkUnderRoadsideAssistanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        var rows = await _context.Vehicles
+            .Where(vehicle => vehicle.Id == vehicleId && vehicle.OperationalStatus == VehicleOperationalStatus.Active)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(vehicle => vehicle.OperationalStatus, VehicleOperationalStatus.UnderRoadsideAssistance)
+                .SetProperty(vehicle => vehicle.UpdatedAt, utcNow), cancellationToken);
+
+        return rows == 1;
+    }
+
+    public async Task<bool> TryReleaseFromRoadsideAssistanceAsync(Guid vehicleId, DateTime utcNow, CancellationToken cancellationToken)
+    {
+        var rows = await _context.Vehicles
+            .Where(vehicle => vehicle.Id == vehicleId && vehicle.OperationalStatus == VehicleOperationalStatus.UnderRoadsideAssistance)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(vehicle => vehicle.OperationalStatus, VehicleOperationalStatus.Active)
+                .SetProperty(vehicle => vehicle.UpdatedAt, utcNow), cancellationToken);
+
+        return rows == 1;
+    }
 }

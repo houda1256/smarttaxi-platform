@@ -36,17 +36,30 @@ public class RolePermissionRepositoryTests
         // Least privilege: Customer gets no elevated/admin permissions, only the
         // baseline self-service ones every account gets (seeded in 2e) plus the
         // Customer-side Ride permissions (seeded in 4l), Payments permissions (seeded in 5h),
-        // and Financial Disputes permissions (seeded in Phase 5B).
-        Assert.Equal(16, permissions.Count);
+        // Financial Disputes permissions (seeded in Phase 5B), Subscription self-service
+        // permissions (Module 5), Notifications self-service permissions (Module 6),
+        // Loyalty self-service permissions (Module 7), and the Advertising ad-tracking
+        // permission (Module 8 — Customer's own app can view/click a served ad).
+        Assert.Equal(29, permissions.Count);
         Assert.Contains("professional.register.own", permissions);
         Assert.Contains("preferences.manage.own", permissions);
         Assert.Contains("data-requests.submit.own", permissions);
         Assert.Contains("rides.create", permissions);
         Assert.Contains("payments.create", permissions);
         Assert.Contains("finance.disputes.open.own", permissions);
+        Assert.Contains("subscription.read.own", permissions);
+        Assert.Contains("notifications.read.own", permissions);
+        Assert.Contains("notifications.preferences.manage.own", permissions);
+        Assert.Contains("notifications.device-tokens.manage.own", permissions);
+        Assert.Contains("loyalty.account.read.own", permissions);
+        Assert.Contains("loyalty.rewards.read", permissions);
+        Assert.Contains("loyalty.redemption.create.own", permissions);
+        Assert.Contains("loyalty.challenges.read", permissions);
+        Assert.Contains("advertising.tracking.record", permissions);
         Assert.DoesNotContain("users.read", permissions);
         Assert.DoesNotContain("users.manage", permissions);
         Assert.DoesNotContain("rides.cancel.admin", permissions);
         Assert.DoesNotContain("payments.refund", permissions);
+        Assert.DoesNotContain("advertising.campaigns.manage.own", permissions);
     }
 }

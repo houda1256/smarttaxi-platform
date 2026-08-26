@@ -20,7 +20,7 @@ public class EnrollTwoFactorCommandHandlerTests
 
     private async Task<Guid> RegisterUserAsync(string email = "user@example.com", string password = "correct-password")
     {
-        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher);
+        var registerHandler = new RegisterUserCommandHandler(_userRepository, _passwordHasher, new FakeNotificationDispatcher());
         var result = await registerHandler.Handle(new RegisterUserCommand(email, password), CancellationToken.None);
         return result.Value!.UserId;
     }

@@ -2,8 +2,11 @@ using SmartTaxi.Application.Common;
 using SmartTaxi.Application.Common.Messaging;
 using SmartTaxi.Application.Fleet.Drivers.Abstractions;
 using SmartTaxi.Application.Identity.Documents;
+using SmartTaxi.Application.Notifications.Abstractions;
+using SmartTaxi.Application.Notifications.Contracts;
 using SmartTaxi.Domain.Fleet.Drivers.Enums;
 using SmartTaxi.Domain.Identity.Enums;
+using SmartTaxi.Domain.Notifications.Enums;
 
 namespace SmartTaxi.Application.Fleet.Drivers.Commands.ApproveDriver;
 
@@ -22,11 +25,14 @@ public sealed class ApproveDriverCommandHandler : ICommandHandler<ApproveDriverC
 
     private readonly IDriverProfileRepository _repository;
     private readonly DocumentEligibilityChecker _eligibilityChecker;
+    private readonly INotificationDispatcher _notificationDispatcher;
 
-    public ApproveDriverCommandHandler(IDriverProfileRepository repository, DocumentEligibilityChecker eligibilityChecker)
+    public ApproveDriverCommandHandler(
+        IDriverProfileRepository repository, DocumentEligibilityChecker eligibilityChecker, INotificationDispatcher notificationDispatcher)
     {
         _repository = repository;
         _eligibilityChecker = eligibilityChecker;
+        _notificationDispatcher = notificationDispatcher;
     }
 
     public async Task<Result> Handle(ApproveDriverCommand command, CancellationToken cancellationToken)
@@ -62,6 +68,12 @@ public sealed class ApproveDriverCommandHandler : ICommandHandler<ApproveDriverC
         {
             return Result.Failure(NotUnderReviewError, ErrorType.Conflict);
         }
+
+        await _notificationDispatcher.DispatchAsync(
+            new NotificationRequest(
+                profile.UserId, NotificationCategory.Fleet, "fleet.driver.approved", new Dictionary<string, string>(),
+                IsMandatory: false, SourceType: "DriverProfile", SourceId: profile.Id),
+            cancellationToken);
 
         return Result.Success();
     }
