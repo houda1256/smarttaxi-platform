@@ -33,6 +33,7 @@ using SmartTaxi.Domain.Payments.SubscriptionCharges.Entities;
 using SmartTaxi.Domain.Payments.Taxes.Entities;
 using SmartTaxi.Domain.Rides.Entities;
 using SmartTaxi.Domain.Subscriptions.Entities;
+using SmartTaxi.Domain.Support.Entities;
 using SmartTaxi.Infrastructure.Persistence.Entities;
 
 namespace SmartTaxi.Infrastructure.Persistence;
@@ -219,6 +220,12 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<RoadsidePartnerSelectionHistory> RoadsidePartnerSelectionHistories => Set<RoadsidePartnerSelectionHistory>();
 
     internal DbSet<RolePermissionRecord> RolePermissions => Set<RolePermissionRecord>();
+
+    public DbSet<SupportTicket> SupportTickets => Set<SupportTicket>();
+
+    public DbSet<SupportTicketMessage> SupportTicketMessages => Set<SupportTicketMessage>();
+
+    public DbSet<SupportIncident> SupportIncidents => Set<SupportIncident>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

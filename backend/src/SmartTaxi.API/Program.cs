@@ -8,6 +8,7 @@ using SmartTaxi.API.Endpoints.Identity;
 using SmartTaxi.API.Endpoints.Loyalty;
 using SmartTaxi.API.Endpoints.Maintenance;
 using SmartTaxi.API.Endpoints.RoadsideAssistance;
+using SmartTaxi.API.Endpoints.Support;
 using SmartTaxi.API.Endpoints.Notifications;
 using SmartTaxi.API.Endpoints.Payments;
 using SmartTaxi.API.Endpoints.Rides;
@@ -252,6 +253,36 @@ using SmartTaxi.Application.RoadsideAssistance.Queries.GetMyRoadsideJobs;
 using SmartTaxi.Application.RoadsideAssistance.Queries.GetMyRoadsidePartnerProfile;
 using SmartTaxi.Application.RoadsideAssistance.Queries.GetRecommendedRoadsidePartners;
 using SmartTaxi.Application.RoadsideAssistance.Queries.GetRoadsideAssistanceRequestById;
+using SmartTaxi.Application.Support.Commands.AcknowledgeSupportIncident;
+using SmartTaxi.Application.Support.Commands.AddAdminTicketMessage;
+using SmartTaxi.Application.Support.Commands.AddInternalNote;
+using SmartTaxi.Application.Support.Commands.AddTicketMessage;
+using SmartTaxi.Application.Support.Commands.AssignSupportTicket;
+using SmartTaxi.Application.Support.Commands.CloseSupportIncident;
+using SmartTaxi.Application.Support.Commands.CloseSupportTicket;
+using SmartTaxi.Application.Support.Commands.CreateIncidentFromFinancialDispute;
+using SmartTaxi.Application.Support.Commands.CreateIncidentFromMaintenance;
+using SmartTaxi.Application.Support.Commands.CreateIncidentFromRide;
+using SmartTaxi.Application.Support.Commands.CreateIncidentFromRoadside;
+using SmartTaxi.Application.Support.Commands.CreateSupportTicket;
+using SmartTaxi.Application.Support.Commands.EscalateTicketToIncident;
+using SmartTaxi.Application.Support.Commands.InvestigateSupportIncident;
+using SmartTaxi.Application.Support.Commands.MarkIncidentFalsePositive;
+using SmartTaxi.Application.Support.Commands.MarkWaitingForCustomer;
+using SmartTaxi.Application.Support.Commands.ReassignSupportIncident;
+using SmartTaxi.Application.Support.Commands.ReassignSupportTicket;
+using SmartTaxi.Application.Support.Commands.ReopenSupportIncident;
+using SmartTaxi.Application.Support.Commands.ReopenSupportTicket;
+using SmartTaxi.Application.Support.Commands.ReportSupportIncident;
+using SmartTaxi.Application.Support.Commands.ResolveSupportIncident;
+using SmartTaxi.Application.Support.Commands.ResolveSupportTicket;
+using SmartTaxi.Application.Support.Commands.StartSupportTicket;
+using SmartTaxi.Application.Support.Queries.GetAllSupportIncidents;
+using SmartTaxi.Application.Support.Queries.GetAllSupportTickets;
+using SmartTaxi.Application.Support.Queries.GetMySupportTickets;
+using SmartTaxi.Application.Support.Queries.GetSupportIncidentById;
+using SmartTaxi.Application.Support.Queries.GetSupportTicketDetails;
+using SmartTaxi.Application.Support.Queries.GetSupportTicketDetailsAdmin;
 using SmartTaxi.Application.Notifications.Abstractions;
 using SmartTaxi.Application.Notifications.Commands.ActivateNotificationTemplate;
 using SmartTaxi.Application.Notifications.Commands.CreateNotificationTemplate;
@@ -741,6 +772,38 @@ builder.Services.AddScoped<GetMyRoadsideJobsQueryHandler>();
 builder.Services.AddScoped<GetRecommendedRoadsidePartnersQueryHandler>();
 builder.Services.AddScoped<GetAllRoadsideAssistanceRequestsQueryHandler>();
 
+builder.Services.AddScoped<CreateSupportTicketCommandHandler>();
+builder.Services.AddScoped<AddTicketMessageCommandHandler>();
+builder.Services.AddScoped<AddAdminTicketMessageCommandHandler>();
+builder.Services.AddScoped<AddInternalNoteCommandHandler>();
+builder.Services.AddScoped<AssignSupportTicketCommandHandler>();
+builder.Services.AddScoped<ReassignSupportTicketCommandHandler>();
+builder.Services.AddScoped<StartSupportTicketCommandHandler>();
+builder.Services.AddScoped<MarkWaitingForCustomerCommandHandler>();
+builder.Services.AddScoped<ResolveSupportTicketCommandHandler>();
+builder.Services.AddScoped<CloseSupportTicketCommandHandler>();
+builder.Services.AddScoped<ReopenSupportTicketCommandHandler>();
+builder.Services.AddScoped<EscalateTicketToIncidentCommandHandler>();
+builder.Services.AddScoped<GetMySupportTicketsQueryHandler>();
+builder.Services.AddScoped<GetAllSupportTicketsQueryHandler>();
+builder.Services.AddScoped<GetSupportTicketDetailsQueryHandler>();
+builder.Services.AddScoped<GetSupportTicketDetailsAdminQueryHandler>();
+
+builder.Services.AddScoped<ReportSupportIncidentCommandHandler>();
+builder.Services.AddScoped<CreateIncidentFromRideCommandHandler>();
+builder.Services.AddScoped<CreateIncidentFromFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<CreateIncidentFromRoadsideCommandHandler>();
+builder.Services.AddScoped<CreateIncidentFromMaintenanceCommandHandler>();
+builder.Services.AddScoped<AcknowledgeSupportIncidentCommandHandler>();
+builder.Services.AddScoped<ReassignSupportIncidentCommandHandler>();
+builder.Services.AddScoped<InvestigateSupportIncidentCommandHandler>();
+builder.Services.AddScoped<ResolveSupportIncidentCommandHandler>();
+builder.Services.AddScoped<CloseSupportIncidentCommandHandler>();
+builder.Services.AddScoped<ReopenSupportIncidentCommandHandler>();
+builder.Services.AddScoped<MarkIncidentFalsePositiveCommandHandler>();
+builder.Services.AddScoped<GetAllSupportIncidentsQueryHandler>();
+builder.Services.AddScoped<GetSupportIncidentByIdQueryHandler>();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -861,6 +924,10 @@ app.MapMaintenanceAdminEndpoints();
 
 app.MapRoadsideAssistanceEndpoints();
 app.MapRoadsideAssistanceAdminEndpoints();
+
+app.MapSupportTicketEndpoints();
+app.MapSupportTicketAdminEndpoints();
+app.MapSupportIncidentAdminEndpoints();
 
 app.MapControllers(); // SECURITY DEMO ONLY — hosts VulnerableSqlController; remove after CodeQL demo
 

@@ -133,6 +133,14 @@ public static class Permissions
     public const string RoadsideReadAll = "roadside.read.all";
     public const string RoadsideManageAll = "roadside.manage.all";
 
+    public const string SupportTicketsCreateOwn = "support.tickets.create.own";
+    public const string SupportTicketsReadOwn = "support.tickets.read.own";
+    public const string SupportTicketsManageOwn = "support.tickets.manage.own";
+    public const string SupportTicketsReadAll = "support.tickets.read.all";
+    public const string SupportTicketsManageAll = "support.tickets.manage.all";
+    public const string SupportIncidentsReadAll = "support.incidents.read.all";
+    public const string SupportIncidentsManageAll = "support.incidents.manage.all";
+
     public static readonly IReadOnlyCollection<string> All =
     [
         UsersRead,
@@ -248,6 +256,13 @@ public static class Permissions
         RoadsideRequestsManageOwn,
         RoadsideJobsManageOwn,
         RoadsideReadAll,
-        RoadsideManageAll
+        RoadsideManageAll,
+        SupportTicketsCreateOwn,
+        SupportTicketsReadOwn,
+        SupportTicketsManageOwn,
+        SupportTicketsReadAll,
+        SupportTicketsManageAll,
+        SupportIncidentsReadAll,
+        SupportIncidentsManageAll
     ];
 }

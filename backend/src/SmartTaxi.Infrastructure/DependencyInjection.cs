@@ -48,6 +48,8 @@ using SmartTaxi.Application.Rides;
 using SmartTaxi.Application.Rides.Abstractions;
 using SmartTaxi.Application.Subscriptions;
 using SmartTaxi.Application.Subscriptions.Abstractions;
+using SmartTaxi.Application.Support;
+using SmartTaxi.Application.Support.Abstractions;
 using SmartTaxi.Infrastructure.Advertising.Options;
 using SmartTaxi.Infrastructure.Advertising.Repositories;
 using SmartTaxi.Infrastructure.Advertising.Services;
@@ -77,6 +79,7 @@ using SmartTaxi.Infrastructure.Rides.Policies;
 using SmartTaxi.Infrastructure.Rides.Repositories;
 using SmartTaxi.Infrastructure.Rides.Services;
 using SmartTaxi.Infrastructure.Subscriptions.Repositories;
+using SmartTaxi.Infrastructure.Support.Repositories;
 
 namespace SmartTaxi.Infrastructure;
 
@@ -316,6 +319,13 @@ public static class DependencyInjection
         services.AddScoped<IRoadsideEscalationRepository, RoadsideEscalationRepository>();
         services.AddScoped<IRoadsideAssistanceBillingService, RoadsideAssistanceBillingService>();
         services.AddSingleton<IRoadsideExpiryPolicy, RoadsideExpiryPolicy>();
+
+        services.AddScoped<ISupportTicketRepository, SupportTicketRepository>();
+        services.AddScoped<ISupportTicketMessageRepository, SupportTicketMessageRepository>();
+        services.AddScoped<ISupportIncidentRepository, SupportIncidentRepository>();
+        services.AddScoped<ISupportIncidentReporter, SupportIncidentReporter>();
+        services.AddScoped<ISupportTicketEscalationRepository, SupportTicketEscalationRepository>();
+        services.AddScoped<ISupportRelatedEntityValidator, SupportRelatedEntityValidator>();
 
         return services;
     }

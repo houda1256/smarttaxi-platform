@@ -38,9 +38,18 @@ public class RolePermissionRepositoryTests
         // Customer-side Ride permissions (seeded in 4l), Payments permissions (seeded in 5h),
         // Financial Disputes permissions (seeded in Phase 5B), Subscription self-service
         // permissions (Module 5), Notifications self-service permissions (Module 6),
-        // Loyalty self-service permissions (Module 7), and the Advertising ad-tracking
-        // permission (Module 8 — Customer's own app can view/click a served ad).
-        Assert.Equal(29, permissions.Count);
+        // Loyalty self-service permissions (Module 7), the Advertising ad-tracking
+        // permission (Module 8 — Customer's own app can view/click a served ad), and the
+        // Support ticket self-service permissions (Module 11 — Customer never gets the
+        // incidents.* permissions, which are Admin-only).
+        Assert.Equal(32, permissions.Count);
+        Assert.Contains("support.tickets.create.own", permissions);
+        Assert.Contains("support.tickets.read.own", permissions);
+        Assert.Contains("support.tickets.manage.own", permissions);
+        Assert.DoesNotContain("support.tickets.read.all", permissions);
+        Assert.DoesNotContain("support.tickets.manage.all", permissions);
+        Assert.DoesNotContain("support.incidents.read.all", permissions);
+        Assert.DoesNotContain("support.incidents.manage.all", permissions);
         Assert.Contains("professional.register.own", permissions);
         Assert.Contains("preferences.manage.own", permissions);
         Assert.Contains("data-requests.submit.own", permissions);
