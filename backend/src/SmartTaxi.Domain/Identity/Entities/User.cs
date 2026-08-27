@@ -33,6 +33,20 @@ public sealed class User : AggregateRoot
     /// </summary>
     public DateTime? CreatedAtUtc { get; private set; }
 
+    /// <summary>
+    /// Additive — Module 13A account-lockout support. Mutated exclusively via
+    /// atomic repository-level conditional guards (IUserRepository.
+    /// RecordFailedLoginAttemptAsync/ResetFailedLoginAttemptsAsync), mirroring
+    /// PhoneVerificationOtp's AttemptCount/LockedUntil exactly — never a
+    /// domain mutation method here, since concurrent failed attempts must
+    /// increment atomically at the database level.
+    /// </summary>
+    public int FailedLoginAttempts { get; private set; }
+
+    public DateTime? LockedUntilUtc { get; private set; }
+
+    public bool IsLockedOut(DateTime utcNow) => LockedUntilUtc is not null && utcNow < LockedUntilUtc;
+
     public IReadOnlyCollection<UserRole> Roles =>
         _roleAssignments.Select(assignment => assignment.Role).ToList();
 

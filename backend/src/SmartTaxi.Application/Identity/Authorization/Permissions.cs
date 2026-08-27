@@ -145,6 +145,10 @@ public static class Permissions
     public const string AnalyticsReportsRead = "analytics.reports.read";
     public const string AnalyticsReportsExport = "analytics.reports.export";
 
+    public const string AdminUsersManage = "admin.users.manage";
+    public const string AdminUsersTwoFactorReset = "admin.users.two-factor.reset";
+    public const string AdminAuditLogRead = "admin.audit-log.read";
+
     public static readonly IReadOnlyCollection<string> All =
     [
         UsersRead,
@@ -270,6 +274,9 @@ public static class Permissions
         SupportIncidentsManageAll,
         AnalyticsDashboardRead,
         AnalyticsReportsRead,
-        AnalyticsReportsExport
+        AnalyticsReportsExport,
+        AdminUsersManage,
+        AdminUsersTwoFactorReset,
+        AdminAuditLogRead
     ];
 }

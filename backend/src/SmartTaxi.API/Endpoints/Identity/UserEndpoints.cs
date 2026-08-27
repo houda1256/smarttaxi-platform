@@ -99,9 +99,11 @@ public static class UserEndpoints
         Guid userId,
         AssignRoleRequest request,
         AssignRoleCommandHandler handler,
+        ClaimsPrincipal currentUser,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(new AssignRoleCommand(userId, request.Role), cancellationToken);
+        var actingAdminUserId = Guid.Parse(currentUser.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        var result = await handler.Handle(new AssignRoleCommand(userId, request.Role, actingAdminUserId), cancellationToken);
 
         if (!result.IsSuccess)
         {
@@ -118,9 +120,11 @@ public static class UserEndpoints
         Guid userId,
         string role,
         RemoveRoleCommandHandler handler,
+        ClaimsPrincipal currentUser,
         CancellationToken cancellationToken)
     {
-        var result = await handler.Handle(new RemoveRoleCommand(userId, role), cancellationToken);
+        var actingAdminUserId = Guid.Parse(currentUser.FindFirstValue(JwtRegisteredClaimNames.Sub)!);
+        var result = await handler.Handle(new RemoveRoleCommand(userId, role, actingAdminUserId), cancellationToken);
 
         if (!result.IsSuccess)
         {

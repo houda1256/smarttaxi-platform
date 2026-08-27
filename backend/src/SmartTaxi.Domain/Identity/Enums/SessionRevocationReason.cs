@@ -6,5 +6,6 @@ public enum SessionRevocationReason
     ManualRevocation,
     ReuseDetected,
     PasswordReset,
-    PasswordChanged
+    PasswordChanged,
+    AdminAction
 }

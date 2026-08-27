@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SmartTaxi.Application.Administration.Abstractions;
 using SmartTaxi.Application.Advertising;
 using SmartTaxi.Application.Advertising.Abstractions;
 using SmartTaxi.Application.Analytics.Abstractions;
@@ -51,6 +52,8 @@ using SmartTaxi.Application.Subscriptions;
 using SmartTaxi.Application.Subscriptions.Abstractions;
 using SmartTaxi.Application.Support;
 using SmartTaxi.Application.Support.Abstractions;
+using SmartTaxi.Infrastructure.Administration.Repositories;
+using SmartTaxi.Infrastructure.Administration.Services;
 using SmartTaxi.Infrastructure.Advertising.Options;
 using SmartTaxi.Infrastructure.Advertising.Repositories;
 using SmartTaxi.Infrastructure.Advertising.Services;
@@ -343,6 +346,14 @@ public static class DependencyInjection
         services.AddScoped<IFinancialAnalyticsReader, FinancialAnalyticsReader>();
         services.AddScoped<IScheduledReportRepository, ScheduledReportRepository>();
         services.AddScoped<IAnalyticsReportExporter, DevAnalyticsReportExporter>();
+
+        services.Configure<LoginLockoutOptions>(configuration.GetSection(LoginLockoutOptions.SectionName));
+        services.AddSingleton<ILoginLockoutPolicy, LoginLockoutPolicy>();
+
+        services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+        services.AddScoped<IAuditedUserRepository, AuditedUserRepository>();
+        services.AddScoped<IAdminUserManagementRepository, AdminUserManagementRepository>();
+        services.AddSingleton<IAuditContextAccessor, NullAuditContextAccessor>();
 
         return services;
     }

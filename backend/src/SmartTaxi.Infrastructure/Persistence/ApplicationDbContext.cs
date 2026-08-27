@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartTaxi.Domain.Administration.Entities;
 using SmartTaxi.Domain.Advertising.Entities;
 using SmartTaxi.Domain.Analytics.Entities;
 using SmartTaxi.Domain.Fleet.Alerts.Entities;
@@ -229,6 +230,8 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<SupportIncident> SupportIncidents => Set<SupportIncident>();
 
     public DbSet<ScheduledReportDefinition> ScheduledReportDefinitions => Set<ScheduledReportDefinition>();
+
+    public DbSet<AuditLogEntry> AuditLogs => Set<AuditLogEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

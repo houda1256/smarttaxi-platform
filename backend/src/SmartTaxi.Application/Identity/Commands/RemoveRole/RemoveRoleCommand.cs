@@ -3,4 +3,4 @@ using SmartTaxi.Application.Common.Messaging;
 
 namespace SmartTaxi.Application.Identity.Commands.RemoveRole;
 
-public sealed record RemoveRoleCommand(Guid UserId, string Role) : ICommand<Result>;
+public sealed record RemoveRoleCommand(Guid UserId, string Role, Guid ActingAdminUserId) : ICommand<Result>;

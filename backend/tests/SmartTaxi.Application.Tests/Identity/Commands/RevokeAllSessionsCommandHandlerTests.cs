@@ -21,7 +21,7 @@ public class RevokeAllSessionsCommandHandlerTests
 
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
-            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy());
+            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository());
         _revokeAllHandler = new RevokeAllSessionsCommandHandler(_sessionRepository);
     }
 

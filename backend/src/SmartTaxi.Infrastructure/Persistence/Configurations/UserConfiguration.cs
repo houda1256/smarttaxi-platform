@@ -50,6 +50,12 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAtUtc);
         builder.HasIndex(u => u.CreatedAtUtc);
 
+        // Additive (Module 13A) — existing users get FailedLoginAttempts=0/
+        // LockedUntilUtc=null via the migration's defaults, never a fabricated
+        // historical lockout state.
+        builder.Property(u => u.FailedLoginAttempts).IsRequired().HasDefaultValue(0);
+        builder.Property(u => u.LockedUntilUtc);
+
         // Roles are persisted in a separate table via the private _roleAssignments
         // backing field. User only exposes a read-only Roles projection plus
         // AssignRole/RemoveRole behavior — never a settable collection — so this

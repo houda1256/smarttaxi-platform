@@ -19,6 +19,8 @@ public class TwoFactorChallengeCommandHandlerTests
     private readonly FakeTwoFactorSecretProtector _protector = new();
     private readonly FakeTwoFactorPolicy _policy = new();
     private readonly FakeRefreshTokenHasher _refreshTokenHasher = new();
+    private readonly FakeLoginLockoutPolicy _lockoutPolicy = new();
+    private readonly FakeAuditLogRepository _auditLogRepository = new();
 
     private readonly LoginUserCommandHandler _loginHandler;
     private readonly EnrollTwoFactorCommandHandler _enrollHandler;
@@ -36,14 +38,16 @@ public class TwoFactorChallengeCommandHandlerTests
 
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
-            _challengeRepository, new FakeRefreshTokenGenerator(), _refreshTokenHasher, _policy);
+            _challengeRepository, new FakeRefreshTokenGenerator(), _refreshTokenHasher, _policy,
+            _lockoutPolicy, _auditLogRepository);
 
         _enrollHandler = new EnrollTwoFactorCommandHandler(_userRepository, _totpService, _protector, _policy);
         _confirmHandler = new ConfirmTwoFactorCommandHandler(_userRepository, _totpService, _protector, _recoveryCodeService);
 
         _challengeHandler = new TwoFactorChallengeCommandNs.TwoFactorChallengeCommandHandler(
             _challengeRepository, _userRepository, _sessionRepository, _refreshTokenHasher,
-            _totpService, _protector, _recoveryCodeService, refreshTokenIssuer);
+            _totpService, _protector, _recoveryCodeService, refreshTokenIssuer,
+            _lockoutPolicy, _auditLogRepository);
     }
 
     private async Task<(Guid UserId, string ChallengeToken, string Secret, IReadOnlyCollection<string> RecoveryCodes)> RegisterEnrollAndLoginAsync(
@@ -131,5 +135,50 @@ public class TwoFactorChallengeCommandHandlerTests
             new TwoFactorChallengeCommandNs.TwoFactorChallengeCommand("not-a-real-token", "000000"), CancellationToken.None);
 
         Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task Handle_WithWrongCode_ContributesToSharedFailedAttemptCounter()
+    {
+        var (userId, challengeToken, _, _) = await RegisterEnrollAndLoginAsync();
+
+        await _challengeHandler.Handle(
+            new TwoFactorChallengeCommandNs.TwoFactorChallengeCommand(challengeToken, "wrong-code"), CancellationToken.None);
+
+        var user = await _userRepository.GetByIdAsync(userId, CancellationToken.None);
+        Assert.Equal(1, user!.FailedLoginAttempts);
+    }
+
+    [Fact]
+    public async Task Handle_WithRepeatedWrongCodes_LocksAccountAtThresholdAndEmitsAuditOnce()
+    {
+        var (userId, challengeToken, _, _) = await RegisterEnrollAndLoginAsync();
+
+        for (var i = 0; i < _lockoutPolicy.MaxFailedAttempts; i++)
+        {
+            await _challengeHandler.Handle(
+                new TwoFactorChallengeCommandNs.TwoFactorChallengeCommand(challengeToken, "wrong-code"), CancellationToken.None);
+        }
+
+        var user = await _userRepository.GetByIdAsync(userId, CancellationToken.None);
+        Assert.True(user!.IsLockedOut(DateTime.UtcNow));
+        Assert.Single(_auditLogRepository.Entries);
+        Assert.Equal(SmartTaxi.Domain.Administration.Enums.AuditAction.AccountLocked, _auditLogRepository.Entries[0].Action);
+    }
+
+    [Fact]
+    public async Task Handle_WithCorrectCodeAfterAPriorFailure_ResetsFailedAttemptCounter()
+    {
+        var (userId, challengeToken, secret, _) = await RegisterEnrollAndLoginAsync();
+        await _challengeHandler.Handle(
+            new TwoFactorChallengeCommandNs.TwoFactorChallengeCommand(challengeToken, "wrong-code"), CancellationToken.None);
+
+        var code = FakeTotpService.CodeFor(secret);
+        var result = await _challengeHandler.Handle(
+            new TwoFactorChallengeCommandNs.TwoFactorChallengeCommand(challengeToken, code), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        var user = await _userRepository.GetByIdAsync(userId, CancellationToken.None);
+        Assert.Equal(0, user!.FailedLoginAttempts);
     }
 }

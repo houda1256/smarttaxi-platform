@@ -323,4 +323,21 @@ public class UserTests
         // Roles/eligibility history are untouched — anonymization scrubs PII, not the account's history.
         Assert.True(user.HasRole(UserRole.Customer));
     }
+
+    [Fact]
+    public void IsLockedOut_WithNoLockedUntil_ReturnsFalse()
+    {
+        var user = CreateUser();
+
+        Assert.False(user.IsLockedOut(DateTime.UtcNow));
+    }
+
+    [Fact]
+    public void NewUser_HasZeroFailedLoginAttemptsAndNoLockout()
+    {
+        var user = CreateUser();
+
+        Assert.Equal(0, user.FailedLoginAttempts);
+        Assert.Null(user.LockedUntilUtc);
+    }
 }

@@ -1,10 +1,21 @@
+using SmartTaxi.Application.Administration.Abstractions;
 using SmartTaxi.Application.Common;
 using SmartTaxi.Application.Common.Messaging;
 using SmartTaxi.Application.Identity.Abstractions;
 using SmartTaxi.Application.Identity.Sessions;
+using SmartTaxi.Domain.Administration.Entities;
+using SmartTaxi.Domain.Administration.Enums;
 
 namespace SmartTaxi.Application.Identity.Commands.TwoFactorChallenge;
 
+/// <summary>
+/// A failed TOTP/recovery-code attempt participates in the SAME unified
+/// authentication-failure counter as a wrong password — otherwise a correct
+/// password would leave an unbounded, unrelated brute-force surface against
+/// the 6-digit TOTP code. Success here is the "complete authentication flow"
+/// point that resets the counter (LoginUserCommandHandler's own 2FA-required
+/// branch deliberately never resets it).
+/// </summary>
 public sealed class TwoFactorChallengeCommandHandler
     : ICommandHandler<TwoFactorChallengeCommand, Result<TwoFactorChallengeResult>>
 {
@@ -18,6 +29,8 @@ public sealed class TwoFactorChallengeCommandHandler
     private readonly ITwoFactorSecretProtector _protector;
     private readonly RecoveryCodeService _recoveryCodeService;
     private readonly RefreshTokenIssuer _refreshTokenIssuer;
+    private readonly ILoginLockoutPolicy _lockoutPolicy;
+    private readonly IAuditLogRepository _auditLogRepository;
 
     public TwoFactorChallengeCommandHandler(
         ITwoFactorChallengeRepository challengeRepository,
@@ -27,7 +40,9 @@ public sealed class TwoFactorChallengeCommandHandler
         ITotpService totpService,
         ITwoFactorSecretProtector protector,
         RecoveryCodeService recoveryCodeService,
-        RefreshTokenIssuer refreshTokenIssuer)
+        RefreshTokenIssuer refreshTokenIssuer,
+        ILoginLockoutPolicy lockoutPolicy,
+        IAuditLogRepository auditLogRepository)
     {
         _challengeRepository = challengeRepository;
         _userRepository = userRepository;
@@ -37,6 +52,8 @@ public sealed class TwoFactorChallengeCommandHandler
         _protector = protector;
         _recoveryCodeService = recoveryCodeService;
         _refreshTokenIssuer = refreshTokenIssuer;
+        _lockoutPolicy = lockoutPolicy;
+        _auditLogRepository = auditLogRepository;
     }
 
     public async Task<Result<TwoFactorChallengeResult>> Handle(TwoFactorChallengeCommand command, CancellationToken cancellationToken)
@@ -57,12 +74,27 @@ public sealed class TwoFactorChallengeCommandHandler
             return Result<TwoFactorChallengeResult>.Failure(InvalidError, ErrorType.Unauthorized);
         }
 
+        if (user.IsLockedOut(utcNow))
+        {
+            return Result<TwoFactorChallengeResult>.Failure(InvalidError, ErrorType.Unauthorized);
+        }
+
         var rawSecret = _protector.Unprotect(user.TwoFactorActiveSecretEncrypted);
         var codeValid = _totpService.ValidateCode(rawSecret, command.Code, utcNow)
             || await _recoveryCodeService.TryConsumeMatchingAsync(user.Id, command.Code, utcNow, cancellationToken);
 
         if (!codeValid)
         {
+            var newCount = await _userRepository.RecordFailedLoginAttemptAsync(
+                user.Id, _lockoutPolicy.MaxFailedAttempts, utcNow, _lockoutPolicy.LockoutDuration, cancellationToken);
+
+            if (newCount == _lockoutPolicy.MaxFailedAttempts)
+            {
+                await _auditLogRepository.AddAsync(
+                    AuditLogEntry.Create(null, AuditAction.AccountLocked, AuditTargetType.User, user.Id, null, null, null, null, utcNow),
+                    cancellationToken);
+            }
+
             return Result<TwoFactorChallengeResult>.Failure(InvalidError, ErrorType.Unauthorized);
         }
 
@@ -76,6 +108,7 @@ public sealed class TwoFactorChallengeCommandHandler
         var (session, rawRefreshToken, accessToken) =
             await _refreshTokenIssuer.StartSessionAsync(user, challenge.DeviceLabel, cancellationToken);
         await _sessionRepository.AddAsync(session, cancellationToken);
+        await _userRepository.ResetFailedLoginAttemptsAsync(user.Id, cancellationToken);
 
         return Result<TwoFactorChallengeResult>.Success(new TwoFactorChallengeResult(accessToken, rawRefreshToken));
     }
