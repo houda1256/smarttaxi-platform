@@ -33,7 +33,7 @@ public class JwtTokenGeneratorTests
     [Fact]
     public async Task GenerateToken_IncludesSessionIdAndAllCurrentRolesAndPermissions()
     {
-        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Admin);
+        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Admin, DateTime.UtcNow);
         user.AssignRole(UserRole.Driver);
         var sessionId = Guid.NewGuid();
 

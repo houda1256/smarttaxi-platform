@@ -21,7 +21,7 @@ public class CreateFleetCommandHandlerTests
     [Fact]
     public async Task Handle_ForTaxiOwner_CreatesFleet()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("h"), UserRole.TaxiOwner);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("h"), UserRole.TaxiOwner, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var result = await _handler.Handle(new CreateFleetCommand(user.Id, "My Fleet", "desc", Guid.NewGuid()), CancellationToken.None);
@@ -34,7 +34,7 @@ public class CreateFleetCommandHandlerTests
     [Fact]
     public async Task Handle_ForNonTaxiOwner_ReturnsForbidden()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("h"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("h"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var result = await _handler.Handle(new CreateFleetCommand(user.Id, "My Fleet", null, Guid.NewGuid()), CancellationToken.None);

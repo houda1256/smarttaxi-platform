@@ -26,8 +26,8 @@ public class LoyaltyReferralRewardGranterTests
 
     private async Task<(User Referrer, User Referee, Referral Referral)> CreateRewardEligibleReferralAsync()
     {
-        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Driver);
-        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
+        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Driver, DateTime.UtcNow);
+        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(referrer, CancellationToken.None);
         await _userRepository.AddAsync(referee, CancellationToken.None);
 
@@ -68,8 +68,8 @@ public class LoyaltyReferralRewardGranterTests
     [Fact]
     public async Task TryGrantIfEligibleAsync_NotYetRewardEligible_ReturnsFalse()
     {
-        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Driver);
-        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
+        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Driver, DateTime.UtcNow);
+        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(referrer, CancellationToken.None);
         await _userRepository.AddAsync(referee, CancellationToken.None);
         var referral = new Referral(referrer.Id, referee.Id, "CODE1", DateTime.UtcNow);

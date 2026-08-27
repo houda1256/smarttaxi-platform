@@ -24,7 +24,7 @@ public class TicketLifecycleCommandHandlerTests
 
     private async Task<Guid> CreateAdminAsync()
     {
-        var user = User.Create(Email.Create($"admin-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Admin);
+        var user = User.Create(Email.Create($"admin-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Admin, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user.Id;
     }

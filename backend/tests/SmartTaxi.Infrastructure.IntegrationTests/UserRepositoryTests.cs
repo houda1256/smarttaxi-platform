@@ -19,7 +19,7 @@ public class UserRepositoryTests
     public async Task AddAsync_ThenGetByIdAsync_PersistsAllRoles()
     {
         var email = Email.Create($"{Guid.NewGuid()}@example.com");
-        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         user.AssignRole(UserRole.Driver);
 
         await using (var writeContext = _fixture.CreateContext())
@@ -42,7 +42,7 @@ public class UserRepositoryTests
     public async Task UpdateAsync_AfterRemovingRole_PersistsRemoval()
     {
         var email = Email.Create($"{Guid.NewGuid()}@example.com");
-        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         user.AssignRole(UserRole.Driver);
 
         await using (var writeContext = _fixture.CreateContext())

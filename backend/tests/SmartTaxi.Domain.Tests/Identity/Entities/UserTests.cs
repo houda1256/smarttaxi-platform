@@ -10,7 +10,7 @@ public class UserTests
     {
         var email = Email.Create("user@example.com");
         var passwordHash = HashedPassword.Create("hashed-value");
-        return User.Create(email, passwordHash, initialRole);
+        return User.Create(email, passwordHash, initialRole, DateTime.UtcNow);
     }
 
     [Fact]
@@ -19,7 +19,7 @@ public class UserTests
         var email = Email.Create("user@example.com");
         var passwordHash = HashedPassword.Create("hashed-value");
 
-        var user = User.Create(email, passwordHash, UserRole.Customer);
+        var user = User.Create(email, passwordHash, UserRole.Customer, DateTime.UtcNow);
 
         Assert.NotEqual(Guid.Empty, user.Id);
         Assert.Equal(email, user.Email);
@@ -27,6 +27,18 @@ public class UserTests
         Assert.True(user.HasRole(UserRole.Customer));
         Assert.Single(user.Roles);
         Assert.True(user.IsActive);
+    }
+
+    [Fact]
+    public void Create_SetsCreatedAtUtcToProvidedInstant()
+    {
+        var email = Email.Create("user@example.com");
+        var passwordHash = HashedPassword.Create("hashed-value");
+        var utcNow = new DateTime(2026, 1, 15, 10, 30, 0, DateTimeKind.Utc);
+
+        var user = User.Create(email, passwordHash, UserRole.Customer, utcNow);
+
+        Assert.Equal(utcNow, user.CreatedAtUtc);
     }
 
     [Fact]
@@ -56,8 +68,8 @@ public class UserTests
         var email = Email.Create("user@example.com");
         var passwordHash = HashedPassword.Create("hashed-value");
 
-        var first = User.Create(email, passwordHash, UserRole.Customer);
-        var second = User.Create(email, passwordHash, UserRole.Customer);
+        var first = User.Create(email, passwordHash, UserRole.Customer, DateTime.UtcNow);
+        var second = User.Create(email, passwordHash, UserRole.Customer, DateTime.UtcNow);
 
         Assert.NotEqual(first.Id, second.Id);
     }

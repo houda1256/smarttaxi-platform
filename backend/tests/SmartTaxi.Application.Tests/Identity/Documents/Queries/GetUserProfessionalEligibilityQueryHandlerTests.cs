@@ -23,7 +23,7 @@ public class GetUserProfessionalEligibilityQueryHandlerTests
 
     private async Task<Guid> CreateDriverAsync()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Driver);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Driver, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user.Id;
     }
@@ -88,7 +88,7 @@ public class GetUserProfessionalEligibilityQueryHandlerTests
     [Fact]
     public async Task Handle_ForCustomerRole_ReturnsNoEligibilityEntries()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var result = await _handler.Handle(new GetUserProfessionalEligibilityQuery(user.Id), CancellationToken.None);

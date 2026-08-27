@@ -35,5 +35,8 @@ public sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subscri
             .HasFilter("\"Status\" IN ('Pending', 'Active')");
 
         builder.HasIndex(subscription => subscription.Status);
+
+        // Module 12 (Analytics) — SubscriptionGrowthCount filters by CreatedAt alone.
+        builder.HasIndex(subscription => subscription.CreatedAt);
     }
 }

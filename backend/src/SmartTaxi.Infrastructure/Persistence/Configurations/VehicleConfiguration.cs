@@ -41,5 +41,8 @@ public sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
         builder.Property(vehicle => vehicle.UpdatedAt).IsRequired();
 
         builder.HasIndex(vehicle => vehicle.OperationalStatus);
+
+        // Module 12 (Analytics) — VehicleGrowthCount filters by CreatedAt alone.
+        builder.HasIndex(vehicle => vehicle.CreatedAt);
     }
 }

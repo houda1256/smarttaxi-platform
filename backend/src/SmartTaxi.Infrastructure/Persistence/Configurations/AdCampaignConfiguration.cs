@@ -48,6 +48,8 @@ public sealed class AdCampaignConfiguration : IEntityTypeConfiguration<AdCampaig
         builder.Property(campaign => campaign.TargetEndHour);
 
         builder.Property(campaign => campaign.CreatedAtUtc).IsRequired();
+        // Module 12 (Analytics) — CampaignGrowthCount filters by CreatedAtUtc alone.
+        builder.HasIndex(campaign => campaign.CreatedAtUtc);
         builder.Property(campaign => campaign.UpdatedAtUtc).IsRequired();
         builder.Property(campaign => campaign.SubmittedAtUtc);
         builder.Property(campaign => campaign.ReviewedAtUtc);

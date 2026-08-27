@@ -50,7 +50,7 @@ public class PersonalDataRequestRepositoryTests
     public async Task Anonymize_PreservesUserDocumentForeignKeyIntegrity()
     {
         var email = Email.Create($"{Guid.NewGuid()}@example.com");
-        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(email, HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         var document = UserDocument.Upload(
             user.Id, DocumentType.DriverLicense, "key", "f.pdf", "application/pdf", 1, "hash", null, null, DateTime.UtcNow);
 

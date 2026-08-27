@@ -20,7 +20,7 @@ public class GetMyReferralCodeQueryHandlerTests
     [Fact]
     public async Task Handle_WhenUserHasNoCodeYet_GeneratesAndPersistsOne()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var result = await _handler.Handle(new GetMyReferralCodeQuery(user.Id), CancellationToken.None);
@@ -34,7 +34,7 @@ public class GetMyReferralCodeQueryHandlerTests
     [Fact]
     public async Task Handle_WhenUserAlreadyHasACode_ReturnsTheSameCodeEveryTime()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var first = await _handler.Handle(new GetMyReferralCodeQuery(user.Id), CancellationToken.None);

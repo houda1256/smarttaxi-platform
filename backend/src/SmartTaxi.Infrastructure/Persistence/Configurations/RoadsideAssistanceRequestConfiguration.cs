@@ -40,6 +40,10 @@ public sealed class RoadsideAssistanceRequestConfiguration : IEntityTypeConfigur
         builder.Property(request => request.FinalCost).HasPrecision(12, 3);
 
         builder.Property(request => request.RequestedAtUtc).IsRequired();
+        // Module 12 (Analytics) — RoadsideAnalyticsReader's RequestCount query filters by RequestedAtUtc
+        // alone, discovered when re-checking actual query shapes (added for the same reason as
+        // MaintenanceRequest's identical index).
+        builder.HasIndex(request => request.RequestedAtUtc);
         builder.Property(request => request.AcceptedAtUtc);
         builder.Property(request => request.PartnerOnTheWayAtUtc);
         builder.Property(request => request.PartnerArrivedAtUtc);

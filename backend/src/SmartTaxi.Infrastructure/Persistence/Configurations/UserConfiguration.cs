@@ -45,6 +45,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.ReferralCode).HasMaxLength(20);
         builder.HasIndex(u => u.ReferralCode).IsUnique();
 
+        // Nullable, additive (Module 12/Analytics) — null for every user created
+        // before this column existed; no historical value is fabricated for them.
+        builder.Property(u => u.CreatedAtUtc);
+        builder.HasIndex(u => u.CreatedAtUtc);
+
         // Roles are persisted in a separate table via the private _roleAssignments
         // backing field. User only exposes a read-only Roles projection plus
         // AssignRole/RemoveRole behavior — never a settable collection — so this

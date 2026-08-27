@@ -19,7 +19,7 @@ public class RemoveRoleCommandHandlerTests
 
     private async Task<User> SeedUserAsync(params UserRole[] extraRoles)
     {
-        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
+        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         foreach (var role in extraRoles)
         {
             user.AssignRole(role);

@@ -23,7 +23,7 @@ public class RegisterAndUpdateRoadsidePartnerProfileCommandHandlerTests
 
     private async Task<User> CreateUserAsync(UserRole role)
     {
-        var user = User.Create(Email.Create($"user-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), role);
+        var user = User.Create(Email.Create($"user-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), role, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user;
     }

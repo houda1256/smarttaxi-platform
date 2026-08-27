@@ -48,6 +48,8 @@ public sealed class SupportIncidentConfiguration : IEntityTypeConfiguration<Supp
             .HasFilter("\"SourceType\" IS NOT NULL");
 
         builder.Property(incident => incident.CreatedAtUtc).IsRequired();
+        // Module 12 (Analytics) — IncidentGrowthCount filters by CreatedAtUtc alone.
+        builder.HasIndex(incident => incident.CreatedAtUtc);
         builder.Property(incident => incident.UpdatedAtUtc).IsRequired();
         builder.Property(incident => incident.ResolvedAtUtc);
         builder.Property(incident => incident.ClosedAtUtc);

@@ -141,6 +141,10 @@ public static class Permissions
     public const string SupportIncidentsReadAll = "support.incidents.read.all";
     public const string SupportIncidentsManageAll = "support.incidents.manage.all";
 
+    public const string AnalyticsDashboardRead = "analytics.dashboard.read";
+    public const string AnalyticsReportsRead = "analytics.reports.read";
+    public const string AnalyticsReportsExport = "analytics.reports.export";
+
     public static readonly IReadOnlyCollection<string> All =
     [
         UsersRead,
@@ -263,6 +267,9 @@ public static class Permissions
         SupportTicketsReadAll,
         SupportTicketsManageAll,
         SupportIncidentsReadAll,
-        SupportIncidentsManageAll
+        SupportIncidentsManageAll,
+        AnalyticsDashboardRead,
+        AnalyticsReportsRead,
+        AnalyticsReportsExport
     ];
 }

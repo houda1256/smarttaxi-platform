@@ -143,8 +143,8 @@ public class ProcessPaymentLoyaltyAwardCommandHandlerTests
     [Fact]
     public async Task Handle_WhenPayerIsRefereeWithSatisfiedConditions_GrantsReferralReward()
     {
-        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
-        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
+        var referrer = User.Create(Email.Create($"referrer-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
+        var referee = User.Create(Email.Create($"referee-{Guid.NewGuid():N}@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         referee.VerifyEmail(DateTime.UtcNow.AddDays(-10));
         await _userRepository.AddAsync(referrer, CancellationToken.None);
         await _userRepository.AddAsync(referee, CancellationToken.None);

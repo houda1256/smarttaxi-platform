@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartTaxi.Application.Advertising;
 using SmartTaxi.Application.Advertising.Abstractions;
+using SmartTaxi.Application.Analytics.Abstractions;
 using SmartTaxi.Application.Fleet.Alerts.Abstractions;
 using SmartTaxi.Application.Fleet.Assignments.Abstractions;
 using SmartTaxi.Application.Fleet.Common.Abstractions;
@@ -79,6 +80,9 @@ using SmartTaxi.Infrastructure.Rides.Policies;
 using SmartTaxi.Infrastructure.Rides.Repositories;
 using SmartTaxi.Infrastructure.Rides.Services;
 using SmartTaxi.Infrastructure.Subscriptions.Repositories;
+using SmartTaxi.Infrastructure.Analytics.Readers;
+using SmartTaxi.Infrastructure.Analytics.Repositories;
+using SmartTaxi.Infrastructure.Analytics.Services;
 using SmartTaxi.Infrastructure.Support.Repositories;
 
 namespace SmartTaxi.Infrastructure;
@@ -326,6 +330,19 @@ public static class DependencyInjection
         services.AddScoped<ISupportIncidentReporter, SupportIncidentReporter>();
         services.AddScoped<ISupportTicketEscalationRepository, SupportTicketEscalationRepository>();
         services.AddScoped<ISupportRelatedEntityValidator, SupportRelatedEntityValidator>();
+
+        services.AddScoped<IAdminDashboardReader, AdminDashboardReader>();
+        services.AddScoped<IGrowthAnalyticsReader, GrowthAnalyticsReader>();
+        services.AddScoped<IRideAnalyticsReader, RideAnalyticsReader>();
+        services.AddScoped<IFleetAnalyticsReader, FleetAnalyticsReader>();
+        services.AddScoped<ISubscriptionAnalyticsReader, SubscriptionAnalyticsReader>();
+        services.AddScoped<IAdvertisingAnalyticsReader, AdvertisingAnalyticsReader>();
+        services.AddScoped<IMaintenanceAnalyticsReader, MaintenanceAnalyticsReader>();
+        services.AddScoped<IRoadsideAnalyticsReader, RoadsideAnalyticsReader>();
+        services.AddScoped<ISupportAnalyticsReader, SupportAnalyticsReader>();
+        services.AddScoped<IFinancialAnalyticsReader, FinancialAnalyticsReader>();
+        services.AddScoped<IScheduledReportRepository, ScheduledReportRepository>();
+        services.AddScoped<IAnalyticsReportExporter, DevAnalyticsReportExporter>();
 
         return services;
     }

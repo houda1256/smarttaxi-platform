@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SmartTaxi.API.Endpoints.Advertising;
+using SmartTaxi.API.Endpoints.Analytics;
 using SmartTaxi.API.Endpoints.Fleet;
 using SmartTaxi.API.Endpoints.Identity;
 using SmartTaxi.API.Endpoints.Loyalty;
@@ -283,6 +284,22 @@ using SmartTaxi.Application.Support.Queries.GetMySupportTickets;
 using SmartTaxi.Application.Support.Queries.GetSupportIncidentById;
 using SmartTaxi.Application.Support.Queries.GetSupportTicketDetails;
 using SmartTaxi.Application.Support.Queries.GetSupportTicketDetailsAdmin;
+using SmartTaxi.Application.Analytics.Commands.CreateScheduledReport;
+using SmartTaxi.Application.Analytics.Commands.DeactivateScheduledReport;
+using SmartTaxi.Application.Analytics.Commands.ExportAnalyticsReport;
+using SmartTaxi.Application.Analytics.Commands.ProcessDueScheduledReports;
+using SmartTaxi.Application.Analytics.Commands.UpdateScheduledReport;
+using SmartTaxi.Application.Analytics.Queries.GetAdminDashboard;
+using SmartTaxi.Application.Analytics.Queries.GetAdvertisingAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetFinancialAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetFleetAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetGrowthAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetMaintenanceAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetRideAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetRoadsideAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetScheduledReports;
+using SmartTaxi.Application.Analytics.Queries.GetSubscriptionAnalytics;
+using SmartTaxi.Application.Analytics.Queries.GetSupportAnalytics;
 using SmartTaxi.Application.Notifications.Abstractions;
 using SmartTaxi.Application.Notifications.Commands.ActivateNotificationTemplate;
 using SmartTaxi.Application.Notifications.Commands.CreateNotificationTemplate;
@@ -804,6 +821,23 @@ builder.Services.AddScoped<MarkIncidentFalsePositiveCommandHandler>();
 builder.Services.AddScoped<GetAllSupportIncidentsQueryHandler>();
 builder.Services.AddScoped<GetSupportIncidentByIdQueryHandler>();
 
+builder.Services.AddScoped<GetAdminDashboardQueryHandler>();
+builder.Services.AddScoped<GetGrowthAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetRideAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetFleetAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetSubscriptionAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetAdvertisingAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetMaintenanceAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetRoadsideAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetSupportAnalyticsQueryHandler>();
+builder.Services.AddScoped<GetFinancialAnalyticsQueryHandler>();
+builder.Services.AddScoped<CreateScheduledReportCommandHandler>();
+builder.Services.AddScoped<UpdateScheduledReportCommandHandler>();
+builder.Services.AddScoped<DeactivateScheduledReportCommandHandler>();
+builder.Services.AddScoped<ProcessDueScheduledReportsCommandHandler>();
+builder.Services.AddScoped<GetScheduledReportsQueryHandler>();
+builder.Services.AddScoped<ExportAnalyticsReportCommandHandler>();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -928,6 +962,9 @@ app.MapRoadsideAssistanceAdminEndpoints();
 app.MapSupportTicketEndpoints();
 app.MapSupportTicketAdminEndpoints();
 app.MapSupportIncidentAdminEndpoints();
+
+app.MapAnalyticsEndpoints();
+app.MapScheduledReportEndpoints();
 
 app.MapControllers(); // SECURITY DEMO ONLY — hosts VulnerableSqlController; remove after CodeQL demo
 

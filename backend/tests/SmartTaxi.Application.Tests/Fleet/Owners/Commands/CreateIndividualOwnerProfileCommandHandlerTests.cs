@@ -24,7 +24,7 @@ public class CreateIndividualOwnerProfileCommandHandlerTests
 
     private async Task<Guid> CreateUserWithRoleAsync(UserRole role)
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), role);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), role, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user.Id;
     }

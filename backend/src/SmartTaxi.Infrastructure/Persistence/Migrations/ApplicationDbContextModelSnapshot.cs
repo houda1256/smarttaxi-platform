@@ -142,6 +142,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("CreatedAtUtc");
+
                     b.HasIndex("Status");
 
                     b.HasIndex("Status", "EndAtUtc");
@@ -440,6 +442,52 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.HasIndex("CampaignId");
 
                     b.ToTable("AdvertisingCreatives", (string)null);
+                });
+
+            modelBuilder.Entity("SmartTaxi.Domain.Analytics.Entities.ScheduledReportDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastProcessedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("NextRunAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessingClaimedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RecipientUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientUserId");
+
+                    b.HasIndex("IsActive", "NextRunAtUtc")
+                        .HasDatabaseName("IX_ScheduledReportDefinitions_IsActive_NextRunAtUtc");
+
+                    b.ToTable("ScheduledReportDefinitions", (string)null);
                 });
 
             modelBuilder.Entity("SmartTaxi.Domain.Fleet.Alerts.Entities.FleetAlert", b =>
@@ -1125,6 +1173,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("FleetId");
 
                     b.HasIndex("LicensePlate")
@@ -1472,6 +1522,9 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(320)
@@ -1520,6 +1573,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAtUtc");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -2323,6 +2378,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.HasIndex("GarageUserId");
 
                     b.HasIndex("OwnerUserId");
+
+                    b.HasIndex("RequestedAtUtc");
 
                     b.HasIndex("Status");
 
@@ -3501,6 +3558,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.HasIndex("TransactionNumber")
                         .IsUnique();
 
+                    b.HasIndex("EntryType", "CreatedAt");
+
                     b.HasIndex("SourceType", "SourceId");
 
                     b.HasIndex("SourceType", "SourceId", "EntryType")
@@ -4432,6 +4491,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RequestedAtUtc");
+
                     b.HasIndex("RequesterUserId");
 
                     b.HasIndex("SelectedPartnerUserId");
@@ -4588,6 +4649,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("PlanId");
 
@@ -4755,6 +4818,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AssignedAdminUserId");
 
+                    b.HasIndex("CreatedAtUtc");
+
                     b.HasIndex("IncidentNumber")
                         .IsUnique();
 
@@ -4841,6 +4906,8 @@ namespace SmartTaxi.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AssignedAdminUserId");
+
+                    b.HasIndex("CreatedAtUtc");
 
                     b.HasIndex("RequesterUserId");
 

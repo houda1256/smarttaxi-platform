@@ -20,7 +20,7 @@ public class RegisterReferralCommandHandlerTests
 
     private async Task<User> CreateUserWithReferralCodeAsync(string code)
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         user.EnsureReferralCode(code);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user;

@@ -68,7 +68,7 @@ public class NotificationDispatcherIntegrationTests
     private async Task<Guid> CreateUserAsync(ApplicationDbContext context)
     {
         var email = Email.Create($"user-{Guid.NewGuid():N}@example.com");
-        var user = User.Create(email, HashedPassword.Create("hash"), UserRole.Customer);
+        var user = User.Create(email, HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         await new UserRepository(context).AddAsync(user, CancellationToken.None);
         return user.Id;
     }

@@ -22,7 +22,7 @@ public class SuspendProfessionalAccountRequestCommandHandlerTests
     [Fact]
     public async Task Handle_ForApprovedRequest_SuspendsAndRemovesRole()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         user.AssignRole(UserRole.Driver);
         await _userRepository.AddAsync(user, CancellationToken.None);
 

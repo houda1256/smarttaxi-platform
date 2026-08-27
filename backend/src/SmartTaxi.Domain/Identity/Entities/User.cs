@@ -24,19 +24,29 @@ public sealed class User : AggregateRoot
 
     public string? ReferralCode { get; private set; }
 
+    /// <summary>
+    /// Additive, nullable — added for Module 12 (Analytics)'s UserGrowth metric.
+    /// Null for every user created before this property existed (no accurate
+    /// historical registration date exists for them and none is fabricated);
+    /// always set for users created afterward. UserGrowth must exclude null
+    /// rows rather than treat them as "registered at an unknown recent date."
+    /// </summary>
+    public DateTime? CreatedAtUtc { get; private set; }
+
     public IReadOnlyCollection<UserRole> Roles =>
         _roleAssignments.Select(assignment => assignment.Role).ToList();
 
-    private User(Guid id, Email email, HashedPassword passwordHash)
+    private User(Guid id, Email email, HashedPassword passwordHash, DateTime? createdAtUtc)
         : base(id)
     {
         Email = email;
         PasswordHash = passwordHash;
+        CreatedAtUtc = createdAtUtc;
     }
 
-    public static User Create(Email email, HashedPassword passwordHash, UserRole initialRole)
+    public static User Create(Email email, HashedPassword passwordHash, UserRole initialRole, DateTime utcNow)
     {
-        var user = new User(Guid.NewGuid(), email, passwordHash);
+        var user = new User(Guid.NewGuid(), email, passwordHash, utcNow);
         user.AssignRole(initialRole);
         return user;
     }

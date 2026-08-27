@@ -14,7 +14,7 @@ public class GetUserByIdQueryHandlerTests
     [Fact]
     public async Task Handle_WithExistingUser_ReturnsRolesAndPermissions()
     {
-        var user = User.Create(Email.Create("admin@example.com"), HashedPassword.Create("hash"), UserRole.Admin);
+        var user = User.Create(Email.Create("admin@example.com"), HashedPassword.Create("hash"), UserRole.Admin, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var rolePermissionRepository = new FakeRolePermissionRepository(new Dictionary<UserRole, string[]>

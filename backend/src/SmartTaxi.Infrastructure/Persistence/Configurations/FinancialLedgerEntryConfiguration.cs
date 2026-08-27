@@ -39,5 +39,9 @@ public sealed class FinancialLedgerEntryConfiguration : IEntityTypeConfiguration
         builder.Property(entry => entry.CreatedAt).IsRequired();
         builder.Property(entry => entry.CreatedBy);
         builder.Property(entry => entry.ReversalOfEntryId);
+
+        // Module 12 (Analytics) — FinancialAnalyticsReader/AdminDashboardReader filter by EntryType and,
+        // for period-scoped queries, CreatedAt together; no existing index covered this combination.
+        builder.HasIndex(entry => new { entry.EntryType, entry.CreatedAt });
     }
 }

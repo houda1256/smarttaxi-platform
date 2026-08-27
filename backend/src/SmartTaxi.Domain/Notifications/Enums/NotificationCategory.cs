@@ -5,8 +5,10 @@ namespace SmartTaxi.Domain.Notifications.Enums;
 /// notification today, plus System for platform-wide/non-module messages.
 /// Support is Module 11's own value (Administration deliberately has none —
 /// no Module 11 notification originates from a general "Administration"
-/// concept in this pass). Future modules add their own value here rather
-/// than Notifications inventing speculative categories up front.
+/// concept in this pass). Analytics is Module 12's own value (used only for
+/// scheduled-report delivery — ProcessDueScheduledReportsCommand). Future
+/// modules add their own value here rather than Notifications inventing
+/// speculative categories up front.
 /// </summary>
 public enum NotificationCategory
 {
@@ -21,5 +23,6 @@ public enum NotificationCategory
     Maintenance,
     Roadside,
     Support,
+    Analytics,
     System
 }

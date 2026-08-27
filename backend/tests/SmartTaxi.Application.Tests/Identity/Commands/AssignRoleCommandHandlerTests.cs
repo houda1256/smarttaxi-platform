@@ -19,7 +19,7 @@ public class AssignRoleCommandHandlerTests
 
     private async Task<User> SeedUserAsync()
     {
-        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Customer);
+        var user = User.Create(Email.Create("user@example.com"), HashedPassword.Create("hash"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user;
     }

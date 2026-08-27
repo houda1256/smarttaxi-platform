@@ -46,7 +46,7 @@ public sealed class RegisterUserCommandHandler
         }
 
         var hashedPassword = HashedPassword.Create(_passwordHasher.Hash(command.Password));
-        var user = User.Create(email, hashedPassword, UserRole.Customer);
+        var user = User.Create(email, hashedPassword, UserRole.Customer, DateTime.UtcNow);
 
         await _userRepository.AddAsync(user, cancellationToken);
 

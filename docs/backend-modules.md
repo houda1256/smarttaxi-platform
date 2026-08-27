@@ -8,7 +8,7 @@ Ce document décrit les onze modules métier du backend SmartTaxi, chacun destin
 
 Pour le détail complet de chaque module (entités, statuts, événements, règles métier précises), voir [docs/business-functional-specification.md](business-functional-specification.md), qui fait foi en cas de divergence avec ce document. Ce document-ci reste la carte concise des modules et de leurs interactions.
 
-Les modules **Identity**, **Fleet** et **Ride** sont implémentés à ce jour, les modules **Payment**, **Subscription**, **Notifications** et **Loyalty** le sont partiellement (voir [docs/backend-audit-report.md](backend-audit-report.md) pour l'état d'Identity ; le rapport final de la Phase 3 couvre l'implémentation de Fleet ; le rapport final de la Phase 4 couvre l'implémentation de Ride ; le rapport final de la Phase 5 couvre le sous-ensemble de Payment implémenté ; le rapport de Module 5 couvre le sous-ensemble de Subscription implémenté ; le rapport de Module 6 couvre le sous-ensemble de Notifications implémenté ; le rapport de Module 7 couvre le sous-ensemble de Loyalty implémenté ; voir la section 11 ci-dessous pour le sous-ensemble Support/Incidents implémenté du Module 11) : le reste du périmètre de Payment/Subscription, ainsi que l'Administration au sens large (rôles administratifs dédiés, audit général, `SystemSetting`, analytics — section 12), restent à l'état de spécification, en préparation du développement à venir.
+Les modules **Identity**, **Fleet** et **Ride** sont implémentés à ce jour, les modules **Payment**, **Subscription**, **Notifications** et **Loyalty** le sont partiellement (voir [docs/backend-audit-report.md](backend-audit-report.md) pour l'état d'Identity ; le rapport final de la Phase 3 couvre l'implémentation de Fleet ; le rapport final de la Phase 4 couvre l'implémentation de Ride ; le rapport final de la Phase 5 couvre le sous-ensemble de Payment implémenté ; le rapport de Module 5 couvre le sous-ensemble de Subscription implémenté ; le rapport de Module 6 couvre le sous-ensemble de Notifications implémenté ; le rapport de Module 7 couvre le sous-ensemble de Loyalty implémenté ; voir la section 11 ci-dessous pour le sous-ensemble Support/Incidents implémenté du Module 11 ; voir la section 12 ci-dessous pour le sous-ensemble Analytics & Reporting implémenté du Module 12) : le reste du périmètre de Payment/Subscription, ainsi que l'Administration au sens large (rôles administratifs dédiés, audit général, `SystemSetting`, géographie — Module 13A pratique), restent à l'état de spécification, en préparation du développement à venir.
 
 ## 2. Identity
 
@@ -115,30 +115,39 @@ Les modules **Identity**, **Fleet** et **Ride** sont implémentés à ce jour, l
 - **Interactions réellement câblées (Module 11)** : Identity (rôle Admin, `ProfessionalAccountRequest` — lecture seule), Ride/Payment/FinancialDispute/Subscription/Advertising/Maintenance/RoadsideAssistance/Fleet (validation de propriété en lecture seule via `ISupportRelatedEntityValidator`, et pour Ride/FinancialDispute/RoadsideAssistance/Maintenance également comme source des 4 commandes de création manuelle d'incident), Notifications (`INotificationDispatcher`, catégorie `Support`).
 - **Règles d'isolation** : les notifications de sécurité critiques ne sont jamais désactivables (Module 6) ; les notes internes de support ne sont jamais exposées au demandeur, garanti par le repository (Module 11).
 
-## 12. Administration, Audit, Configuration et Analytics
+## 12. Administration, Audit, Configuration et Analytics (Analytics & Reporting — Module 12 pratique, implémenté ; reste d'Administration — Module 13A pratique, non démarré)
 
-- **Objectif** : fournir aux administrateurs les outils de supervision, d'audit et de configuration de la plateforme.
-- **Responsabilités** : rôles administratifs à moindre privilège (SuperAdmin, PlatformAdmin, SupportAgent, FinanceManager, AdvertiserAdmin, FleetManager, OperationsManager, ContentModerator, SecurityOfficer), actions sensibles nécessitant confirmation renforcée, tableaux de bord spécialisés par rôle, journal d'audit immuable, historique métier, paramètres système centralisés (`SystemSetting`), feature flags, références géographiques, règles de rétention, requêtes de données personnelles, analytics agrégées, rapports planifiés, exports, mode maintenance, endpoints de santé applicative.
-- **Données sensibles** : accès transverse à des données sensibles de plusieurs modules — contrôle d'accès strict et journalisé.
-- **Interactions** : potentiellement tous les modules, principalement en lecture, via des interfaces dédiées.
-- **Règles d'isolation** : Administration ne contourne jamais les règles métier des autres modules ; toute action de supervision passe par les cas d'utilisation exposés par chaque module. Aucune infrastructure de monitoring externe n'est implémentée (Prometheus/Grafana/OpenTelemetry restent hors périmètre, réservés à une phase DevSecOps séparée).
+- **Objectif** : fournir aux administrateurs les outils de supervision, d'audit et de configuration de la plateforme. La spécification bundle l'intégralité de ceci dans un seul "Module 11 — Administration, Audit, Configuration and Analytics" ; la séquence pratique en extrait un sous-ensemble Analytics/Reporting ("Module 12"), le reste (rôles administratifs, audit, `SystemSetting`, géographie) étant prévu pour un futur "Module 13A — Administration Completion", distinct de la finalisation DevSecOps ("Module 13B").
+- **État d'implémentation (Analytics & Reporting)** : implémenté. Architecture entièrement en lecture, sans nouvelle entité de domaine pour les KPI (une seule entité persistée : `ScheduledReportDefinition`) — 10 lecteurs Infrastructure dédiés (`IAdminDashboardReader`, `IGrowthAnalyticsReader`, `IRideAnalyticsReader`, `IFleetAnalyticsReader`, `ISubscriptionAnalyticsReader`, `IAdvertisingAnalyticsReader`, `IMaintenanceAnalyticsReader`, `IRoadsideAnalyticsReader`, `ISupportAnalyticsReader`, `IFinancialAnalyticsReader`), chacun lisant directement `ApplicationDbContext` (même convention que `FinancialReportRepository`), jamais via les repositories des autres modules. Tableau de bord admin (15 métriques, hors `SystemHealth`), analytics de croissance période-sur-période pour les 9 métriques nommées par la spécification (`UserGrowth`, `RideGrowth`, `RevenueGrowth`, `SubscriptionGrowth`, `PartnerGrowth`, `VehicleGrowth`, `CampaignGrowth`, `SupportTicketGrowth`, `IncidentGrowth`), rapports par domaine (Ride/Fleet/Subscription/Advertising/Maintenance/Roadside/Support/Financial), export non-financier (`IAnalyticsReportExporter`, stub de développement, formats Pdf/Excel/Csv — jamais de bibliothèque de rendu réelle), rapports planifiés (`ScheduledReportDefinition` + `ProcessDueScheduledReportsCommand`, traitement explicite/manuel, aucun ordonnanceur réel).
+- **Financier** : jamais recalculé — `TotalRevenue`/`PlatformCommission` réutilisent exactement les mêmes champs que `GetRevenueSummaryQueryHandler`/`FinancialReportRepository` de Payments ; seul `RevenueGrowth` (période-sur-période) est un calcul réellement nouveau, lu directement sur le grand livre immuable.
+- **UserGrowth** : `User.CreatedAtUtc` ajouté (nullable, aucune valeur historique fabriquée pour les utilisateurs existants — ils restent `NULL` et sont exclus du calcul). Fiable uniquement pour les inscriptions postérieures au déploiement de cette migration.
+- **PartnerGrowth** : compte exclusivement les approbations `GaragePartner`/`RoadsideAssistancePartner` (les deux seuls rôles nommés "...Partner" dans le vocabulaire du domaine) — `TaxiOwner` (Fleet) et `Advertiser` (a son propre `CampaignGrowth`) en sont exclus.
+- **Analytics géographiques (Ride)** : partiellement différées — `Ride` n'a qu'une adresse en texte libre, aucune dimension Ville/Zone fiable n'existe ; aucune n'est fabriquée. À réévaluer avec le futur catalogue de géographie (Module 13A).
+- **Concurrence des rapports planifiés** : `ProcessDueScheduledReportsCommand` réclame atomiquement une occurrence due (`TryClaimAsync`) avant toute génération/livraison — deux processeurs concurrents ne peuvent jamais livrer la même occurrence. Livraison "au moins une fois", pas "exactement une fois" : un crash entre la livraison et la finalisation laisse la réclamation en place, qui redevient réclamable après un délai documenté et sera alors relivrée — compromis délibéré, documenté, jamais présenté comme une garantie plus forte qu'il ne l'est.
+- **Permissions** : exactement 3, Admin uniquement (`analytics.dashboard.read`, `analytics.reports.read`, `analytics.reports.export`) — aucun nouveau rôle utilisateur.
+- **Hors périmètre du Module 12** (délibérément différé) : rapports "Security" (aucune donnée d'audit n'existe encore), planification automatique réelle (aucun ordonnanceur/tâche de fond n'existe dans ce projet), bibliothèques réelles de rendu PDF/Excel/CSV, persistance de métadonnées d'export, tables de snapshot KPI.
+- **Responsabilités restantes (Module 13A — Administration, non démarré)** : rôles administratifs à moindre privilège (SuperAdmin, PlatformAdmin, SupportAgent, FinanceManager, AdvertiserAdmin, FleetManager, OperationsManager, ContentModerator, SecurityOfficer), actions sensibles nécessitant confirmation renforcée, journal d'audit immuable, historique métier, paramètres système centralisés (`SystemSetting`), feature flags, références géographiques, règles de rétention, mode maintenance, endpoints de santé applicative.
+- **Données sensibles** : accès transverse à des données sensibles de plusieurs modules — contrôle d'accès strict et journalisé (Administration, à venir) ; côté Analytics implémenté, aucune donnée individuelle (email/téléphone/GPS/texte de ticket ou d'incident) n'apparaît jamais dans un agrégat.
+- **Interactions réellement câblées (Analytics)** : lecture directe des tables Identity/Fleet/Rides/Payments/Subscriptions/Advertising/Maintenance/RoadsideAssistance/Support via `ApplicationDbContext`, jamais d'écriture, jamais de dépendance sur les repositories métier de ces modules.
+- **Règles d'isolation** : Analytics ne modifie jamais l'état d'un autre module. Administration (à venir) ne contournera jamais les règles métier des autres modules ; toute action de supervision passera par les cas d'utilisation exposés par chaque module. Aucune infrastructure de monitoring externe n'est implémentée (Prometheus/Grafana/OpenTelemetry restent hors périmètre, réservés à la phase DevSecOps — Module 13B).
 
 ## 13. Matrice des interactions entre modules
 
 Lecture : une case cochée indique que le module en ligne interagit avec le module en colonne (dans le sens prévu des échanges).
 
-| Module \ vers → | Identity | Subscription | Ride | Fleet | Maintenance | RoadsideAssistance | Loyalty | Payment | Advertising | Support | Administration |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Identity | — | | | | | | | | | | |
-| Subscription | ✓ | — | | ✓ | ✓ | ✓ | | ✓ | ✓ | | |
-| Ride | ✓ | | — | ✓ | | ✓ | ✓ | ✓ | | ✓ | |
-| Fleet | ✓ | | ✓ | — | ✓ | ✓ | | ✓ | ✓ | | |
-| Maintenance | | | | ✓ | — | ✓ | | ✓ | | | |
-| RoadsideAssistance | | | ✓ | ✓ | ✓ | — | | ✓ | | ✓ | |
-| Loyalty | ✓ | | ✓ | | | | — | ✓ | | | |
-| Payment | | | | | | | | — | | | |
-| Advertising | ✓ | | | | | | | ✓ | — | | |
-| Support | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ | — | ✓ |
-| Administration | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| Module \ vers → | Identity | Subscription | Ride | Fleet | Maintenance | RoadsideAssistance | Loyalty | Payment | Advertising | Support | Analytics | Administration |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Identity | — | | | | | | | | | | | |
+| Subscription | ✓ | — | | ✓ | ✓ | ✓ | | ✓ | ✓ | | | |
+| Ride | ✓ | | — | ✓ | | ✓ | ✓ | ✓ | | ✓ | | |
+| Fleet | ✓ | | ✓ | — | ✓ | ✓ | | ✓ | ✓ | | | |
+| Maintenance | | | | ✓ | — | ✓ | | ✓ | | | | |
+| RoadsideAssistance | | | ✓ | ✓ | ✓ | — | | ✓ | | ✓ | | |
+| Loyalty | ✓ | | ✓ | | | | — | ✓ | | | | |
+| Payment | | | | | | | | — | | | | |
+| Advertising | ✓ | | | | | | | ✓ | — | | | |
+| Support | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ | — | | ✓ |
+| Analytics | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ | — | |
+| Administration | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
 
 Cette matrice sera affinée au fur et à mesure de l'implémentation effective des modules ; voir [docs/business-functional-specification.md](business-functional-specification.md) pour la liste complète des événements métier inter-modules.

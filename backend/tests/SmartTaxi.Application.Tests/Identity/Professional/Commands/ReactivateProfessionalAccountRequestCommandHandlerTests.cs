@@ -37,7 +37,7 @@ public class ReactivateProfessionalAccountRequestCommandHandlerTests
     [Fact]
     public async Task Handle_ForSuspendedRequestWithStillValidDocuments_ReactivatesAndRegrantsRole()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         await ApproveAllDriverDocumentsAsync(user.Id);
 
@@ -59,7 +59,7 @@ public class ReactivateProfessionalAccountRequestCommandHandlerTests
     [Fact]
     public async Task Handle_ForSuspendedRequestWithNoLongerValidDocuments_ReturnsValidationError()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
 
         var request = new ProfessionalAccountRequest(user.Id, UserRole.Driver, DateTime.UtcNow);

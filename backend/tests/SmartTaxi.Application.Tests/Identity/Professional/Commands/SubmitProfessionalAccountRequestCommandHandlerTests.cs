@@ -20,7 +20,7 @@ public class SubmitProfessionalAccountRequestCommandHandlerTests
 
     private async Task<Guid> CreateUserAsync()
     {
-        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer);
+        var user = User.Create(Email.Create($"{Guid.NewGuid()}@example.com"), HashedPassword.Create("hashed"), UserRole.Customer, DateTime.UtcNow);
         await _userRepository.AddAsync(user, CancellationToken.None);
         return user.Id;
     }

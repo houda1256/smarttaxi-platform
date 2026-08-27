@@ -34,6 +34,9 @@ public sealed class SupportTicketConfiguration : IEntityTypeConfiguration<Suppor
         builder.HasIndex(ticket => ticket.AssignedAdminUserId);
 
         builder.Property(ticket => ticket.CreatedAtUtc).IsRequired();
+        // Module 12 (Analytics) — SupportTicketGrowthCount filters by CreatedAtUtc alone (never combined
+        // with Status in the same query), so a single-column index serves it better than a composite.
+        builder.HasIndex(ticket => ticket.CreatedAtUtc);
         builder.Property(ticket => ticket.UpdatedAtUtc).IsRequired();
         builder.Property(ticket => ticket.ResolvedAtUtc);
         builder.Property(ticket => ticket.ClosedAtUtc);

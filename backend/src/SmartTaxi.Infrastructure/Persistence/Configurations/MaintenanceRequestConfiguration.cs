@@ -35,6 +35,11 @@ public sealed class MaintenanceRequestConfiguration : IEntityTypeConfiguration<M
             .HasFilter("\"Status\" NOT IN ('Completed', 'Cancelled', 'Rejected', 'QuoteRejected')");
 
         builder.Property(request => request.RequestedAtUtc).IsRequired();
+        // Module 12 (Analytics) — MaintenanceAnalyticsReader's RequestCount/AverageTurnaround queries
+        // filter by RequestedAtUtc alone, discovered when re-checking actual query shapes (not in the
+        // original candidate list, added here for consistency with the identical pattern on every other
+        // module's "GrowthCount" query).
+        builder.HasIndex(request => request.RequestedAtUtc);
         builder.Property(request => request.ConfirmedAtUtc);
         builder.Property(request => request.GarageRejectionReason).HasMaxLength(1000);
         builder.Property(request => request.EstimatedCost).HasPrecision(12, 3);
