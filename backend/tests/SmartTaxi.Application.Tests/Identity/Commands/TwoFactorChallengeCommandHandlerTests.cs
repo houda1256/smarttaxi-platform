@@ -39,7 +39,7 @@ public class TwoFactorChallengeCommandHandlerTests
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
             _challengeRepository, new FakeRefreshTokenGenerator(), _refreshTokenHasher, _policy,
-            _lockoutPolicy, _auditLogRepository);
+            _lockoutPolicy, _auditLogRepository, new FakeAuditContextAccessor());
 
         _enrollHandler = new EnrollTwoFactorCommandHandler(_userRepository, _totpService, _protector, _policy);
         _confirmHandler = new ConfirmTwoFactorCommandHandler(_userRepository, _totpService, _protector, _recoveryCodeService);
@@ -47,7 +47,7 @@ public class TwoFactorChallengeCommandHandlerTests
         _challengeHandler = new TwoFactorChallengeCommandNs.TwoFactorChallengeCommandHandler(
             _challengeRepository, _userRepository, _sessionRepository, _refreshTokenHasher,
             _totpService, _protector, _recoveryCodeService, refreshTokenIssuer,
-            _lockoutPolicy, _auditLogRepository);
+            _lockoutPolicy, _auditLogRepository, new FakeAuditContextAccessor());
     }
 
     private async Task<(Guid UserId, string ChallengeToken, string Secret, IReadOnlyCollection<string> RecoveryCodes)> RegisterEnrollAndLoginAsync(

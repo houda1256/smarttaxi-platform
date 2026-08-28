@@ -21,13 +21,16 @@ internal sealed class AdminUserManagementRepository : IAdminUserManagementReposi
     private readonly ApplicationDbContext _context;
     private readonly ISessionRepository _sessionRepository;
     private readonly ITwoFactorRecoveryCodeRepository _recoveryCodeRepository;
+    private readonly IAuditContextAccessor _auditContextAccessor;
 
     public AdminUserManagementRepository(
-        ApplicationDbContext context, ISessionRepository sessionRepository, ITwoFactorRecoveryCodeRepository recoveryCodeRepository)
+        ApplicationDbContext context, ISessionRepository sessionRepository, ITwoFactorRecoveryCodeRepository recoveryCodeRepository,
+        IAuditContextAccessor auditContextAccessor)
     {
         _context = context;
         _sessionRepository = sessionRepository;
         _recoveryCodeRepository = recoveryCodeRepository;
+        _auditContextAccessor = auditContextAccessor;
     }
 
     public async Task<bool> TrySuspendAsync(Guid targetUserId, Guid actorUserId, DateTime utcNow, CancellationToken cancellationToken)
@@ -46,8 +49,10 @@ internal sealed class AdminUserManagementRepository : IAdminUserManagementReposi
 
         await _sessionRepository.RevokeAllActiveSessionsAsync(targetUserId, SessionRevocationReason.AdminAction, utcNow, cancellationToken);
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
-            actorUserId, AuditAction.AdminUserSuspended, AuditTargetType.User, targetUserId, null, null, null, null, utcNow);
+            actorUserId, AuditAction.AdminUserSuspended, AuditTargetType.User, targetUserId, null,
+            context.CorrelationId, context.IpAddress, context.UserAgent, utcNow);
         await _context.AuditLogs.AddAsync(auditEntry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -69,8 +74,10 @@ internal sealed class AdminUserManagementRepository : IAdminUserManagementReposi
             return false;
         }
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
-            actorUserId, AuditAction.AdminUserReactivated, AuditTargetType.User, targetUserId, null, null, null, null, utcNow);
+            actorUserId, AuditAction.AdminUserReactivated, AuditTargetType.User, targetUserId, null,
+            context.CorrelationId, context.IpAddress, context.UserAgent, utcNow);
         await _context.AuditLogs.AddAsync(auditEntry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -93,9 +100,11 @@ internal sealed class AdminUserManagementRepository : IAdminUserManagementReposi
         var revokedCount = await _sessionRepository.RevokeAllActiveSessionsAsync(
             targetUserId, SessionRevocationReason.AdminAction, utcNow, cancellationToken);
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
             actorUserId, AuditAction.AdminUserSessionsRevoked, AuditTargetType.User, targetUserId,
-            new Dictionary<string, string> { ["revokedCount"] = revokedCount.ToString() }, null, null, null, utcNow);
+            new Dictionary<string, string> { ["revokedCount"] = revokedCount.ToString() },
+            context.CorrelationId, context.IpAddress, context.UserAgent, utcNow);
         await _context.AuditLogs.AddAsync(auditEntry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -126,8 +135,10 @@ internal sealed class AdminUserManagementRepository : IAdminUserManagementReposi
 
         await _recoveryCodeRepository.DeleteAllForUserAsync(targetUserId, cancellationToken);
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
-            actorUserId, AuditAction.AdminUserTwoFactorReset, AuditTargetType.User, targetUserId, null, null, null, null, utcNow);
+            actorUserId, AuditAction.AdminUserTwoFactorReset, AuditTargetType.User, targetUserId, null,
+            context.CorrelationId, context.IpAddress, context.UserAgent, utcNow);
         await _context.AuditLogs.AddAsync(auditEntry, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
 

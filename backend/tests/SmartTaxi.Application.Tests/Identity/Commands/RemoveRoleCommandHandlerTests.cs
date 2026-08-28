@@ -16,7 +16,7 @@ public class RemoveRoleCommandHandlerTests
 
     public RemoveRoleCommandHandlerTests()
     {
-        _handler = new RemoveRoleCommandHandler(_userRepository, _auditedUserRepository);
+        _handler = new RemoveRoleCommandHandler(_userRepository, _auditedUserRepository, new FakeAuditContextAccessor());
     }
 
     private async Task<User> SeedUserAsync(params UserRole[] extraRoles)

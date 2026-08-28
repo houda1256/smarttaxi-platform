@@ -21,7 +21,7 @@ public class LogoutCommandHandlerTests
 
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
-            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository());
+            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository(), new FakeAuditContextAccessor());
         _logoutHandler = new LogoutCommandHandler(_sessionRepository);
     }
 

@@ -6,6 +6,7 @@ using SmartTaxi.Domain.Identity.Entities;
 using SmartTaxi.Domain.Identity.Enums;
 using SmartTaxi.Domain.Identity.ValueObjects;
 using SmartTaxi.Infrastructure.Administration.Repositories;
+using SmartTaxi.Infrastructure.Administration.Services;
 using SmartTaxi.Infrastructure.Identity.Repositories;
 
 namespace SmartTaxi.Infrastructure.IntegrationTests;
@@ -47,9 +48,9 @@ public class AdminUserManagementIntegrationTests
         await using var contextA = _fixture.CreateContext();
         await using var contextB = _fixture.CreateContext();
         var repositoryA = new AdminUserManagementRepository(
-            contextA, new SessionRepository(contextA), new TwoFactorRecoveryCodeRepository(contextA));
+            contextA, new SessionRepository(contextA), new TwoFactorRecoveryCodeRepository(contextA), new NullAuditContextAccessor());
         var repositoryB = new AdminUserManagementRepository(
-            contextB, new SessionRepository(contextB), new TwoFactorRecoveryCodeRepository(contextB));
+            contextB, new SessionRepository(contextB), new TwoFactorRecoveryCodeRepository(contextB), new NullAuditContextAccessor());
 
         var results = await Task.WhenAll(
             repositoryA.TrySuspendAsync(userId, actorId, utcNow, CancellationToken.None),
@@ -79,7 +80,7 @@ public class AdminUserManagementIntegrationTests
 
         await using (var context = _fixture.CreateContext())
         {
-            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context));
+            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context), new NullAuditContextAccessor());
             var suspended = await repository.TrySuspendAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
             Assert.True(suspended);
         }
@@ -106,7 +107,7 @@ public class AdminUserManagementIntegrationTests
 
         await using (var context = _fixture.CreateContext())
         {
-            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context));
+            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context), new NullAuditContextAccessor());
             await repository.TrySuspendAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
             var reactivated = await repository.TryReactivateAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
             Assert.True(reactivated);
@@ -137,13 +138,13 @@ public class AdminUserManagementIntegrationTests
 
         await using (var context = _fixture.CreateContext())
         {
-            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context));
+            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context), new NullAuditContextAccessor());
             first = await repository.TryRevokeSessionsAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
         }
 
         await using (var context = _fixture.CreateContext())
         {
-            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context));
+            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context), new NullAuditContextAccessor());
             second = await repository.TryRevokeSessionsAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
         }
 
@@ -175,7 +176,7 @@ public class AdminUserManagementIntegrationTests
 
         await using (var context = _fixture.CreateContext())
         {
-            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context));
+            var repository = new AdminUserManagementRepository(context, new SessionRepository(context), new TwoFactorRecoveryCodeRepository(context), new NullAuditContextAccessor());
             var reset = await repository.TryResetTwoFactorAsync(userId, Guid.NewGuid(), utcNow, CancellationToken.None);
             Assert.True(reset);
         }

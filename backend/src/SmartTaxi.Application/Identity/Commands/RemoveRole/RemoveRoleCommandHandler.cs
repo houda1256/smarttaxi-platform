@@ -13,11 +13,14 @@ public sealed class RemoveRoleCommandHandler : ICommandHandler<RemoveRoleCommand
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuditedUserRepository _auditedUserRepository;
+    private readonly IAuditContextAccessor _auditContextAccessor;
 
-    public RemoveRoleCommandHandler(IUserRepository userRepository, IAuditedUserRepository auditedUserRepository)
+    public RemoveRoleCommandHandler(
+        IUserRepository userRepository, IAuditedUserRepository auditedUserRepository, IAuditContextAccessor auditContextAccessor)
     {
         _userRepository = userRepository;
         _auditedUserRepository = auditedUserRepository;
+        _auditContextAccessor = auditContextAccessor;
     }
 
     public async Task<Result> Handle(RemoveRoleCommand command, CancellationToken cancellationToken)
@@ -41,9 +44,11 @@ public sealed class RemoveRoleCommandHandler : ICommandHandler<RemoveRoleCommand
 
         user.RemoveRole(role);
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
             command.ActingAdminUserId, AuditAction.RoleRemoved, AuditTargetType.User, user.Id,
-            new Dictionary<string, string> { ["role"] = role.ToString() }, null, null, null, DateTime.UtcNow);
+            new Dictionary<string, string> { ["role"] = role.ToString() },
+            context.CorrelationId, context.IpAddress, context.UserAgent, DateTime.UtcNow);
 
         await _auditedUserRepository.SaveWithAuditAsync(user, auditEntry, cancellationToken);
 

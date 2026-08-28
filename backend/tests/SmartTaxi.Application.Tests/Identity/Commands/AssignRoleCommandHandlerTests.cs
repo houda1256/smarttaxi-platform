@@ -16,7 +16,7 @@ public class AssignRoleCommandHandlerTests
 
     public AssignRoleCommandHandlerTests()
     {
-        _handler = new AssignRoleCommandHandler(_userRepository, _auditedUserRepository);
+        _handler = new AssignRoleCommandHandler(_userRepository, _auditedUserRepository, new FakeAuditContextAccessor());
     }
 
     private async Task<User> SeedUserAsync()

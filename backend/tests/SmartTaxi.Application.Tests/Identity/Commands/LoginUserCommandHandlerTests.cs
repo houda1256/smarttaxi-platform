@@ -23,7 +23,8 @@ public class LoginUserCommandHandlerTests
 
         _handler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
-            _challengeRepository, new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), _lockoutPolicy, _auditLogRepository);
+            _challengeRepository, new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(),
+            _lockoutPolicy, _auditLogRepository, new FakeAuditContextAccessor());
     }
 
     private async Task RegisterUserAsync(string email, string password)

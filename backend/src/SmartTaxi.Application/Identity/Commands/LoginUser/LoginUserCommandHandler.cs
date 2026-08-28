@@ -35,6 +35,7 @@ public sealed class LoginUserCommandHandler
     private readonly ITwoFactorPolicy _twoFactorPolicy;
     private readonly ILoginLockoutPolicy _lockoutPolicy;
     private readonly IAuditLogRepository _auditLogRepository;
+    private readonly IAuditContextAccessor _auditContextAccessor;
 
     public LoginUserCommandHandler(
         IUserRepository userRepository,
@@ -46,7 +47,8 @@ public sealed class LoginUserCommandHandler
         IRefreshTokenHasher tokenHasher,
         ITwoFactorPolicy twoFactorPolicy,
         ILoginLockoutPolicy lockoutPolicy,
-        IAuditLogRepository auditLogRepository)
+        IAuditLogRepository auditLogRepository,
+        IAuditContextAccessor auditContextAccessor)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
@@ -58,6 +60,7 @@ public sealed class LoginUserCommandHandler
         _twoFactorPolicy = twoFactorPolicy;
         _lockoutPolicy = lockoutPolicy;
         _auditLogRepository = auditLogRepository;
+        _auditContextAccessor = auditContextAccessor;
     }
 
     public async Task<Result<LoginUserResult>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
@@ -134,8 +137,11 @@ public sealed class LoginUserCommandHandler
 
         if (newCount == _lockoutPolicy.MaxFailedAttempts)
         {
+            var context = _auditContextAccessor.GetContext();
             await _auditLogRepository.AddAsync(
-                AuditLogEntry.Create(null, AuditAction.AccountLocked, AuditTargetType.User, userId, null, null, null, null, utcNow),
+                AuditLogEntry.Create(
+                    null, AuditAction.AccountLocked, AuditTargetType.User, userId, null,
+                    context.CorrelationId, context.IpAddress, context.UserAgent, utcNow),
                 cancellationToken);
         }
     }

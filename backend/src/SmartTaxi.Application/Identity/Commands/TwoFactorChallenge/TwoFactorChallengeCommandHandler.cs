@@ -31,6 +31,7 @@ public sealed class TwoFactorChallengeCommandHandler
     private readonly RefreshTokenIssuer _refreshTokenIssuer;
     private readonly ILoginLockoutPolicy _lockoutPolicy;
     private readonly IAuditLogRepository _auditLogRepository;
+    private readonly IAuditContextAccessor _auditContextAccessor;
 
     public TwoFactorChallengeCommandHandler(
         ITwoFactorChallengeRepository challengeRepository,
@@ -42,7 +43,8 @@ public sealed class TwoFactorChallengeCommandHandler
         RecoveryCodeService recoveryCodeService,
         RefreshTokenIssuer refreshTokenIssuer,
         ILoginLockoutPolicy lockoutPolicy,
-        IAuditLogRepository auditLogRepository)
+        IAuditLogRepository auditLogRepository,
+        IAuditContextAccessor auditContextAccessor)
     {
         _challengeRepository = challengeRepository;
         _userRepository = userRepository;
@@ -54,6 +56,7 @@ public sealed class TwoFactorChallengeCommandHandler
         _refreshTokenIssuer = refreshTokenIssuer;
         _lockoutPolicy = lockoutPolicy;
         _auditLogRepository = auditLogRepository;
+        _auditContextAccessor = auditContextAccessor;
     }
 
     public async Task<Result<TwoFactorChallengeResult>> Handle(TwoFactorChallengeCommand command, CancellationToken cancellationToken)
@@ -90,8 +93,11 @@ public sealed class TwoFactorChallengeCommandHandler
 
             if (newCount == _lockoutPolicy.MaxFailedAttempts)
             {
+                var context = _auditContextAccessor.GetContext();
                 await _auditLogRepository.AddAsync(
-                    AuditLogEntry.Create(null, AuditAction.AccountLocked, AuditTargetType.User, user.Id, null, null, null, null, utcNow),
+                    AuditLogEntry.Create(
+                        null, AuditAction.AccountLocked, AuditTargetType.User, user.Id, null,
+                        context.CorrelationId, context.IpAddress, context.UserAgent, utcNow),
                     cancellationToken);
             }
 

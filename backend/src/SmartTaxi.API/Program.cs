@@ -1,8 +1,16 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using SmartTaxi.API.Administration;
+using SmartTaxi.API.Cors;
+using SmartTaxi.API.Correlation;
 using SmartTaxi.API.Endpoints.Administration;
+using SmartTaxi.API.HealthChecks;
+using SmartTaxi.API.Middleware;
+using SmartTaxi.API.RateLimiting;
 using SmartTaxi.API.Endpoints.Advertising;
 using SmartTaxi.API.Endpoints.Analytics;
 using SmartTaxi.API.Endpoints.Fleet;
@@ -285,6 +293,7 @@ using SmartTaxi.Application.Support.Queries.GetMySupportTickets;
 using SmartTaxi.Application.Support.Queries.GetSupportIncidentById;
 using SmartTaxi.Application.Support.Queries.GetSupportTicketDetails;
 using SmartTaxi.Application.Support.Queries.GetSupportTicketDetailsAdmin;
+using SmartTaxi.Application.Administration.Abstractions;
 using SmartTaxi.Application.Administration.Commands.ReactivateUser;
 using SmartTaxi.Application.Administration.Commands.ResetUserTwoFactor;
 using SmartTaxi.Application.Administration.Commands.RevokeUserSessions;
@@ -342,6 +351,64 @@ using SmartTaxi.Application.Payments.Queries.GetPaymentTransactionHistory;
 using SmartTaxi.Application.Payments.Queries.GetReceiptByPaymentId;
 using SmartTaxi.Application.Payments.Queries.GetRefundsForPayment;
 using SmartTaxi.Application.Payments.Queries.GetRevenueSummary;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.AddBusinessCustomerEmployee;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.CloseBusinessCustomer;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.DeactivateBusinessCustomerEmployee;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.ReactivateBusinessCustomer;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.RegisterBusinessCustomer;
+using SmartTaxi.Application.Payments.BusinessCustomers.Commands.SuspendBusinessCustomer;
+using SmartTaxi.Application.Payments.BusinessCustomers.Queries.GetAllBusinessCustomers;
+using SmartTaxi.Application.Payments.BusinessCustomers.Queries.GetBusinessCustomerById;
+using SmartTaxi.Application.Payments.BusinessCustomers.Queries.GetBusinessCustomerEmployees;
+using SmartTaxi.Application.Payments.BusinessCustomers.Queries.GetMyBusinessCustomer;
+using SmartTaxi.Application.Payments.CashDeclarations.Commands.ApproveCashDeclaration;
+using SmartTaxi.Application.Payments.CashDeclarations.Commands.DisputeCashDeclaration;
+using SmartTaxi.Application.Payments.CashDeclarations.Commands.SettleCashDeclaration;
+using SmartTaxi.Application.Payments.CashDeclarations.Commands.StartReviewCashDeclaration;
+using SmartTaxi.Application.Payments.CashDeclarations.Commands.SubmitCashDeclaration;
+using SmartTaxi.Application.Payments.CashDeclarations.Queries.GetCashDeclarationById;
+using SmartTaxi.Application.Payments.CashDeclarations.Queries.GetCashDeclarationsForReview;
+using SmartTaxi.Application.Payments.CashDeclarations.Queries.GetMyCashDeclarations;
+using SmartTaxi.Application.Payments.CashRegister.Commands.CloseCashRegisterSession;
+using SmartTaxi.Application.Payments.CashRegister.Commands.DisputeCashRegisterSession;
+using SmartTaxi.Application.Payments.CashRegister.Commands.OpenCashRegisterSession;
+using SmartTaxi.Application.Payments.CashRegister.Commands.ReconcileCashRegisterSession;
+using SmartTaxi.Application.Payments.CashRegister.Commands.RecordCashMovement;
+using SmartTaxi.Application.Payments.CashRegister.Commands.RegisterCashRegister;
+using SmartTaxi.Application.Payments.CashRegister.Queries.GetCashRegisterSessionById;
+using SmartTaxi.Application.Payments.CashRegister.Queries.GetMovementsForSession;
+using SmartTaxi.Application.Payments.CashRegister.Queries.GetSessionsForOwner;
+using SmartTaxi.Application.Payments.Disputes.Commands.EscalateFinancialDispute;
+using SmartTaxi.Application.Payments.Disputes.Commands.OpenFinancialDispute;
+using SmartTaxi.Application.Payments.Disputes.Commands.RejectFinancialDispute;
+using SmartTaxi.Application.Payments.Disputes.Commands.ResolveFinancialDispute;
+using SmartTaxi.Application.Payments.Disputes.Commands.StartReviewFinancialDispute;
+using SmartTaxi.Application.Payments.Disputes.Queries.GetFinancialDisputeById;
+using SmartTaxi.Application.Payments.Disputes.Queries.GetFinancialDisputesForReview;
+using SmartTaxi.Application.Payments.Disputes.Queries.GetMyFinancialDisputes;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Commands.CancelGroupedInvoice;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Commands.GenerateGroupedInvoice;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Commands.MarkGroupedInvoicePaid;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Queries.GetGroupedInvoiceById;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Queries.GetGroupedInvoiceLines;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Queries.GetGroupedInvoicesForBusinessCustomer;
+using SmartTaxi.Application.Payments.GroupedInvoicing.Queries.GetOverdueGroupedInvoices;
+using SmartTaxi.Application.Payments.Payouts.Commands.ApprovePayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.CancelPayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.CompletePayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.FailPayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.RejectPayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.RequestPayout;
+using SmartTaxi.Application.Payments.Payouts.Commands.StartProcessingPayout;
+using SmartTaxi.Application.Payments.Payouts.Queries.GetAdminPayouts;
+using SmartTaxi.Application.Payments.Payouts.Queries.GetMyPayouts;
+using SmartTaxi.Application.Payments.Payouts.Queries.GetPayoutById;
+using SmartTaxi.Application.Payments.Reports.Queries.ExportFinancialReport;
+using SmartTaxi.Application.Payments.Reports.Queries.GetFinancialReport;
+using SmartTaxi.Application.Payments.Taxes.Commands.CreateTaxRule;
+using SmartTaxi.Application.Payments.Taxes.Commands.DeactivateTaxRule;
+using SmartTaxi.Application.Payments.Taxes.Queries.GetAllTaxRules;
+using SmartTaxi.Application.Payments.Taxes.Queries.GetApplicableTaxRule;
 using SmartTaxi.Application.Rides.Abstractions;
 using SmartTaxi.Application.Rides.Commands.AcceptFare;
 using SmartTaxi.Application.Rides.Commands.AcknowledgeSos;
@@ -409,6 +476,7 @@ using SmartTaxi.Application.Rides.Queries.GetRideRatings;
 using SmartTaxi.Application.Rides.Queries.GetRideSafetyEvents;
 using SmartTaxi.Application.Rides.Queries.GetSharedRideFareBreakdown;
 using SmartTaxi.Infrastructure;
+using SmartTaxi.Infrastructure.Configuration;
 using SmartTaxi.Infrastructure.Identity.Options;
 using TwoFactorChallengeCommandNs = SmartTaxi.Application.Identity.Commands.TwoFactorChallenge;
 
@@ -417,7 +485,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddControllers(); // SECURITY DEMO ONLY — required to host VulnerableSqlController; remove after CodeQL demo
 builder.Services.AddSignalR();
 
 // Used to encrypt TOTP secrets at rest (ITwoFactorSecretProtector). Registered
@@ -425,6 +492,13 @@ builder.Services.AddSignalR();
 builder.Services.AddDataProtection();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Overrides Infrastructure's NullAuditContextAccessor for normal HTTP request
+// handling — the last registration wins for constructor injection. Non-HTTP
+// callers and tests still get the Infrastructure fallback directly.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IAuditContextAccessor, HttpCorrelationAuditContextAccessor>();
+
 builder.Services.AddScoped<RegisterUserCommandHandler>();
 builder.Services.AddScoped<LoginUserCommandHandler>();
 builder.Services.AddScoped<GetUserByIdQueryHandler>();
@@ -656,6 +730,64 @@ builder.Services.AddScoped<GetRevenueSummaryQueryHandler>();
 builder.Services.AddScoped<GetDriverRevenueReportQueryHandler>();
 builder.Services.AddScoped<GetOwnerRevenueReportQueryHandler>();
 builder.Services.AddScoped<GetPaymentStatisticsQueryHandler>();
+builder.Services.AddScoped<AddBusinessCustomerEmployeeCommandHandler>();
+builder.Services.AddScoped<ApproveCashDeclarationCommandHandler>();
+builder.Services.AddScoped<ApprovePayoutCommandHandler>();
+builder.Services.AddScoped<CancelGroupedInvoiceCommandHandler>();
+builder.Services.AddScoped<CancelPayoutCommandHandler>();
+builder.Services.AddScoped<CloseBusinessCustomerCommandHandler>();
+builder.Services.AddScoped<CloseCashRegisterSessionCommandHandler>();
+builder.Services.AddScoped<CompletePayoutCommandHandler>();
+builder.Services.AddScoped<CreateTaxRuleCommandHandler>();
+builder.Services.AddScoped<DeactivateBusinessCustomerEmployeeCommandHandler>();
+builder.Services.AddScoped<DeactivateTaxRuleCommandHandler>();
+builder.Services.AddScoped<DisputeCashDeclarationCommandHandler>();
+builder.Services.AddScoped<DisputeCashRegisterSessionCommandHandler>();
+builder.Services.AddScoped<EscalateFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<ExportFinancialReportQueryHandler>();
+builder.Services.AddScoped<FailPayoutCommandHandler>();
+builder.Services.AddScoped<GenerateGroupedInvoiceCommandHandler>();
+builder.Services.AddScoped<GetAdminPayoutsQueryHandler>();
+builder.Services.AddScoped<GetAllBusinessCustomersQueryHandler>();
+builder.Services.AddScoped<GetAllTaxRulesQueryHandler>();
+builder.Services.AddScoped<GetApplicableTaxRuleQueryHandler>();
+builder.Services.AddScoped<GetBusinessCustomerByIdQueryHandler>();
+builder.Services.AddScoped<GetBusinessCustomerEmployeesQueryHandler>();
+builder.Services.AddScoped<GetCashDeclarationByIdQueryHandler>();
+builder.Services.AddScoped<GetCashDeclarationsForReviewQueryHandler>();
+builder.Services.AddScoped<GetCashRegisterSessionByIdQueryHandler>();
+builder.Services.AddScoped<GetFinancialDisputeByIdQueryHandler>();
+builder.Services.AddScoped<GetFinancialDisputesForReviewQueryHandler>();
+builder.Services.AddScoped<GetFinancialReportQueryHandler>();
+builder.Services.AddScoped<GetGroupedInvoiceByIdQueryHandler>();
+builder.Services.AddScoped<GetGroupedInvoiceLinesQueryHandler>();
+builder.Services.AddScoped<GetGroupedInvoicesForBusinessCustomerQueryHandler>();
+builder.Services.AddScoped<GetMovementsForSessionQueryHandler>();
+builder.Services.AddScoped<GetMyBusinessCustomerQueryHandler>();
+builder.Services.AddScoped<GetMyCashDeclarationsQueryHandler>();
+builder.Services.AddScoped<GetMyFinancialDisputesQueryHandler>();
+builder.Services.AddScoped<GetMyPayoutsQueryHandler>();
+builder.Services.AddScoped<GetOverdueGroupedInvoicesQueryHandler>();
+builder.Services.AddScoped<GetPayoutByIdQueryHandler>();
+builder.Services.AddScoped<GetSessionsForOwnerQueryHandler>();
+builder.Services.AddScoped<MarkGroupedInvoicePaidCommandHandler>();
+builder.Services.AddScoped<OpenCashRegisterSessionCommandHandler>();
+builder.Services.AddScoped<OpenFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<ReactivateBusinessCustomerCommandHandler>();
+builder.Services.AddScoped<ReconcileCashRegisterSessionCommandHandler>();
+builder.Services.AddScoped<RecordCashMovementCommandHandler>();
+builder.Services.AddScoped<RegisterBusinessCustomerCommandHandler>();
+builder.Services.AddScoped<RegisterCashRegisterCommandHandler>();
+builder.Services.AddScoped<RejectFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<RejectPayoutCommandHandler>();
+builder.Services.AddScoped<RequestPayoutCommandHandler>();
+builder.Services.AddScoped<ResolveFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<SettleCashDeclarationCommandHandler>();
+builder.Services.AddScoped<StartProcessingPayoutCommandHandler>();
+builder.Services.AddScoped<StartReviewCashDeclarationCommandHandler>();
+builder.Services.AddScoped<StartReviewFinancialDisputeCommandHandler>();
+builder.Services.AddScoped<SubmitCashDeclarationCommandHandler>();
+builder.Services.AddScoped<SuspendBusinessCustomerCommandHandler>();
 
 // Subscription module.
 builder.Services.AddScoped<CreateSubscriptionPlanCommandHandler>();
@@ -850,7 +982,24 @@ builder.Services.AddScoped<GetScheduledReportsQueryHandler>();
 builder.Services.AddScoped<ExportAnalyticsReportCommandHandler>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
+
+// GlobalExceptionHandler bypasses IProblemDetailsService entirely (it writes
+// its own ProblemDetails directly), so it adds the correlation id itself —
+// this callback only covers TypedResults.Problem()/Results.Problem() paths
+// (every module's ToProblem() convention), verified by an integration test
+// rather than assumed.
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        var correlationId = context.HttpContext.GetCorrelationId();
+
+        if (correlationId is not null)
+        {
+            context.ProblemDetails.Extensions["correlationId"] = correlationId;
+        }
+    };
+});
 
 // Single source of truth for JWT settings: the same JwtOptions type/section
 // bound in SmartTaxi.Infrastructure.DependencyInjection.AddInfrastructure
@@ -866,6 +1015,13 @@ builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Without this, ASP.NET Core's JWT handler remaps short claim names
+        // ("sub", "role", ...) to legacy long-form URIs on validation, so
+        // every currentUser.FindFirstValue(JwtRegisteredClaimNames.Sub) call
+        // across the API (49 endpoint files) would find nothing and throw —
+        // a pre-existing gap, not something Module 13B introduced.
+        options.MapInboundClaims = false;
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -878,6 +1034,26 @@ builder.Services
             NameClaimType = "sub",
             RoleClaimType = "role"
         };
+
+        // SignalR's browser WebSocket transport cannot set an Authorization
+        // header on the handshake, so its client sends the JWT as an
+        // "access_token" query parameter instead — accepted ONLY for the two
+        // hub paths, never for ordinary /api/** endpoints, and never logged.
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var path = context.HttpContext.Request.Path;
+
+                if ((path.StartsWithSegments("/hubs/rides") || path.StartsWithSegments("/hubs/notifications"))
+                    && context.Request.Query.TryGetValue("access_token", out var accessToken))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
     });
 
 // One claim-based policy per known permission code — new permissions added by
@@ -888,6 +1064,25 @@ foreach (var permission in Permissions.All)
     authorizationBuilder.AddPolicy(permission, policy => policy.RequireClaim(Permissions.ClaimType, permission));
 }
 
+// PostgreSQL is the only mandatory runtime dependency — every other external
+// abstraction (email/SMS/push/file-storage/report-export) is an in-process
+// dev stub today, never a real network dependency, so none belong here.
+builder.Services.AddHealthChecks()
+    .AddCheck<PostgresHealthCheck>("postgres", tags: ["ready"]);
+
+// Both resolve RateLimitingOptions/CorsOptions per-request via DI (not a
+// pre-Build() configuration snapshot) — see RateLimitPolicySelector's and
+// ConfiguredCorsPolicyProvider's own doc comments for why.
+builder.Services.AddApiRateLimiting();
+builder.Services.AddApiCors();
+
+builder.Services.AddHsts(options =>
+{
+    options.MaxAge = TimeSpan.FromDays(30);
+    options.IncludeSubDomains = false;
+    options.Preload = false;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -897,12 +1092,32 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+// Order below follows ASP.NET Core's actual constraints, not convention:
+// exception handling must wrap everything that can throw; correlation must
+// resolve before anything downstream logs or writes a response; HSTS must
+// precede HTTPS redirection (it attaches to the redirected/HTTPS response);
+// CORS must run before authentication (an anonymous preflight still needs
+// CORS headers); the rate limiter must run before authorization so
+// unauthenticated abuse (e.g. login brute force) is throttled without a
+// successful auth first, but after authentication so UserId-partitioned
+// policies see a populated HttpContext.User; authorization needs the
+// authenticated principal, so it comes last.
 app.UseExceptionHandler();
+app.UseCorrelation();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
-
+app.UseSecurityHeaders();
+app.UseCors();
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
+
+app.MapHealthEndpoints();
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
@@ -932,8 +1147,8 @@ app.MapRideNegotiationEndpoints();
 app.MapRideSharedRideEndpoints();
 app.MapRideFeedbackEndpoints();
 app.MapRideAdminEndpoints();
-app.MapHub<RideHub>("/hubs/rides");
-app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<RideHub>("/hubs/rides").DisableRateLimiting();
+app.MapHub<NotificationHub>("/hubs/notifications").DisableRateLimiting();
 
 app.MapPaymentEndpoints();
 app.MapPaymentAdminEndpoints();
@@ -979,30 +1194,8 @@ app.MapSupportIncidentAdminEndpoints();
 app.MapAnalyticsEndpoints();
 app.MapScheduledReportEndpoints();
 
-app.MapControllers(); // SECURITY DEMO ONLY — hosts VulnerableSqlController; remove after CodeQL demo
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
-
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+// Makes the top-level Program class visible to WebApplicationFactory<Program>
+// in SmartTaxi.API.Tests — no behavioral change.
+public partial class Program;

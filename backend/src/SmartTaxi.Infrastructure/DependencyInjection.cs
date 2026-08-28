@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SmartTaxi.Application.Administration.Abstractions;
 using SmartTaxi.Application.Advertising;
 using SmartTaxi.Application.Advertising.Abstractions;
@@ -55,6 +56,7 @@ using SmartTaxi.Application.Support.Abstractions;
 using SmartTaxi.Infrastructure.Administration.Repositories;
 using SmartTaxi.Infrastructure.Administration.Services;
 using SmartTaxi.Infrastructure.Advertising.Options;
+using SmartTaxi.Infrastructure.Configuration;
 using SmartTaxi.Infrastructure.Advertising.Repositories;
 using SmartTaxi.Infrastructure.Advertising.Services;
 using SmartTaxi.Infrastructure.Fleet.Repositories;
@@ -117,12 +119,16 @@ public static class DependencyInjection
         services.AddSingleton<IRefreshTokenHasher, RefreshTokenHasher>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+        services.AddSingleton<IValidateOptions<JwtOptions>, JwtOptionsValidator>();
+        services.AddOptions<JwtOptions>().ValidateOnStart();
 
         // Scoped (not Singleton): JwtTokenGenerator now depends on
         // IRolePermissionRepository, which uses the scoped ApplicationDbContext.
         services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
         services.Configure<RefreshTokenOptions>(configuration.GetSection(RefreshTokenOptions.SectionName));
+        services.AddSingleton<IValidateOptions<RefreshTokenOptions>, RefreshTokenOptionsValidator>();
+        services.AddOptions<RefreshTokenOptions>().ValidateOnStart();
         services.AddSingleton<IRefreshTokenPolicy, RefreshTokenPolicy>();
 
         services.Configure<EmailVerificationOptions>(configuration.GetSection(EmailVerificationOptions.SectionName));
@@ -348,12 +354,25 @@ public static class DependencyInjection
         services.AddScoped<IAnalyticsReportExporter, DevAnalyticsReportExporter>();
 
         services.Configure<LoginLockoutOptions>(configuration.GetSection(LoginLockoutOptions.SectionName));
+        services.AddSingleton<IValidateOptions<LoginLockoutOptions>, LoginLockoutOptionsValidator>();
+        services.AddOptions<LoginLockoutOptions>().ValidateOnStart();
         services.AddSingleton<ILoginLockoutPolicy, LoginLockoutPolicy>();
 
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IAuditedUserRepository, AuditedUserRepository>();
         services.AddScoped<IAdminUserManagementRepository, AdminUserManagementRepository>();
+        // Default/fallback — the API composition root overrides this with an
+        // HttpContext-aware implementation for normal request handling; this
+        // registration is what non-HTTP callers and tests actually get.
         services.AddSingleton<IAuditContextAccessor, NullAuditContextAccessor>();
+
+        services.Configure<RateLimitingOptions>(configuration.GetSection(RateLimitingOptions.SectionName));
+        services.AddSingleton<IValidateOptions<RateLimitingOptions>, RateLimitingOptionsValidator>();
+        services.AddOptions<RateLimitingOptions>().ValidateOnStart();
+
+        services.Configure<CorsOptions>(configuration.GetSection(CorsOptions.SectionName));
+        services.AddSingleton<IValidateOptions<CorsOptions>, CorsOptionsValidator>();
+        services.AddOptions<CorsOptions>().ValidateOnStart();
 
         return services;
     }

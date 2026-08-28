@@ -32,7 +32,7 @@ public class ResetPasswordCommandHandlerTests
             new FakeTokenGenerator(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeRefreshTokenPolicy());
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, refreshTokenIssuer,
-            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository());
+            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository(), new FakeAuditContextAccessor());
     }
 
     private async Task<Guid> RegisterAndRequestResetAsync(string email = "user@example.com", string password = "correct-password")

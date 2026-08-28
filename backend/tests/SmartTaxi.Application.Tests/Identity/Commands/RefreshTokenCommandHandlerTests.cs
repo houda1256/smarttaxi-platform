@@ -25,7 +25,7 @@ public class RefreshTokenCommandHandlerTests
 
         _loginHandler = new LoginUserCommandHandler(
             _userRepository, _passwordHasher, _sessionRepository, _refreshTokenIssuer,
-            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository());
+            new FakeTwoFactorChallengeRepository(), new FakeRefreshTokenGenerator(), new FakeRefreshTokenHasher(), new FakeTwoFactorPolicy(), new FakeLoginLockoutPolicy(), new FakeAuditLogRepository(), new FakeAuditContextAccessor());
         _refreshHandler = new RefreshTokenCommandHandler(_sessionRepository, _userRepository, _refreshTokenHasher, _refreshTokenIssuer);
     }
 

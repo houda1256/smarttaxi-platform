@@ -19,11 +19,14 @@ public sealed class AssignRoleCommandHandler : ICommandHandler<AssignRoleCommand
 {
     private readonly IUserRepository _userRepository;
     private readonly IAuditedUserRepository _auditedUserRepository;
+    private readonly IAuditContextAccessor _auditContextAccessor;
 
-    public AssignRoleCommandHandler(IUserRepository userRepository, IAuditedUserRepository auditedUserRepository)
+    public AssignRoleCommandHandler(
+        IUserRepository userRepository, IAuditedUserRepository auditedUserRepository, IAuditContextAccessor auditContextAccessor)
     {
         _userRepository = userRepository;
         _auditedUserRepository = auditedUserRepository;
+        _auditContextAccessor = auditContextAccessor;
     }
 
     public async Task<Result<AssignRoleResult>> Handle(AssignRoleCommand command, CancellationToken cancellationToken)
@@ -42,9 +45,11 @@ public sealed class AssignRoleCommandHandler : ICommandHandler<AssignRoleCommand
 
         user.AssignRole(role);
 
+        var context = _auditContextAccessor.GetContext();
         var auditEntry = AuditLogEntry.Create(
             command.ActingAdminUserId, AuditAction.RoleAssigned, AuditTargetType.User, user.Id,
-            new Dictionary<string, string> { ["role"] = role.ToString() }, null, null, null, DateTime.UtcNow);
+            new Dictionary<string, string> { ["role"] = role.ToString() },
+            context.CorrelationId, context.IpAddress, context.UserAgent, DateTime.UtcNow);
 
         await _auditedUserRepository.SaveWithAuditAsync(user, auditEntry, cancellationToken);
 
