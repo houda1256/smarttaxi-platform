@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smarttaxi-config
+data:
+  ASPNETCORE_ENVIRONMENT: "Development"
+  Jwt__Issuer: "SmartTaxi"
+  Jwt__Audience: "SmartTaxi"
+  POSTGRES_DB: "smarttaxi"
+  POSTGRES_USER: "smarttaxi_user"

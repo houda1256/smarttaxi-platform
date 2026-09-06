@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 
 # Local development instructions
 CLAUDE.local.md
+devsecops/kubernetes/secret.yaml
