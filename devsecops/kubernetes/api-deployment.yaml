@@ -47,14 +47,14 @@ spec:
                   name: smarttaxi-secrets
                   key: JWT_KEY
 
-            - name: ConnectionStrings__DefaultConnection
-              value: "Host=postgres;Port=5432;Database=smarttaxi;Username=smarttaxi_user;Password=$(POSTGRES_PASSWORD)"
-
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: smarttaxi-secrets
                   key: POSTGRES_PASSWORD
+
+            - name: ConnectionStrings__DefaultConnection
+              value: "Host=postgres;Port=5432;Database=smarttaxi;Username=smarttaxi_user;Password=$(POSTGRES_PASSWORD)"
 
           readinessProbe:
             tcpSocket:
