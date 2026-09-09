@@ -1,0 +1,56 @@
+replicas: 1
+
+persistence:
+  enabled: true
+  type: pvc
+  storageClassName: gp3
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+
+admin:
+  existingSecret: ""
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://smarttaxi-prometheus-server.monitoring.svc.cluster.local
+        isDefault: true
+        editable: false
+envValueFrom:
+  GF_SMTP_USER:
+    secretKeyRef:
+      name: grafana-smtp
+      key: user
+
+  GF_SMTP_PASSWORD:
+    secretKeyRef:
+      name: grafana-smtp
+      key: password
+
+  GF_SMTP_FROM_ADDRESS:
+    secretKeyRef:
+      name: grafana-smtp
+      key: user
+
+grafana.ini:
+  smtp:
+    enabled: true
+    host: smtp.gmail.com:587
+    from_name: SmartTaxi Grafana Alerts
+    startTLS_policy: MandatoryStartTLS

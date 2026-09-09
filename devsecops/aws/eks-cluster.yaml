@@ -18,8 +18,8 @@ vpc:
 managedNodeGroups:
   - name: smarttaxi-workers
     instanceType: t3.small
-    desiredCapacity: 1
-    minSize: 1
+    desiredCapacity: 2
+    minSize: 2
     maxSize: 2
 
     volumeSize: 20

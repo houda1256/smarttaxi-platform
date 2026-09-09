@@ -1,0 +1,28 @@
+alertmanager:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: true
+
+server:
+  persistentVolume:
+    enabled: false
+
+  retention: "6h"
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 300Mi
+
+  service:
+    type: ClusterIP
