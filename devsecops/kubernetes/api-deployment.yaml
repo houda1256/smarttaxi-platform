@@ -15,12 +15,32 @@ spec:
         app: smarttaxi-api
 
     spec:
+      securityContext:
+        runAsNonRoot: true
+
       containers:
         - name: smarttaxi-api
+
           image: 397291427673.dkr.ecr.eu-north-1.amazonaws.com/smarttaxi-api:dev
 
           ports:
             - containerPort: 8080
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
 
           env:
             - name: ASPNETCORE_ENVIRONMENT
