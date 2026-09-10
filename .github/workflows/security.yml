@@ -28,7 +28,9 @@ jobs:
           fetch-depth: 0
 
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
+	env:
+    	  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
   codeql:
@@ -70,7 +72,7 @@ jobs:
         run: docker build -t smarttaxi-api:security-scan .
 
       - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@v0.33.1
         with:
           image-ref: smarttaxi-api:security-scan
           format: table
