@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-09-11 17:56:51",
+  "champion_model": "Random Forest",
+  "business_status": "BELOW_BUSINESS_THRESHOLD",
+  "models_summary": {
+    "Baseline (Avg Speed)": {
+      "mae_minutes": 7.907,
+      "mae_seconds": 474.4,
+      "rmse_minutes": 13.136,
+      "mape_pct": 41.95,
+      "r2": 0.2584,
+      "latency_ms": 0.021
+    },
+    "Random Forest": {
+      "mae_minutes": 5.202,
+      "mae_seconds": 312.1,
+      "rmse_minutes": 8.54,
+      "mape_pct": 32.07,
+      "r2": 0.6866,
+      "latency_ms": 16.418
+    },
+    "XGBoost": {
+      "mae_minutes": 5.295,
+      "mae_seconds": 317.7,
+      "rmse_minutes": 8.649,
+      "mape_pct": 33.2,
+      "r2": 0.6785,
+      "latency_ms": 1.806
+    },
+    "LightGBM": {
+      "mae_minutes": 5.28,
+      "mae_seconds": 316.8,
+      "rmse_minutes": 8.626,
+      "mape_pct": 33.01,
+      "r2": 0.6802,
+      "latency_ms": 1.057
+    },
+    "CatBoost": {
+      "mae_minutes": 5.402,
+      "mae_seconds": 324.1,
+      "rmse_minutes": 8.767,
+      "mape_pct": 34.19,
+      "r2": 0.6697,
+      "latency_ms": 1.231
+    }
+  },
+  "slice_analysis": {
+    "Baseline (Avg Speed)": {
+      "overall_mae_min": 7.907,
+      "short_trips_mae_min": 4.645,
+      "long_trips_mae_min": 29.645,
+      "rush_hour_mae_min": 7.415,
+      "offpeak_mae_min": 8.134
+    },
+    "Random Forest": {
+      "overall_mae_min": 5.202,
+      "short_trips_mae_min": 3.638,
+      "long_trips_mae_min": 11.31,
+      "rush_hour_mae_min": 5.326,
+      "offpeak_mae_min": 5.144
+    },
+    "XGBoost": {
+      "overall_mae_min": 5.295,
+      "short_trips_mae_min": 3.732,
+      "long_trips_mae_min": 11.354,
+      "rush_hour_mae_min": 5.464,
+      "offpeak_mae_min": 5.217
+    },
+    "LightGBM": {
+      "overall_mae_min": 5.28,
+      "short_trips_mae_min": 3.694,
+      "long_trips_mae_min": 11.328,
+      "rush_hour_mae_min": 5.45,
+      "offpeak_mae_min": 5.202
+    },
+    "CatBoost": {
+      "overall_mae_min": 5.402,
+      "short_trips_mae_min": 3.805,
+      "long_trips_mae_min": 11.438,
+      "rush_hour_mae_min": 5.6,
+      "offpeak_mae_min": 5.311
+    }
+  },
+  "champion_feature_importance": {
+    "distance_haversine_km": 84.56,
+    "distance_manhattan_km": 5.07,
+    "cos_hour": 4.82,
+    "pickup_dayofweek": 1.93,
+    "sin_hour": 1.19,
+    "pickup_hour": 1.16,
+    "is_weekend": 0.67,
+    "passenger_count": 0.47,
+    "is_rush_hour": 0.12
+  }
+}
