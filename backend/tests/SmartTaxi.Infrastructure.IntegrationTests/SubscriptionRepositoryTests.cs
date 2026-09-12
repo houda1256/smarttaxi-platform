@@ -117,9 +117,6 @@ public class SubscriptionRepositoryTests
     public async Task TryRenewAsync_TwoConcurrentRenewalsWithSameExpectedEndDate_OnlyOneSucceedsAndEndDateReflectsExactlyOnePeriod()
     {
         var subscription = NewSubscription(Guid.NewGuid(), Guid.NewGuid());
-        var originalEndDate = subscription.EndDate;
-        var firstAttemptEndDate = originalEndDate.AddMonths(1);
-        var secondAttemptEndDate = originalEndDate.AddMonths(2);
 
         await using (var writeContext = _fixture.CreateContext())
         {
@@ -127,6 +124,16 @@ public class SubscriptionRepositoryTests
             await repo.TryAddAsync(subscription, CancellationToken.None);
             await repo.TryActivateAsync(subscription.Id, DateTime.UtcNow, CancellationToken.None);
         }
+
+        // PostgreSQL's timestamptz column has microsecond precision, while an in-memory DateTime
+        // has 100ns ticks, so the pre-persistence subscription.EndDate can carry a sub-microsecond
+        // remainder that never round-trips through the database. Re-reading it here mirrors what a
+        // real caller does (compute the renewal from a previously persisted/read value) and keeps
+        // the expected end dates comparable to what PostgreSQL will actually store.
+        await using var setupReadContext = _fixture.CreateContext();
+        var originalEndDate = (await new SubscriptionRepository(setupReadContext).GetByIdAsync(subscription.Id, CancellationToken.None))!.EndDate;
+        var firstAttemptEndDate = originalEndDate.AddMonths(1);
+        var secondAttemptEndDate = originalEndDate.AddMonths(2);
 
         await using var context1 = _fixture.CreateContext();
         await using var context2 = _fixture.CreateContext();
