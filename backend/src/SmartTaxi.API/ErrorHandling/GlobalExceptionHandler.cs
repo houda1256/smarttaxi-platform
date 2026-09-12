@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using SmartTaxi.API.Correlation;
 
 namespace SmartTaxi.API.ErrorHandling;
 
@@ -22,13 +23,20 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-        await httpContext.Response.WriteAsJsonAsync(
-            new ProblemDetails
-            {
-                Title = "Une erreur inattendue est survenue.",
-                Status = StatusCodes.Status500InternalServerError
-            },
-            cancellationToken);
+        var problemDetails = new ProblemDetails
+        {
+            Title = "Une erreur inattendue est survenue.",
+            Status = StatusCodes.Status500InternalServerError
+        };
+
+        var correlationId = httpContext.GetCorrelationId();
+
+        if (correlationId is not null)
+        {
+            problemDetails.Extensions["correlationId"] = correlationId;
+        }
+
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
         return true;
     }

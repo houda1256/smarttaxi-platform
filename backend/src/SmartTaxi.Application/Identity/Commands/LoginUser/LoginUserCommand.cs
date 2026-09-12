@@ -3,5 +3,5 @@ using SmartTaxi.Application.Common.Messaging;
 
 namespace SmartTaxi.Application.Identity.Commands.LoginUser;
 
-public sealed record LoginUserCommand(string Email, string Password)
+public sealed record LoginUserCommand(string Email, string Password, string? DeviceLabel = null)
     : ICommand<Result<LoginUserResult>>;

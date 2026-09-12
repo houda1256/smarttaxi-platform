@@ -6,6 +6,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Lets the Testcontainers-based integration tests construct the internal
+         repository implementations directly to exercise the real EF Core mapping. -->
+    <InternalsVisibleTo Include="SmartTaxi.Infrastructure.IntegrationTests" />
+    <!-- Lets fast, container-free unit tests construct internal services
+         (JwtTokenGenerator, RefreshTokenGenerator, RefreshTokenHasher) directly. -->
+    <InternalsVisibleTo Include="SmartTaxi.Infrastructure.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="10.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

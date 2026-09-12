@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using SmartTaxi.Domain.Common;
 
@@ -14,19 +15,35 @@ public sealed partial class Email : ValueObject
 
     public static Email Create(string value)
     {
+        if (!TryCreate(value, out var email, out var error))
+        {
+            throw new ArgumentException(error, nameof(value));
+        }
+
+        return email;
+    }
+
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out Email? email, [NotNullWhen(false)] out string? error)
+    {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentException("L'email ne peut pas être vide.", nameof(value));
+            email = null;
+            error = "L'email ne peut pas être vide.";
+            return false;
         }
 
         var normalized = value.Trim();
 
         if (!EmailRegex().IsMatch(normalized))
         {
-            throw new ArgumentException("Le format de l'email est invalide.", nameof(value));
+            email = null;
+            error = "Le format de l'email est invalide.";
+            return false;
         }
 
-        return new Email(normalized);
+        email = new Email(normalized);
+        error = null;
+        return true;
     }
 
     protected override IEnumerable<object?> GetEqualityComponents()

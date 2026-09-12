@@ -30,9 +30,44 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("PasswordHash")
             .IsRequired();
 
-        builder.Property(u => u.Role)
-            .HasConversion<string>()
-            .HasMaxLength(50)
-            .IsRequired();
+        builder.Property(u => u.IsActive).IsRequired().HasDefaultValue(true);
+
+        builder.Property(u => u.PhoneNumber).HasMaxLength(20);
+        builder.Property(u => u.EmailVerifiedAt);
+        builder.Property(u => u.PhoneVerifiedAt);
+
+        builder.Property(u => u.TwoFactorEnabled).IsRequired().HasDefaultValue(false);
+        builder.Property(u => u.TwoFactorActiveSecretEncrypted);
+        builder.Property(u => u.TwoFactorPendingSecretEncrypted);
+        builder.Property(u => u.TwoFactorPendingSecretCreatedAt);
+        builder.Property(u => u.TwoFactorConfirmedAt);
+
+        builder.Property(u => u.ReferralCode).HasMaxLength(20);
+        builder.HasIndex(u => u.ReferralCode).IsUnique();
+
+        // Nullable, additive (Module 12/Analytics) — null for every user created
+        // before this column existed; no historical value is fabricated for them.
+        builder.Property(u => u.CreatedAtUtc);
+        builder.HasIndex(u => u.CreatedAtUtc);
+
+        // Additive (Module 13A) — existing users get FailedLoginAttempts=0/
+        // LockedUntilUtc=null via the migration's defaults, never a fabricated
+        // historical lockout state.
+        builder.Property(u => u.FailedLoginAttempts).IsRequired().HasDefaultValue(0);
+        builder.Property(u => u.LockedUntilUtc);
+
+        // Roles are persisted in a separate table via the private _roleAssignments
+        // backing field. User only exposes a read-only Roles projection plus
+        // AssignRole/RemoveRole behavior — never a settable collection — so this
+        // navigation is configured against the field directly (no property exists).
+        builder.OwnsMany<UserRoleAssignment>("_roleAssignments", roles =>
+        {
+            roles.ToTable("UserRoles");
+            roles.WithOwner().HasForeignKey(r => r.UserId);
+            roles.Property(r => r.Role).HasConversion<string>().HasMaxLength(50).IsRequired();
+            roles.HasKey(r => new { r.UserId, r.Role });
+        });
+
+        builder.Navigation("_roleAssignments").UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

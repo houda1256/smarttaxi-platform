@@ -4,5 +4,5 @@ namespace SmartTaxi.Application.Identity.Abstractions;
 
 public interface ITokenGenerator
 {
-    string GenerateToken(User user);
+    Task<string> GenerateToken(User user, Guid sessionId, CancellationToken cancellationToken);
 }

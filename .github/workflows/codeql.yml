@@ -1,0 +1,58 @@
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - feature/identity-authentication
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  codeql:
+    name: Analyze C# Code
+    runs-on: ubuntu-latest
+
+    # Disables the Roslyn/MSBuild shared compilation server (VBCSCompiler).
+    # With build-mode: manual, CodeQL's tracer only sees compiler processes it
+    # directly launches; a reused shared-compilation server bypasses that
+    # tracing and silently drops compiled files from the CodeQL database,
+    # producing non-deterministic (sometimes empty) results for the same code.
+    env:
+      DOTNET_CLI_UseSharedCompilation: 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: manual
+
+      - name: Restore dependencies
+        run: dotnet restore backend/SmartTaxiBackend.slnx
+
+      - name: Build solution
+        run: dotnet build backend/SmartTaxiBackend.slnx --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test backend/SmartTaxiBackend.slnx --configuration Release --no-build
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4

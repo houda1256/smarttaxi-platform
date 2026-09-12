@@ -1,9 +1,12 @@
 using SmartTaxi.Application.Common;
 using SmartTaxi.Application.Common.Messaging;
 using SmartTaxi.Application.Identity.Abstractions;
+using SmartTaxi.Application.Notifications.Abstractions;
+using SmartTaxi.Application.Notifications.Contracts;
 using SmartTaxi.Domain.Identity.Entities;
 using SmartTaxi.Domain.Identity.Enums;
 using SmartTaxi.Domain.Identity.ValueObjects;
+using SmartTaxi.Domain.Notifications.Enums;
 
 namespace SmartTaxi.Application.Identity.Commands.RegisterUser;
 
@@ -14,23 +17,21 @@ public sealed class RegisterUserCommandHandler
 
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly INotificationDispatcher _notificationDispatcher;
 
-    public RegisterUserCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public RegisterUserCommandHandler(
+        IUserRepository userRepository, IPasswordHasher passwordHasher, INotificationDispatcher notificationDispatcher)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _notificationDispatcher = notificationDispatcher;
     }
 
     public async Task<Result<RegisterUserResult>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        Email email;
-        try
+        if (!Email.TryCreate(command.Email, out var email, out var emailError))
         {
-            email = Email.Create(command.Email);
-        }
-        catch (ArgumentException ex)
-        {
-            return Result<RegisterUserResult>.Failure(ex.Message, ErrorType.Validation);
+            return Result<RegisterUserResult>.Failure(emailError, ErrorType.Validation);
         }
 
         if (await _userRepository.ExistsByEmailAsync(email, cancellationToken))
@@ -45,9 +46,17 @@ public sealed class RegisterUserCommandHandler
         }
 
         var hashedPassword = HashedPassword.Create(_passwordHasher.Hash(command.Password));
-        var user = User.Create(email, hashedPassword, UserRole.Customer);
+        var user = User.Create(email, hashedPassword, UserRole.Customer, DateTime.UtcNow);
 
         await _userRepository.AddAsync(user, cancellationToken);
+
+        // Optional/non-security notification — account creation itself never blocks on this, and OTP/verification
+        // flows (RequestEmailVerification, etc.) keep sending directly through IEmailSender/ISmsSender unchanged.
+        await _notificationDispatcher.DispatchAsync(
+            new NotificationRequest(
+                user.Id, NotificationCategory.Identity, "identity.welcome", new Dictionary<string, string>(),
+                IsMandatory: false, SourceType: "User", SourceId: user.Id),
+            cancellationToken);
 
         return Result<RegisterUserResult>.Success(new RegisterUserResult(user.Id, user.Email.Value));
     }
