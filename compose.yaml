@@ -28,6 +28,7 @@ services:
       Jwt__Audience: ${JWT_AUDIENCE}
       Jwt__Key: ${JWT_KEY}
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      EtaService__BaseUrl: "http://eta-service:8000"
 
     ports:
       - "8080:8080"
@@ -35,6 +36,22 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  eta-service:
+    build:
+      context: ./services/eta-service
+      dockerfile: Dockerfile
+
+    image: smarttaxi-eta:dev
+
+    ports:
+      - "8000:8000"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   postgres_data:
