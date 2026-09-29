@@ -1,0 +1,13 @@
+CampagneID,Campagne,AnnonceurID,Ville,MoisDebut,MoisFin,DureeMois,BudgetPrevu,BudgetConsomme
+CP01,Ramadan Mobilité,AN06,Ben Arous,2025-07-01,2025-09-01,3,185.0,163.0
+CP02,Rentrée Scolaire,AN06,Sfax,2025-09-01,2025-11-01,3,570.0,540.0
+CP03,Été Côtier,AN07,Mahdia,2025-07-01,2025-09-01,3,545.0,650.0
+CP04,Fidélité Business,AN07,Manouba,2026-03-01,2026-06-01,4,502.0,512.0
+CP05,Aéroport Express,AN01,Bizerte,2025-07-01,2025-08-01,2,313.0,304.0
+CP06,Nuit Urbaine,AN04,Sousse,2026-05-01,2026-07-01,3,571.0,806.0
+CP07,Week-end Sahel,AN02,Ben Arous,2025-06-01,2025-08-01,3,546.0,504.0
+CP08,Paiement Carte,AN04,Ariana,2025-08-01,2025-10-01,3,217.0,172.0
+CP09,Retour Diaspora,AN07,Tunis,2025-11-01,2026-02-01,4,350.0,260.0
+CP10,Black Friday Taxi,AN04,Kairouan,2026-03-01,2026-06-01,4,343.0,438.0
+CP11,Santé & Mobilité,AN05,Kairouan,2026-04-01,2026-05-01,2,178.0,150.0
+CP12,Campus Connect,AN05,Ariana,2025-12-01,2026-01-01,2,320.0,249.0

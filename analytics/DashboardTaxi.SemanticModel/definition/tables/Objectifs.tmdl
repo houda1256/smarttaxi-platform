@@ -1,0 +1,254 @@
+/// Table unique des objectifs : une ligne par mois, ville et indicateur de pilotage. Remplace les deux anciennes tables d objectifs, qui ne pouvaient pas etre croisees.
+table Objectifs
+	lineageTag: 36da4ce4-1bdd-4e03-87f3-41f99bdb5555
+
+	/// Objectif de chiffre d’affaires sur la periode et le perimetre selectionnes.
+	measure 'Objectif CA' = CALCULATE ( SUM ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Chiffre d’affaires" )
+		formatString: #,0 "TND"
+		displayFolder: 06 Objectifs
+		lineageTag: a3b418fb-94f8-4c1d-bc7f-3653f626d8c8
+
+	/// Objectif de volume de courses terminees sur la periode et le perimetre selectionnes.
+	measure 'Objectif courses' = CALCULATE ( SUM ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Volume de courses" )
+		formatString: #,0
+		displayFolder: 06 Objectifs
+		lineageTag: 6613a446-568d-49e8-bc9d-4bda936eb697
+
+	/// Niveau cible du taux de completion.
+	measure 'Objectif taux de complétion' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Taux de complétion" )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: 3b010152-71ba-4db2-a8e4-e983ad4d7404
+
+	/// Niveau cible de la note moyenne client.
+	measure 'Objectif note moyenne' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Note moyenne client" )
+		formatString: 0.00
+		displayFolder: 06 Objectifs
+		lineageTag: 22ae28af-6e31-4981-b39d-3d2cc1f423f7
+
+	/// Niveau cible du taux de marge estime.
+	measure 'Objectif taux de marge' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Taux de marge" )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: 276bbda6-8f2d-4de4-855a-d0c51f06b4e5
+
+	/// Niveau cible de la part du chiffre d’affaires payee par carte.
+	measure 'Objectif part carte' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Part payée par carte" )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: ddc0e74c-f3da-4845-8201-26ce5595ff73
+
+	/// Plafond cible du poids de l entretien dans le chiffre d’affaires.
+	measure 'Objectif coût flotte sur CA' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Coût flotte / CA" )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: 6080dd71-913c-4a94-87a0-90f63db70550
+
+	/// Plafond cible du poids du marketing dans le chiffre d’affaires.
+	measure 'Objectif coût marketing sur CA' = CALCULATE ( AVERAGE ( Objectifs[Cible] ), REMOVEFILTERS ( Objectifs[Indicateur], Objectifs[Ordre], Objectifs[Unite], Objectifs[Sens], Objectifs[Agregation] ), Objectifs[Indicateur] = "Coût marketing / CA" )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: c3ec4ccb-95d1-4ee1-989f-b1eaca160f5d
+
+	/// Ecart en TND entre le chiffre d’affaires realise et son objectif.
+	measure 'Écart CA vs objectif' = [Chiffre d’affaires] - [Objectif CA]
+		formatString: #,0 "TND"
+		displayFolder: 06 Objectifs
+		lineageTag: 2a936cb1-b0df-432e-9594-12d87e636ad0
+
+	/// Ecart en nombre de courses entre le realise et l objectif.
+	measure 'Écart courses vs objectif' = [Courses terminées] - [Objectif courses]
+		formatString: #,0
+		displayFolder: 06 Objectifs
+		lineageTag: 0387fa8d-7c67-4167-888f-666e0e6ee8cd
+
+	/// Taux d atteinte de l objectif de chiffre d’affaires.
+	measure 'Atteinte objectif CA' = DIVIDE ( [Chiffre d’affaires], [Objectif CA] )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: 3f2af4ed-7faf-4905-abac-2c58cb16fddf
+
+	/// Taux d atteinte de l objectif de volume de courses.
+	measure 'Atteinte objectif courses' = DIVIDE ( [Courses terminées], [Objectif courses] )
+		formatString: 0.0%
+		displayFolder: 06 Objectifs
+		lineageTag: 539a1d85-a46f-4f71-9e0f-37ddc03a74f8
+
+	/// Cible de l indicateur en ligne : somme des cibles mensuelles pour les volumes, moyenne des niveaux cibles pour les ratios.
+	measure 'Cible indicateur' = VAR Agr = SELECTEDVALUE ( Objectifs[Agregation], "Niveau" ) RETURN IF ( Agr = "Somme", SUM ( Objectifs[Cible] ), AVERAGE ( Objectifs[Cible] ) )
+		formatString: #,0.00
+		displayFolder: 07 Pilotage
+		lineageTag: e20e40e4-dbb2-4786-aa6f-9d3db82f67b2
+
+	/// Valeur reelle de l indicateur en ligne, reconstituee depuis les mesures metier.
+	measure 'Réalisé indicateur' = VAR Ind = SELECTEDVALUE ( Objectifs[Indicateur] ) RETURN SWITCH ( Ind, "Chiffre d’affaires", [Chiffre d’affaires], "Volume de courses", [Courses terminées], "Taux de complétion", [Taux de complétion], "Note moyenne client", [Note moyenne client], "Taux de marge", [Taux de marge estimé], "Part payée par carte", [Part payee par carte], "Coût flotte / CA", [Coût entretien sur CA], "Coût marketing / CA", [Coût marketing sur CA] )
+		formatString: #,0.00
+		displayFolder: 07 Pilotage
+		lineageTag: 381cef3f-213e-41e8-9e4e-49f93ebcdc03
+
+	/// Ecart brut entre le realise et la cible de l indicateur en ligne.
+	measure 'Écart indicateur' = [Réalisé indicateur] - [Cible indicateur]
+		formatString: #,0.00
+		displayFolder: 07 Pilotage
+		lineageTag: e872930d-b5c6-4206-a97d-d43ab65bf8f6
+
+	/// Taux d atteinte oriente : pour un indicateur a minimiser, la cible est rapportee au realise.
+	measure 'Taux d’atteinte' = VAR Sens = SELECTEDVALUE ( Objectifs[Sens], "Haut" ) VAR Reel = [Réalisé indicateur] VAR Cible = [Cible indicateur] RETURN IF ( Sens = "Bas", DIVIDE ( Cible, Reel ), DIVIDE ( Reel, Cible ) )
+		formatString: 0.0%
+		displayFolder: 07 Pilotage
+		lineageTag: 29da4240-6e29-4902-945e-452b91624fa4
+
+	/// Valeur de l indicateur sur la meme periode decalee de douze mois.
+	measure 'Réalisé indicateur N-1' = VAR Deb = MIN ( Calendrier[MoisIndex] ) VAR Fin = MAX ( Calendrier[MoisIndex] ) RETURN CALCULATE ( [Réalisé indicateur], REMOVEFILTERS ( Calendrier ), Calendrier[MoisIndex] >= Deb - 12, Calendrier[MoisIndex] <= Fin - 12 )
+		formatString: #,0.00
+		displayFolder: 07 Pilotage
+		lineageTag: d60fd112-2ae3-4318-be5f-820ff5d5b824
+
+	/// Evolution de l indicateur par rapport a la meme periode de l annee precedente.
+	measure 'Variation vs N-1' = VAR Ref = [Réalisé indicateur N-1] RETURN IF ( NOT ISBLANK ( Ref ) && Ref <> 0, DIVIDE ( [Réalisé indicateur] - Ref, Ref ) )
+		formatString: 0.0%
+		displayFolder: 07 Pilotage
+		lineageTag: cd6fae9d-b6ad-43c6-9e2d-5a60e8effcb2
+
+	/// Statut de l indicateur au regard des deux seuils declares dans les hypotheses.
+	measure 'Statut indicateur' = VAR Taux = [Taux d’atteinte] RETURN IF ( ISBLANK ( Taux ), "Non suivi", IF ( Taux >= [Seuil de vigilance], "Objectif atteint", IF ( Taux >= [Seuil d’alerte], "À surveiller", "Hors cible" ) ) )
+		displayFolder: 07 Pilotage
+		lineageTag: 3a2283b5-5fb8-4fcb-ab87-6baf114ce0f2
+
+	/// Traduction numerique du statut, 3 pour atteint, 2 pour a surveiller, 1 pour hors cible. Sert a la mise en forme conditionnelle et au tri.
+	measure 'Indice statut' = VAR Taux = [Taux d’atteinte] RETURN IF ( ISBLANK ( Taux ), BLANK (), IF ( Taux >= [Seuil de vigilance], 3, IF ( Taux >= [Seuil d’alerte], 2, 1 ) ) )
+		formatString: 0
+		displayFolder: 07 Pilotage
+		lineageTag: 2100b548-75df-4775-842f-e822c207de97
+
+	/// Realise mis en forme selon l unite de l indicateur, pour un tableau multi-unites.
+	measure 'Réalisé (texte)' = VAR Unite = SELECTEDVALUE ( Objectifs[Unite] ) VAR Val = [Réalisé indicateur] RETURN SWITCH ( Unite, "TND", FORMAT ( Val, "#,0 ""TND""" ), "Pourcentage", FORMAT ( Val, "0.0%" ), "Note", FORMAT ( Val, "0.00" ), FORMAT ( Val, "#,0" ) )
+		displayFolder: 07 Pilotage
+		lineageTag: 6f75a89e-ebd9-4f8f-8d8a-a65dc747e5a1
+
+	/// Cible mise en forme selon l unite de l indicateur.
+	measure 'Cible (texte)' = VAR Unite = SELECTEDVALUE ( Objectifs[Unite] ) VAR Val = [Cible indicateur] RETURN SWITCH ( Unite, "TND", FORMAT ( Val, "#,0 ""TND""" ), "Pourcentage", FORMAT ( Val, "0.0%" ), "Note", FORMAT ( Val, "0.00" ), FORMAT ( Val, "#,0" ) )
+		displayFolder: 07 Pilotage
+		lineageTag: 24e34f05-0443-427e-a90e-bb2749d9519c
+
+	/// Ecart mis en forme et signe, exprime en points pour les indicateurs en pourcentage.
+	measure 'Écart (texte)' = VAR Unite = SELECTEDVALUE ( Objectifs[Unite] ) VAR Val = [Écart indicateur] VAR Signe = IF ( Val > 0, "+", "" ) RETURN IF ( ISBLANK ( Val ), BLANK (), Signe & SWITCH ( Unite, "TND", FORMAT ( Val, "#,0 ""TND""" ), "Pourcentage", FORMAT ( Val * 100, "0.0 ""pt""" ), "Note", FORMAT ( Val, "0.00" ), FORMAT ( Val, "#,0" ) ) )
+		displayFolder: 07 Pilotage
+		lineageTag: ac5df79d-f357-4753-87ab-fcff2f874bb2
+
+	/// Nombre d indicateurs pour lesquels un taux d atteinte est calculable.
+	measure 'Indicateurs suivis' = COUNTROWS ( FILTER ( VALUES ( Objectifs[Indicateur] ), NOT ISBLANK ( [Taux d’atteinte] ) ) )
+		formatString: #,0
+		displayFolder: 07 Pilotage
+		lineageTag: 79c94339-2006-4f3f-b8f3-0c6bf420cb69
+
+	/// Nombre d indicateurs dont l objectif est atteint.
+	measure 'Indicateurs atteints' = COUNTROWS ( FILTER ( VALUES ( Objectifs[Indicateur] ), [Taux d’atteinte] >= [Seuil de vigilance] ) )
+		formatString: #,0
+		displayFolder: 07 Pilotage
+		lineageTag: 0d0ebe2f-ca09-4397-aadc-7d142e53be46
+
+	/// Nombre d indicateurs situes sous le seuil d alerte.
+	measure 'Indicateurs hors cible' = COUNTROWS ( FILTER ( VALUES ( Objectifs[Indicateur] ), NOT ISBLANK ( [Taux d’atteinte] ) && [Taux d’atteinte] < [Seuil d’alerte] ) )
+		formatString: #,0
+		displayFolder: 07 Pilotage
+		lineageTag: 56eb8e96-27b0-479d-af4e-bbc223a7b07e
+
+	/// Nombre d indicateurs entre le seuil d alerte et le seuil de vigilance.
+	measure 'Indicateurs à surveiller' = COUNTROWS ( FILTER ( VALUES ( Objectifs[Indicateur] ), [Taux d’atteinte] >= [Seuil d’alerte] && [Taux d’atteinte] < [Seuil de vigilance] ) )
+		formatString: #,0
+		displayFolder: 07 Pilotage
+		lineageTag: 5a47af9a-711d-406c-be37-fcae7899efb4
+
+	/// Enumeration des indicateurs hors cible et de leur taux d atteinte, du plus degrade au moins degrade.
+	measure 'Liste indicateurs hors cible' = CONCATENATEX ( FILTER ( VALUES ( Objectifs[Indicateur] ), NOT ISBLANK ( [Taux d’atteinte] ) && [Taux d’atteinte] < [Seuil d’alerte] ), Objectifs[Indicateur] & " " & FORMAT ( [Taux d’atteinte], "0 %" ), " · ", [Taux d’atteinte], ASC )
+		displayFolder: 07 Pilotage
+		lineageTag: ba44cad1-5298-4776-9d74-e5cd8f50fdaa
+
+	/// Premier jour du mois de l objectif.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 8a925685-7af0-4ef3-b395-b69618acb388
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Annee de l objectif.
+	column Annee
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 33986938-a273-4401-a467-6cfc33c696a5
+		summarizeBy: none
+		sourceColumn: Annee
+
+	/// Ville de l objectif.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: e5740890-7354-4689-8a10-7da34853eda8
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Rang d affichage de l indicateur.
+	column Ordre
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: be1fed87-7916-49f5-8d90-e3786cef1873
+		summarizeBy: none
+		sourceColumn: Ordre
+
+	/// Libelle de l indicateur suivi.
+	column Indicateur
+		dataType: string
+		lineageTag: 9ad0ac27-d4cf-40f3-8945-0fc9dfad6bf4
+		summarizeBy: none
+		sourceColumn: Indicateur
+		sortByColumn: Ordre
+
+	/// Valeur cible du mois et de la ville.
+	column Cible
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: d616794a-199b-46f0-a1fe-8635e5401a7e
+		summarizeBy: none
+		sourceColumn: Cible
+
+	/// Unite de mesure de la cible : TND, Nombre, Pourcentage ou Note.
+	column Unite
+		dataType: string
+		lineageTag: b90e8326-754a-45ab-a5ce-e6da5b630ad0
+		summarizeBy: none
+		sourceColumn: Unite
+
+	/// Sens favorable de l indicateur, Haut pour maximiser, Bas pour minimiser.
+	column Sens
+		dataType: string
+		lineageTag: fe7a5175-f037-4f86-9bdd-3b3ccb241bb0
+		summarizeBy: none
+		sourceColumn: Sens
+
+	/// Mode d agregation de la cible : Somme pour les volumes, Niveau pour les ratios.
+	column Agregation
+		dataType: string
+		lineageTag: 0f36f134-e479-4807-b8a6-246a5465b55c
+		summarizeBy: none
+		sourceColumn: Agregation
+
+	partition Objectifs = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\objectifs.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"Annee", Int64.Type}, {"Ville", type text}, {"Ordre", Int64.Type}, {"Indicateur", type text}, {"Cible", type number}, {"Unite", type text}, {"Sens", type text}, {"Agregation", type text}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

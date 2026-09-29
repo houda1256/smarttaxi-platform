@@ -1,0 +1,38 @@
+/// Referentiel des garages partenaires.
+table Garage
+	lineageTag: f3e0bdfd-e03e-469a-a647-46d2c72d456b
+
+	/// Identifiant technique du garage.
+	column GarageID
+		dataType: string
+		isHidden
+		lineageTag: 20006d03-2235-4d2b-960c-6ec0b23914fa
+		summarizeBy: none
+		sourceColumn: GarageID
+
+	/// Nom du garage.
+	column Garage
+		dataType: string
+		lineageTag: c828ce66-d227-4f03-9323-b26716bf4d91
+		summarizeBy: none
+		sourceColumn: Garage
+
+	/// Ville du garage.
+	column Ville
+		dataType: string
+		lineageTag: 5592804d-ef04-4af9-89e5-579207e4c7b9
+		summarizeBy: none
+		sourceColumn: Ville
+
+	partition Garage = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\garage.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"GarageID", type text}, {"Garage", type text}, {"Ville", type text}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

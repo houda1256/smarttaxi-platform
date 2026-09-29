@@ -484,3 +484,8 @@ $RECYCLE.BIN/
 # Local development instructions
 CLAUDE.local.md
 devsecops/kubernetes/secret.yaml
+
+# Power BI local files
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/editorSettings.json

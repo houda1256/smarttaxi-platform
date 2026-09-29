@@ -1,0 +1,242 @@
+Date,TaxiID,GarageID,Ville,TypeIntervention,Montant
+2025-06-01,TX001,GAR04,Sousse,Pneumatiques,70.15
+2025-09-01,TX001,GAR04,Sousse,Carrosserie / tôlerie,58.0
+2025-02-01,TX001,GAR04,Sousse,Plaquettes de frein,27.67
+2026-02-01,TX001,GAR04,Sousse,Vidange + filtres,20.66
+2025-06-01,TX001,GAR04,Sousse,Distribution,105.85
+2025-07-01,TX002,GAR07,Bizerte,Pneumatiques,63.48
+2025-08-01,TX002,GAR07,Bizerte,Climatisation,44.12
+2026-07-01,TX002,GAR07,Bizerte,Climatisation,48.36
+2026-02-01,TX003,GAR04,Sousse,Pneumatiques,79.47
+2025-06-01,TX003,GAR04,Sousse,Distribution,142.95
+2025-08-01,TX003,GAR04,Sousse,Diagnostic électronique,20.89
+2025-03-01,TX004,GAR09,Monastir,Vidange + filtres,25.11
+2026-03-01,TX004,GAR09,Monastir,Carrosserie / tôlerie,108.82
+2026-07-01,TX005,GAR01,Tunis,Diagnostic électronique,28.9
+2026-04-01,TX005,GAR02,Tunis,Diagnostic électronique,20.87
+2026-03-01,TX005,GAR01,Tunis,Diagnostic électronique,17.32
+2025-04-01,TX006,GAR02,Nabeul,Vidange + filtres,34.21
+2025-06-01,TX006,GAR05,Nabeul,Diagnostic électronique,30.79
+2026-01-01,TX006,GAR03,Nabeul,Pneumatiques,78.64
+2025-07-01,TX006,GAR09,Nabeul,Carrosserie / tôlerie,52.7
+2025-04-01,TX007,GAR07,Bizerte,Vidange + filtres,29.89
+2025-03-01,TX007,GAR07,Bizerte,Distribution,149.95
+2025-10-01,TX007,GAR07,Bizerte,Diagnostic électronique,13.78
+2025-01-01,TX008,GAR06,Ben Arous,Diagnostic électronique,16.45
+2025-02-01,TX008,GAR06,Ben Arous,Vidange + filtres,23.41
+2026-04-01,TX008,GAR06,Ben Arous,Vidange + filtres,26.45
+2025-10-01,TX009,GAR01,Tunis,Carrosserie / tôlerie,71.44
+2025-03-01,TX009,GAR02,Tunis,Diagnostic électronique,12.5
+2026-05-01,TX009,GAR01,Tunis,Climatisation,70.79
+2025-06-01,TX009,GAR02,Tunis,Plaquettes de frein,23.1
+2026-03-01,TX010,GAR04,Sousse,Vidange + filtres,18.17
+2025-07-01,TX010,GAR04,Sousse,Diagnostic électronique,17.51
+2025-04-01,TX010,GAR04,Sousse,Carrosserie / tôlerie,50.69
+2026-02-01,TX010,GAR04,Sousse,Climatisation,29.09
+2026-05-01,TX010,GAR04,Sousse,Vidange + filtres,28.85
+2025-10-01,TX011,GAR10,Kairouan,Vidange + filtres,16.19
+2026-02-01,TX011,GAR10,Kairouan,Climatisation,47.41
+2026-04-01,TX011,GAR10,Kairouan,Climatisation,49.34
+2026-06-01,TX011,GAR10,Kairouan,Plaquettes de frein,29.13
+2025-09-01,TX011,GAR10,Kairouan,Embrayage,91.16
+2026-06-01,TX012,GAR04,Sousse,Plaquettes de frein,47.23
+2026-02-01,TX012,GAR04,Sousse,Diagnostic électronique,17.76
+2026-04-01,TX012,GAR04,Sousse,Plaquettes de frein,45.68
+2025-09-01,TX012,GAR04,Sousse,Vidange + filtres,30.98
+2025-05-01,TX012,GAR04,Sousse,Vidange + filtres,17.24
+2025-10-01,TX012,GAR04,Sousse,Diagnostic électronique,21.1
+2025-08-01,TX013,GAR04,Manouba,Diagnostic électronique,21.32
+2026-05-01,TX013,GAR04,Manouba,Pneumatiques,73.06
+2025-05-01,TX013,GAR08,Manouba,Pneumatiques,52.11
+2026-04-01,TX013,GAR04,Manouba,Vidange + filtres,19.92
+2025-07-01,TX013,GAR09,Manouba,Pneumatiques,44.61
+2026-06-01,TX014,GAR04,Sousse,Diagnostic électronique,23.42
+2025-05-01,TX014,GAR04,Sousse,Plaquettes de frein,25.52
+2025-05-01,TX014,GAR04,Sousse,Vidange + filtres,29.45
+2025-07-01,TX014,GAR04,Sousse,Vidange + filtres,30.84
+2025-06-01,TX014,GAR04,Sousse,Pneumatiques,65.78
+2025-06-01,TX015,GAR04,Sousse,Vidange + filtres,30.45
+2026-07-01,TX015,GAR04,Sousse,Pneumatiques,95.76
+2025-11-01,TX016,GAR05,Ariana,Plaquettes de frein,40.1
+2026-07-01,TX016,GAR05,Ariana,Climatisation,66.5
+2025-12-01,TX016,GAR05,Ariana,Climatisation,38.96
+2025-08-01,TX017,GAR08,Djerba,Plaquettes de frein,42.8
+2025-09-01,TX017,GAR08,Djerba,Vidange + filtres,19.96
+2025-04-01,TX017,GAR08,Djerba,Plaquettes de frein,40.0
+2025-05-01,TX018,GAR01,Tunis,Plaquettes de frein,30.51
+2026-03-01,TX018,GAR02,Tunis,Vidange + filtres,26.9
+2026-07-01,TX019,GAR01,Tunis,Plaquettes de frein,73.91
+2025-12-01,TX019,GAR01,Tunis,Diagnostic électronique,18.37
+2026-05-01,TX019,GAR02,Tunis,Plaquettes de frein,56.49
+2025-04-01,TX019,GAR02,Tunis,Plaquettes de frein,59.33
+2025-10-01,TX019,GAR02,Tunis,Vidange + filtres,21.68
+2025-10-01,TX020,GAR03,Sfax,Diagnostic électronique,18.14
+2025-05-01,TX020,GAR03,Sfax,Diagnostic électronique,13.59
+2026-02-01,TX020,GAR03,Sfax,Diagnostic électronique,17.08
+2025-06-01,TX020,GAR03,Sfax,Plaquettes de frein,35.49
+2026-06-01,TX020,GAR03,Sfax,Diagnostic électronique,20.32
+2025-05-01,TX021,GAR04,Sousse,Pneumatiques,80.84
+2025-07-01,TX021,GAR04,Sousse,Plaquettes de frein,47.86
+2026-03-01,TX021,GAR04,Sousse,Vidange + filtres,16.32
+2026-06-01,TX021,GAR04,Sousse,Diagnostic électronique,16.84
+2026-06-01,TX021,GAR04,Sousse,Distribution,118.1
+2025-11-01,TX021,GAR04,Sousse,Embrayage,133.36
+2025-04-01,TX022,GAR01,Tunis,Vidange + filtres,19.73
+2026-04-01,TX022,GAR02,Tunis,Diagnostic électronique,19.4
+2026-04-01,TX022,GAR02,Tunis,Climatisation,52.37
+2026-07-01,TX022,GAR01,Tunis,Diagnostic électronique,50.82
+2025-10-01,TX023,GAR06,Nabeul,Climatisation,51.97
+2026-06-01,TX023,GAR03,Nabeul,Diagnostic électronique,26.49
+2025-09-01,TX023,GAR02,Nabeul,Plaquettes de frein,40.16
+2026-04-01,TX024,GAR02,Tunis,Vidange + filtres,22.16
+2026-07-01,TX024,GAR02,Tunis,Pneumatiques,48.74
+2025-11-01,TX024,GAR01,Tunis,Plaquettes de frein,30.7
+2025-05-01,TX024,GAR01,Tunis,Pneumatiques,73.72
+2025-01-01,TX024,GAR01,Tunis,Distribution,182.99
+2025-09-01,TX024,GAR02,Tunis,Vidange + filtres,19.87
+2025-11-01,TX025,GAR06,Ben Arous,Vidange + filtres,37.74
+2026-03-01,TX025,GAR06,Ben Arous,Carrosserie / tôlerie,86.8
+2025-08-01,TX025,GAR06,Ben Arous,Diagnostic électronique,20.65
+2026-05-01,TX026,GAR05,Ariana,Climatisation,53.38
+2025-07-01,TX026,GAR05,Ariana,Diagnostic électronique,16.23
+2025-10-01,TX027,GAR05,Mahdia,Plaquettes de frein,38.25
+2025-06-01,TX027,GAR01,Mahdia,Plaquettes de frein,40.11
+2026-02-01,TX027,GAR05,Mahdia,Diagnostic électronique,21.08
+2026-05-01,TX028,GAR05,Ariana,Vidange + filtres,29.07
+2026-04-01,TX028,GAR05,Ariana,Plaquettes de frein,23.79
+2025-01-01,TX028,GAR05,Ariana,Plaquettes de frein,26.45
+2025-01-01,TX029,GAR01,Tunis,Climatisation,40.39
+2025-12-01,TX029,GAR02,Tunis,Diagnostic électronique,23.79
+2025-04-01,TX029,GAR01,Tunis,Carrosserie / tôlerie,45.85
+2026-02-01,TX029,GAR02,Tunis,Diagnostic électronique,12.49
+2025-06-01,TX030,GAR06,Ben Arous,Climatisation,53.21
+2025-11-01,TX030,GAR06,Ben Arous,Pneumatiques,74.09
+2025-10-01,TX030,GAR06,Ben Arous,Plaquettes de frein,41.73
+2026-04-01,TX030,GAR06,Ben Arous,Diagnostic électronique,21.82
+2025-06-01,TX030,GAR06,Ben Arous,Vidange + filtres,29.12
+2025-06-01,TX031,GAR06,Ben Arous,Diagnostic électronique,17.12
+2025-10-01,TX031,GAR06,Ben Arous,Diagnostic électronique,17.24
+2025-02-01,TX031,GAR06,Ben Arous,Distribution,175.68
+2026-04-01,TX031,GAR06,Ben Arous,Climatisation,51.82
+2026-03-01,TX032,GAR05,Ariana,Carrosserie / tôlerie,154.81
+2025-06-01,TX032,GAR05,Ariana,Vidange + filtres,39.07
+2026-01-01,TX032,GAR05,Ariana,Plaquettes de frein,55.07
+2026-07-01,TX032,GAR05,Ariana,Vidange + filtres,26.82
+2025-05-01,TX033,GAR01,Tunis,Pneumatiques,77.06
+2026-07-01,TX033,GAR02,Tunis,Climatisation,53.87
+2026-05-01,TX033,GAR01,Tunis,Pneumatiques,78.23
+2025-08-01,TX033,GAR01,Tunis,Vidange + filtres,21.59
+2025-10-01,TX033,GAR01,Tunis,Climatisation,47.59
+2026-03-01,TX034,GAR02,Manouba,Climatisation,29.45
+2026-01-01,TX034,GAR07,Manouba,Carrosserie / tôlerie,91.67
+2026-05-01,TX035,GAR04,Sousse,Diagnostic électronique,17.61
+2026-03-01,TX035,GAR04,Sousse,Plaquettes de frein,25.6
+2025-01-01,TX035,GAR04,Sousse,Plaquettes de frein,25.5
+2025-01-01,TX035,GAR04,Sousse,Plaquettes de frein,30.0
+2025-04-01,TX035,GAR04,Sousse,Carrosserie / tôlerie,70.29
+2025-01-01,TX035,GAR04,Sousse,Carrosserie / tôlerie,45.5
+2025-10-01,TX036,GAR03,Sfax,Vidange + filtres,26.55
+2025-02-01,TX036,GAR03,Sfax,Vidange + filtres,36.8
+2025-05-01,TX036,GAR03,Sfax,Diagnostic électronique,15.69
+2025-03-01,TX036,GAR03,Sfax,Vidange + filtres,29.14
+2026-03-01,TX036,GAR03,Sfax,Pneumatiques,73.07
+2025-05-01,TX036,GAR03,Sfax,Plaquettes de frein,38.32
+2025-06-01,TX037,GAR09,Monastir,Pneumatiques,87.27
+2025-08-01,TX037,GAR09,Monastir,Plaquettes de frein,33.96
+2025-03-01,TX038,GAR05,Ariana,Embrayage,152.21
+2025-06-01,TX038,GAR05,Ariana,Plaquettes de frein,30.55
+2025-03-01,TX038,GAR05,Ariana,Climatisation,47.02
+2025-10-01,TX038,GAR05,Ariana,Pneumatiques,73.43
+2026-01-01,TX039,GAR06,Ben Arous,Vidange + filtres,25.62
+2025-10-01,TX039,GAR06,Ben Arous,Vidange + filtres,17.68
+2025-01-01,TX039,GAR06,Ben Arous,Pneumatiques,38.24
+2026-01-01,TX039,GAR06,Ben Arous,Climatisation,46.82
+2026-06-01,TX039,GAR06,Ben Arous,Embrayage,108.89
+2025-12-01,TX040,GAR08,Nabeul,Vidange + filtres,35.42
+2025-10-01,TX040,GAR06,Nabeul,Climatisation,62.46
+2026-01-01,TX041,GAR05,Ariana,Carrosserie / tôlerie,48.54
+2026-05-01,TX041,GAR05,Ariana,Distribution,122.12
+2025-05-01,TX041,GAR05,Ariana,Vidange + filtres,16.9
+2025-03-01,TX041,GAR05,Ariana,Climatisation,37.89
+2025-10-01,TX042,GAR02,Tunis,Diagnostic électronique,17.91
+2025-09-01,TX042,GAR01,Tunis,Vidange + filtres,42.97
+2025-04-01,TX042,GAR02,Tunis,Carrosserie / tôlerie,58.09
+2025-12-01,TX042,GAR02,Tunis,Pneumatiques,100.16
+2025-07-01,TX043,GAR01,Tunis,Vidange + filtres,29.29
+2026-05-01,TX043,GAR01,Tunis,Plaquettes de frein,61.52
+2025-03-01,TX043,GAR02,Tunis,Diagnostic électronique,20.2
+2026-02-01,TX043,GAR02,Tunis,Plaquettes de frein,46.13
+2026-02-01,TX043,GAR02,Tunis,Distribution,145.67
+2025-08-01,TX043,GAR02,Tunis,Distribution,177.85
+2025-09-01,TX044,GAR04,Sousse,Vidange + filtres,15.4
+2026-07-01,TX044,GAR04,Sousse,Plaquettes de frein,42.39
+2025-01-01,TX044,GAR04,Sousse,Diagnostic électronique,18.09
+2026-01-01,TX044,GAR04,Sousse,Distribution,94.6
+2025-11-01,TX045,GAR06,Nabeul,Plaquettes de frein,36.09
+2025-01-01,TX045,GAR08,Nabeul,Embrayage,136.02
+2026-01-01,TX045,GAR04,Nabeul,Plaquettes de frein,52.69
+2025-06-01,TX045,GAR08,Nabeul,Vidange + filtres,23.73
+2025-03-01,TX045,GAR08,Nabeul,Distribution,110.14
+2025-04-01,TX046,GAR08,Djerba,Plaquettes de frein,48.16
+2026-03-01,TX046,GAR08,Djerba,Diagnostic électronique,15.28
+2025-03-01,TX046,GAR08,Djerba,Plaquettes de frein,34.3
+2025-02-01,TX047,GAR04,Gabès,Vidange + filtres,21.48
+2025-11-01,TX047,GAR10,Gabès,Climatisation,37.42
+2025-07-01,TX047,GAR08,Gabès,Diagnostic électronique,21.75
+2026-03-01,TX047,GAR04,Gabès,Plaquettes de frein,28.65
+2026-01-01,TX048,GAR04,Sousse,Pneumatiques,66.04
+2025-08-01,TX048,GAR04,Sousse,Vidange + filtres,15.84
+2026-03-01,TX048,GAR04,Sousse,Climatisation,33.35
+2026-07-01,TX049,GAR02,Tunis,Pneumatiques,49.13
+2025-04-01,TX049,GAR02,Tunis,Climatisation,33.28
+2025-11-01,TX050,GAR08,Djerba,Carrosserie / tôlerie,56.24
+2026-03-01,TX050,GAR08,Djerba,Plaquettes de frein,35.35
+2025-06-01,TX051,GAR02,Tunis,Climatisation,36.22
+2025-02-01,TX051,GAR02,Tunis,Pneumatiques,51.36
+2026-02-01,TX051,GAR02,Tunis,Vidange + filtres,22.33
+2025-12-01,TX051,GAR01,Tunis,Vidange + filtres,17.03
+2025-04-01,TX052,GAR09,Monastir,Vidange + filtres,18.3
+2025-05-01,TX052,GAR09,Monastir,Carrosserie / tôlerie,86.7
+2025-07-01,TX052,GAR09,Monastir,Embrayage,131.35
+2025-06-01,TX052,GAR09,Monastir,Vidange + filtres,23.71
+2025-04-01,TX052,GAR09,Monastir,Climatisation,41.36
+2026-01-01,TX053,GAR03,Sfax,Pneumatiques,84.15
+2025-09-01,TX053,GAR03,Sfax,Embrayage,116.27
+2025-12-01,TX053,GAR03,Sfax,Diagnostic électronique,12.82
+2025-07-01,TX054,GAR09,Monastir,Vidange + filtres,16.46
+2026-01-01,TX054,GAR09,Monastir,Vidange + filtres,30.09
+2026-02-01,TX054,GAR09,Monastir,Embrayage,96.37
+2025-06-01,TX054,GAR09,Monastir,Plaquettes de frein,46.84
+2025-12-01,TX055,GAR06,Ben Arous,Vidange + filtres,36.15
+2026-03-01,TX055,GAR06,Ben Arous,Vidange + filtres,35.44
+2026-02-01,TX055,GAR06,Ben Arous,Vidange + filtres,28.1
+2025-02-01,TX055,GAR06,Ben Arous,Pneumatiques,100.78
+2025-10-01,TX056,GAR03,Sfax,Embrayage,159.4
+2026-06-01,TX056,GAR03,Sfax,Climatisation,59.37
+2026-06-01,TX056,GAR03,Sfax,Diagnostic électronique,13.88
+2025-02-01,TX056,GAR03,Sfax,Vidange + filtres,26.01
+2025-12-01,TX057,GAR03,Sfax,Carrosserie / tôlerie,39.67
+2025-09-01,TX057,GAR03,Sfax,Diagnostic électronique,12.11
+2026-07-01,TX057,GAR03,Sfax,Climatisation,40.73
+2026-03-01,TX057,GAR03,Sfax,Diagnostic électronique,18.51
+2026-07-01,TX058,GAR09,Gabès,Carrosserie / tôlerie,92.65
+2025-01-01,TX058,GAR03,Gabès,Vidange + filtres,25.22
+2025-07-01,TX058,GAR08,Gabès,Embrayage,178.46
+2026-02-01,TX059,GAR01,Nabeul,Diagnostic électronique,22.55
+2025-01-01,TX059,GAR05,Nabeul,Vidange + filtres,18.81
+2026-04-01,TX059,GAR09,Nabeul,Carrosserie / tôlerie,49.25
+2026-01-01,TX059,GAR06,Nabeul,Diagnostic électronique,13.17
+2025-06-01,TX059,GAR07,Nabeul,Pneumatiques,49.12
+2025-04-01,TX059,GAR01,Nabeul,Embrayage,150.61
+2025-09-01,TX060,GAR08,Djerba,Climatisation,35.12
+2025-07-01,TX060,GAR08,Djerba,Vidange + filtres,35.38
+2026-02-01,TX060,GAR08,Djerba,Distribution,222.12
+2025-07-01,TX060,GAR08,Djerba,Carrosserie / tôlerie,63.12
+2025-02-01,TX060,GAR08,Djerba,Vidange + filtres,30.21
+2025-06-01,TX061,GAR09,Monastir,Plaquettes de frein,24.96
+2025-04-01,TX061,GAR09,Monastir,Diagnostic électronique,15.76
+2025-02-01,TX061,GAR09,Monastir,Carrosserie / tôlerie,72.55
+2025-02-01,TX062,GAR03,Sfax,Vidange + filtres,34.64
+2025-08-01,TX062,GAR03,Sfax,Climatisation,64.59
+2026-01-01,TX062,GAR03,Sfax,Distribution,252.0
+2025-12-01,TX062,GAR03,Sfax,Diagnostic électronique,27.16

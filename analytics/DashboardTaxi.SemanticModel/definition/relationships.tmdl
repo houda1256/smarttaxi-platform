@@ -1,0 +1,83 @@
+relationship rel_Courses_Calendrier
+	fromColumn: Courses.Date
+	toColumn: Calendrier.Date
+
+relationship rel_Courses_Chauffeur
+	fromColumn: Courses.ChauffeurID
+	toColumn: Chauffeur.ChauffeurID
+
+relationship rel_Chauffeur_Ville
+	fromColumn: Chauffeur.Ville
+	toColumn: Ville.Ville
+
+relationship rel_Taxi_Chauffeur
+	fromColumn: Taxi.ChauffeurID
+	toColumn: Chauffeur.ChauffeurID
+
+relationship rel_Taxi_Proprietaire
+	fromColumn: Taxi.ProprietaireID
+	toColumn: Propriétaire.ProprietaireID
+
+relationship rel_Entretien_Calendrier
+	fromColumn: Entretien.Date
+	toColumn: Calendrier.Date
+
+relationship rel_Entretien_Taxi
+	fromColumn: Entretien.TaxiID
+	toColumn: Taxi.TaxiID
+
+relationship rel_Entretien_Garage
+	fromColumn: Entretien.GarageID
+	toColumn: Garage.GarageID
+
+relationship rel_Activite_Calendrier
+	fromColumn: 'Activité clients'.Date
+	toColumn: Calendrier.Date
+
+relationship rel_Activite_Client
+	fromColumn: 'Activité clients'.ClientID
+	toColumn: Client.ClientID
+
+relationship rel_Client_Ville
+	fromColumn: Client.Ville
+	toColumn: Ville.Ville
+
+relationship rel_Marketing_Calendrier
+	fromColumn: Marketing.Date
+	toColumn: Calendrier.Date
+
+relationship rel_Marketing_Campagne
+	fromColumn: Marketing.CampagneID
+	toColumn: Campagne.CampagneID
+
+relationship rel_Marketing_Ville
+	fromColumn: Marketing.Ville
+	toColumn: Ville.Ville
+
+relationship rel_Campagne_Annonceur
+	fromColumn: Campagne.AnnonceurID
+	toColumn: Annonceur.AnnonceurID
+
+relationship rel_Objectifs_Calendrier
+	fromColumn: Objectifs.Date
+	toColumn: Calendrier.Date
+
+relationship rel_Objectifs_Ville
+	fromColumn: Objectifs.Ville
+	toColumn: Ville.Ville
+
+relationship c384d30a-a256-48bc-a3b6-840ab13ca815
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendrier.Date
+	toColumn: LocalDateTable_5fcae81f-6e9d-42b4-b36e-169555aee3ad.Date
+
+relationship 1011487f-78b7-491b-bed0-b0e364b34be8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Campagne.MoisDebut
+	toColumn: LocalDateTable_e6f42241-097b-4e70-99d1-ae3639fc83e8.Date
+
+relationship 600c900c-425c-4222-b2ec-6ec2a6d2c7c9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Campagne.MoisFin
+	toColumn: LocalDateTable_4a27599c-1755-429d-8376-9069fcef0cce.Date
+

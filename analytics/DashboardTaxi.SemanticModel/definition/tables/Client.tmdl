@@ -1,0 +1,54 @@
+/// Referentiel des clients identifies.
+table Client
+	lineageTag: 34ef967f-ba8e-44cf-888c-cb8bb5f2ca81
+
+	/// Identifiant technique du client.
+	column ClientID
+		dataType: string
+		isHidden
+		lineageTag: 03a22b21-c1a8-4c42-8db5-ac20788cd1c6
+		summarizeBy: none
+		sourceColumn: ClientID
+
+	/// Nom du client.
+	column Client
+		dataType: string
+		lineageTag: 3da34ecf-ce41-4fbb-9cf7-c22e7708ece1
+		summarizeBy: none
+		sourceColumn: Client
+
+	/// Ville du client, doublon du referentiel Ville.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: 98483f65-d1ca-424b-9cea-7945f87d7d1e
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Mois d inscription au programme, format AAAA-MM.
+	column MoisInscription
+		dataType: string
+		lineageTag: 04980681-46c9-44c3-a3b3-3b3f4e279a4e
+		summarizeBy: none
+		sourceColumn: MoisInscription
+
+	/// Solde de points de fidelite.
+	column PointsFidelite
+		dataType: int64
+		formatString: #,0
+		lineageTag: 00882638-6c6a-45b2-8028-502d755f0bc9
+		summarizeBy: none
+		sourceColumn: PointsFidelite
+
+	partition Client = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\client.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"ClientID", type text}, {"Client", type text}, {"Ville", type text}, {"MoisInscription", type text}, {"PointsFidelite", Int64.Type}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

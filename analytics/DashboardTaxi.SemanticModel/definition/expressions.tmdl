@@ -1,0 +1,6 @@
+/// Dossier local contenant les fichiers CSV source. A adapter apres decompression du projet.
+expression CheminDonnees = "C:\DashboardTaxi\Donnees" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 455460fd-dbaf-4e32-ae7f-e24ced8a08cd
+
+	annotation PBI_ResultType = Text
+

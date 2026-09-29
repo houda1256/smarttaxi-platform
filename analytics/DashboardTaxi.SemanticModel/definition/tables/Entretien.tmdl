@@ -1,0 +1,92 @@
+/// Interventions de maintenance de la flotte.
+table Entretien
+	lineageTag: 429f9ed5-73d7-47f9-a76e-27da3fa84265
+
+	/// Depenses de maintenance et de reparation de la flotte.
+	measure 'Coût entretien' = SUM ( Entretien[Montant] )
+		formatString: #,0 "TND"
+		lineageTag: 719942f2-53b2-4f85-8f6b-bc6c81353ecd
+
+	/// Nombre d interventions enregistrees en garage.
+	measure Interventions = COUNTROWS ( Entretien )
+		formatString: #,0
+		lineageTag: 895e7189-18db-44c6-84e5-bd72c560f1da
+
+	/// Montant moyen facture par intervention.
+	measure 'Coût moyen par intervention' = DIVIDE ( [Coût entretien], [Interventions] )
+		formatString: #,0.00 "TND"
+		lineageTag: c2b541f3-fa00-40bc-b863-09fe8bfd8bbb
+
+	/// Poids de l entretien dans le chiffre d’affaires.
+	measure 'Coût entretien sur CA' = DIVIDE ( [Coût entretien], [Chiffre d’affaires] )
+		formatString: 0.0%
+		lineageTag: 249ec15a-35e1-479d-840c-816277fee430
+
+	/// Nombre de vehicules passes en garage sur la periode.
+	measure 'Taxis entretenus' = DISTINCTCOUNT ( Entretien[TaxiID] )
+		formatString: #,0
+		lineageTag: 729dabff-33f4-41fa-809a-ee85ecd0d46b
+
+	/// Mois de l intervention.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 20de30ef-0551-4c2a-88f8-7fa45121f750
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Vehicule concerne.
+	column TaxiID
+		dataType: string
+		isHidden
+		lineageTag: a3cfc579-c8bd-4cdf-a01e-76dee47024da
+		summarizeBy: none
+		sourceColumn: TaxiID
+
+	/// Garage ayant realise l intervention.
+	column GarageID
+		dataType: string
+		isHidden
+		lineageTag: 05570ec9-abd7-4ab5-bc85-7aba40538595
+		summarizeBy: none
+		sourceColumn: GarageID
+
+	/// Ville de l intervention, doublon du referentiel Ville.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: b07a23ea-2aa5-48f0-820f-f0419417a545
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Nature de l intervention.
+	column TypeIntervention
+		dataType: string
+		lineageTag: b6041cb2-fc7f-4300-a45b-5bee99e80e1d
+		summarizeBy: none
+		sourceColumn: TypeIntervention
+
+	/// Montant facture, en TND.
+	column Montant
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 509d9727-9f94-43aa-84d6-e2f94ba5a65e
+		summarizeBy: none
+		sourceColumn: Montant
+
+	partition Entretien = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\faits_entretien.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"TaxiID", type text}, {"GarageID", type text}, {"Ville", type text}, {"TypeIntervention", type text}, {"Montant", type number}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

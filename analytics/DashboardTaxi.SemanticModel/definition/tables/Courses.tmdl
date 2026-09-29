@@ -1,0 +1,542 @@
+/// Table de faits mensuelle de l activite par chauffeur.
+table Courses
+	lineageTag: f59fa199-563b-470d-8d78-88621712dc3e
+
+	/// Chiffre d’affaires encaisse sur les courses terminees, en TND.
+	measure 'Chiffre d’affaires' = SUM ( Courses[CA] )
+		formatString: #,0 "TND"
+		displayFolder: 01 Revenus
+		lineageTag: 8df1ca52-f6a9-4a3a-ad75-659ffe6b5a9f
+
+	/// Part du chiffre d’affaires reglee par carte bancaire.
+	measure 'CA carte' = SUM ( Courses[CA_Carte] )
+		formatString: #,0 "TND"
+		displayFolder: 01 Revenus
+		lineageTag: e5097d79-b4d1-4e2a-8246-98bb4c616acf
+
+	/// Chiffre d’affaires regle en especes, par difference.
+	measure 'CA especes' = [Chiffre d’affaires] - [CA carte]
+		formatString: #,0 "TND"
+		displayFolder: 01 Revenus
+		lineageTag: efb093e4-e858-4406-9e23-a9c127880cad
+
+	/// Poids du paiement par carte dans le chiffre d’affaires.
+	measure 'Part payee par carte' = DIVIDE ( [CA carte], [Chiffre d’affaires] )
+		formatString: 0.0%
+		displayFolder: 01 Revenus
+		lineageTag: 913a20a3-72c2-4a9a-aa32-06371a8293cf
+
+	/// Recette moyenne par course terminee.
+	measure 'Panier moyen' = DIVIDE ( [Chiffre d’affaires], [Courses terminées] )
+		formatString: #,0.00 "TND"
+		displayFolder: 01 Revenus
+		lineageTag: 422680d0-3eae-4d11-bd3f-026314c54b5a
+
+	/// Nombre de courses demandees par les clients.
+	measure 'Courses demandées' = SUM ( Courses[CoursesDemandees] )
+		formatString: #,0
+		displayFolder: 02 Activité
+		lineageTag: 33e4b122-c861-4d12-9f58-de7ae745672f
+
+	/// Nombre de courses effectivement realisees.
+	measure 'Courses terminées' = SUM ( Courses[CoursesTerminees] )
+		formatString: #,0
+		displayFolder: 02 Activité
+		lineageTag: 5bc9fb11-0648-4085-9f6f-56a209dddbe4
+
+	/// Nombre de courses annulees avant realisation.
+	measure 'Courses annulées' = SUM ( Courses[CoursesAnnulees] )
+		formatString: #,0
+		displayFolder: 02 Activité
+		lineageTag: 95a65618-1c35-406f-bd8b-a8bbf24c5cf2
+
+	/// Courses terminees rapportees aux courses demandees.
+	measure 'Taux de complétion' = DIVIDE ( [Courses terminées], [Courses demandées] )
+		formatString: 0.0%
+		displayFolder: 02 Activité
+		lineageTag: 9697a40d-f033-4d99-9a65-2dc6e05b0787
+
+	/// Courses annulees rapportees aux courses demandees.
+	measure 'Taux de courses annulées' = DIVIDE ( [Courses annulées], [Courses demandées] )
+		formatString: 0.0%
+		displayFolder: 02 Activité
+		lineageTag: 5c3a5fb4-452d-437d-ae3d-9ea01eac5a26
+
+	/// Distance totale parcourue en charge.
+	measure Kilomètres = SUM ( Courses[Km] )
+		formatString: #,0
+		displayFolder: 02 Activité
+		lineageTag: 14bfd415-938d-4b4f-a1ff-04a612045ed0
+
+	/// Distance moyenne d une course terminee.
+	measure 'Km moyen par course' = DIVIDE ( [Kilomètres], [Courses terminées] )
+		formatString: #,0.0
+		displayFolder: 02 Activité
+		lineageTag: 5807a903-9a6c-4c96-b514-84c99762f8c2
+
+	/// Recette moyenne par kilometre parcouru.
+	measure 'CA par kilomètre' = DIVIDE ( [Chiffre d’affaires], [Kilomètres] )
+		formatString: #,0.00 "TND"
+		displayFolder: 02 Activité
+		lineageTag: 83faa11a-a3bb-47d4-bfee-26968f38e1d9
+
+	/// Note moyenne ponderee par le nombre de courses terminees.
+	measure 'Note moyenne client' = DIVIDE ( SUM ( Courses[SommeNotes] ), [Courses terminées] )
+		formatString: 0.00
+		displayFolder: 03 Qualité
+		lineageTag: 0ec3a945-6f45-479a-aec9-b2b207e995b1
+
+	/// Chauffeurs ayant realise au moins une course sur la periode.
+	measure 'Chauffeurs actifs' = CALCULATE ( DISTINCTCOUNT ( Courses[ChauffeurID] ), Courses[CoursesTerminees] > 0 )
+		formatString: #,0
+		displayFolder: 03 Qualité
+		lineageTag: cb8eed0b-86a7-4e52-98e9-ad0ac4289267
+
+	/// Chiffre d’affaires moyen genere par chauffeur actif.
+	measure 'CA moyen par chauffeur actif' = DIVIDE ( [Chiffre d’affaires], [Chauffeurs actifs] )
+		formatString: #,0 "TND"
+		displayFolder: 03 Qualité
+		lineageTag: 170d66b9-21d7-47c6-b727-17113c9c3853
+
+	/// Chiffre d’affaires de la periode decalee d un mois.
+	measure 'CA mois précédent' = VAR Deb = MIN ( Calendrier[MoisIndex] ) VAR Fin = MAX ( Calendrier[MoisIndex] ) RETURN IF ( NOT ISBLANK ( Deb ), CALCULATE ( [Chiffre d’affaires], REMOVEFILTERS ( Calendrier ), Calendrier[MoisIndex] >= Deb - 1, Calendrier[MoisIndex] <= Fin - 1 ) )
+		formatString: #,0 "TND"
+		displayFolder: 04 Comparaisons
+		lineageTag: 5c0e0637-c6f6-482e-b717-f963cde5659a
+
+	/// Evolution du chiffre d’affaires par rapport au mois precedent.
+	measure 'Variation CA vs mois précédent' = DIVIDE ( [Chiffre d’affaires] - [CA mois précédent], [CA mois précédent] )
+		formatString: 0.0%
+		displayFolder: 04 Comparaisons
+		lineageTag: a4747288-02c8-4b66-ab61-49527b66b2e0
+
+	/// Chiffre d’affaires de la meme periode douze mois plus tot.
+	measure 'CA N-12' = VAR Deb = MIN ( Calendrier[MoisIndex] ) VAR Fin = MAX ( Calendrier[MoisIndex] ) RETURN IF ( NOT ISBLANK ( Deb ), CALCULATE ( [Chiffre d’affaires], REMOVEFILTERS ( Calendrier ), Calendrier[MoisIndex] >= Deb - 12, Calendrier[MoisIndex] <= Fin - 12 ) )
+		formatString: #,0 "TND"
+		displayFolder: 04 Comparaisons
+		lineageTag: a7b9b2ff-ae61-4d64-8644-6227a2a42d50
+
+	/// Croissance du chiffre d’affaires par rapport a la meme periode de l annee precedente.
+	measure 'Croissance CA sur 12 mois' = VAR Ref = [CA N-12] RETURN IF ( NOT ISBLANK ( Ref ) && Ref <> 0, DIVIDE ( [Chiffre d’affaires] - Ref, Ref ) )
+		formatString: 0.0%
+		displayFolder: 04 Comparaisons
+		lineageTag: c0981452-e3d0-43ca-8755-f3bfdbbf225e
+
+	/// Chiffre d’affaires cumule depuis le debut de l annee selectionnee.
+	measure 'CA cumulé annuel' = VAR Annee = SELECTEDVALUE ( Calendrier[Annee] ) VAR Idx = MAX ( Calendrier[MoisIndex] ) RETURN CALCULATE ( [Chiffre d’affaires], REMOVEFILTERS ( Calendrier ), Calendrier[Annee] = Annee, Calendrier[MoisIndex] <= Idx )
+		formatString: #,0 "TND"
+		displayFolder: 04 Comparaisons
+		lineageTag: 381c8ed1-4fbf-4f52-ad97-7e69f0ade0fa
+
+	/// Part du chiffre d’affaires reversee aux chauffeurs. Hypothese de gestion, non issue des sources.
+	measure 'Rétrocession chauffeurs' = [Chiffre d’affaires] * [Taux de rétrocession]
+		formatString: #,0 "TND"
+		displayFolder: 05 Rentabilité
+		lineageTag: 14c26feb-12fa-4ca9-9405-555708bc556c
+
+	/// Chiffre d’affaires diminue de la retrocession, de l entretien et du marketing consomme.
+	measure 'Marge brute estimée' = [Chiffre d’affaires] - [Rétrocession chauffeurs] - [Coût entretien] - [Budget marketing consommé]
+		formatString: #,0 "TND"
+		displayFolder: 05 Rentabilité
+		lineageTag: 08dc5df2-eaa2-4a9a-97c6-51262b140e34
+
+	/// Marge brute estimee rapportee au chiffre d’affaires.
+	measure 'Taux de marge estimé' = DIVIDE ( [Marge brute estimée], [Chiffre d’affaires] )
+		formatString: 0.0%
+		displayFolder: 05 Rentabilité
+		lineageTag: 4105c613-7d4d-4544-97c7-27ee83f01a92
+
+	/// Contribution de la ville au chiffre d’affaires de l ensemble des villes retenues.
+	measure 'Part du CA par ville' = DIVIDE ( [Chiffre d’affaires], CALCULATE ( [Chiffre d’affaires], ALLSELECTED ( Ville[Ville] ) ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 5a0cb1c8-9334-4dc0-9e79-669c561c31fb
+
+	/// Classement de la ville par chiffre d’affaires, 1 pour la premiere.
+	measure 'Rang de la ville' = IF ( HASONEVALUE ( Ville[Ville] ), RANKX ( ALLSELECTED ( Ville[Ville] ), CALCULATE ( [Chiffre d’affaires] ),, DESC, Dense ) )
+		formatString: 0
+		displayFolder: 08 Analyse
+		lineageTag: 7586cadd-31f9-485b-98db-cad5d74120e3
+
+	/// Part cumulee du chiffre d’affaires, des villes les plus contributrices aux moins contributrices. Sert a lire la concentration selon une logique de Pareto.
+	measure 'CA cumulé par ville' = VAR Cur = [Chiffre d’affaires] VAR T = ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ) RETURN IF ( NOT ISBLANK ( Cur ), DIVIDE ( SUMX ( FILTER ( T, [@ca] >= Cur ), [@ca] ), SUMX ( T, [@ca] ) ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: d4656266-6c4b-40fa-8f60-dda5587997fd
+
+	/// Ville qui realise le plus gros chiffre d’affaires du perimetre.
+	measure 'Ville la plus contributrice' = MAXX ( TOPN ( 1, ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca], DESC ), Ville[Ville] )
+		displayFolder: 08 Analyse
+		lineageTag: 86975bca-4307-449d-bd8c-e36bf79bd00a
+
+	/// Poids de la premiere ville dans le chiffre d’affaires du perimetre.
+	measure 'Part de la ville leader' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ) RETURN DIVIDE ( MAXX ( TOPN ( 1, T, [@ca], DESC ), [@ca] ), SUMX ( T, [@ca] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 873e25ce-6c85-410f-a785-b399dc09c687
+
+	/// Ville active dont le chiffre d’affaires est le plus faible.
+	measure 'Ville la moins contributrice' = MINX ( TOPN ( 1, FILTER ( ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ), [@ca], ASC ), Ville[Ville] )
+		displayFolder: 08 Analyse
+		lineageTag: 014c6c54-6888-4006-b80b-c8a597146a38
+
+	/// Poids de la derniere ville dans le chiffre d’affaires du perimetre.
+	measure 'Part de la ville la moins contributrice' = VAR T = FILTER ( ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ) RETURN DIVIDE ( MINX ( TOPN ( 1, T, [@ca], ASC ), [@ca] ), SUMX ( T, [@ca] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: c84b95ac-5067-40c7-b8f7-fe2b9a0bbdd8
+
+	/// Enumeration des trois premieres villes et de leur chiffre d’affaires.
+	measure 'Top 3 villes' = CONCATENATEX ( TOPN ( 3, ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca], DESC ), Ville[Ville] & " " & FORMAT ( [@ca], "#,0 ""TND""" ), " · ", [@ca], DESC )
+		displayFolder: 08 Analyse
+		lineageTag: 46fd607e-16d4-46bc-b532-dc2317f0c216
+
+	/// Concentration du chiffre d’affaires sur les trois premieres villes.
+	measure 'Part des 3 premieres villes' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Ville[Ville] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ) RETURN DIVIDE ( SUMX ( TOPN ( 3, T, [@ca], DESC ), [@ca] ), SUMX ( T, [@ca] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 59803fb9-ef5a-49ab-ad6f-75a02316f029
+
+	/// Contribution du chauffeur au chiffre d’affaires du perimetre.
+	measure 'Part du CA par chauffeur' = DIVIDE ( [Chiffre d’affaires], CALCULATE ( [Chiffre d’affaires], ALLSELECTED ( Chauffeur[Chauffeur] ) ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 52b55716-8940-4183-be5e-747724f139ad
+
+	/// Classement du chauffeur par chiffre d’affaires.
+	measure 'Rang du chauffeur' = IF ( HASONEVALUE ( Chauffeur[Chauffeur] ), RANKX ( ALLSELECTED ( Chauffeur[Chauffeur] ), CALCULATE ( [Chiffre d’affaires] ),, DESC, Dense ) )
+		formatString: 0
+		displayFolder: 08 Analyse
+		lineageTag: 739d303e-99f5-4564-9219-6a5514360c7c
+
+	/// Chauffeur qui genere le plus de chiffre d’affaires.
+	measure 'Chauffeur le plus contributeur' = MAXX ( TOPN ( 1, ADDCOLUMNS ( ALLSELECTED ( Chauffeur[Chauffeur] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca], DESC ), Chauffeur[Chauffeur] )
+		displayFolder: 08 Analyse
+		lineageTag: 7b4ef57a-451e-48fd-b81d-fa064e26366e
+
+	/// Enumeration des cinq premiers chauffeurs par chiffre d’affaires.
+	measure 'Top 5 chauffeurs' = CONCATENATEX ( TOPN ( 5, ADDCOLUMNS ( ALLSELECTED ( Chauffeur[Chauffeur] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca], DESC ), Chauffeur[Chauffeur], " · ", [@ca], DESC )
+		displayFolder: 08 Analyse
+		lineageTag: b53ae8da-7ab3-4eac-9ded-ee144754544b
+
+	/// Concentration du chiffre d’affaires sur les cinq premiers chauffeurs.
+	measure 'Part des 5 premiers chauffeurs' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Chauffeur[Chauffeur] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ) RETURN DIVIDE ( SUMX ( TOPN ( 5, T, [@ca], DESC ), [@ca] ), SUMX ( T, [@ca] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 9a23ca41-d1d9-4639-9b61-ef9f08d354cc
+
+	/// Chauffeur actif dont la note moyenne client est la plus basse.
+	measure 'Chauffeur à accompagner' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Chauffeur[Chauffeur] ), "@courses", CALCULATE ( [Courses terminées] ), "@note", CALCULATE ( [Note moyenne client] ) ) VAR Actifs = FILTER ( T, [@courses] > 0 ) RETURN MINX ( TOPN ( 1, Actifs, [@note], ASC ), Chauffeur[Chauffeur] )
+		displayFolder: 08 Analyse
+		lineageTag: ef6eded5-db31-4ded-85e0-30063c4fb95e
+
+	/// Note moyenne du chauffeur actif le moins bien note.
+	measure 'Note du chauffeur à accompagner' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Chauffeur[Chauffeur] ), "@courses", CALCULATE ( [Courses terminées] ), "@note", CALCULATE ( [Note moyenne client] ) ) VAR Actifs = FILTER ( T, [@courses] > 0 ) RETURN MINX ( TOPN ( 1, Actifs, [@note], ASC ), [@note] )
+		formatString: 0.00
+		displayFolder: 08 Analyse
+		lineageTag: fb5f04a6-1d63-4a97-bb89-43a661519b13
+
+	/// Mois au plus fort chiffre d’affaires sur le perimetre.
+	measure 'Meilleur mois' = MAXX ( TOPN ( 1, FILTER ( ADDCOLUMNS ( ALLSELECTED ( Calendrier[LabelMois] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ), [@ca], DESC ), Calendrier[LabelMois] )
+		displayFolder: 08 Analyse
+		lineageTag: 5b4e4f9f-ecaa-4eb9-9503-7b94707e292d
+
+	/// Chiffre d’affaires du meilleur mois.
+	measure 'CA du meilleur mois' = MAXX ( TOPN ( 1, FILTER ( ADDCOLUMNS ( ALLSELECTED ( Calendrier[LabelMois] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ), [@ca], DESC ), [@ca] )
+		formatString: #,0 "TND"
+		displayFolder: 08 Analyse
+		lineageTag: 45b69001-d0c4-490a-b825-df0f183ef0f2
+
+	/// Mois au plus faible chiffre d’affaires sur le perimetre.
+	measure 'Mois le plus faible' = MINX ( TOPN ( 1, FILTER ( ADDCOLUMNS ( ALLSELECTED ( Calendrier[LabelMois] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ), [@ca], ASC ), Calendrier[LabelMois] )
+		displayFolder: 08 Analyse
+		lineageTag: 26c61f62-e40d-4ec9-9c1e-92246d6058e8
+
+	/// Chiffre d’affaires du mois le plus faible.
+	measure 'CA du mois le plus faible' = MINX ( TOPN ( 1, FILTER ( ADDCOLUMNS ( ALLSELECTED ( Calendrier[LabelMois] ), "@ca", CALCULATE ( [Chiffre d’affaires] ) ), [@ca] > 0 ), [@ca], ASC ), [@ca] )
+		formatString: #,0 "TND"
+		displayFolder: 08 Analyse
+		lineageTag: 53941623-bd9b-4ff5-8165-6d85afc26497
+
+	/// Concentration de la depense sur les dix premiers clients identifies.
+	measure 'Part des 10 premiers clients' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Client[Client] ), "@ca", CALCULATE ( [CA clients identifiés] ) ) VAR Actifs = FILTER ( T, [@ca] > 0 ) RETURN DIVIDE ( SUMX ( TOPN ( 10, Actifs, [@ca], DESC ), [@ca] ), SUMX ( Actifs, [@ca] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 72a097f6-bd5d-4546-a2e2-3918791cf859
+
+	/// Client identifie a la depense la plus elevee.
+	measure 'Client le plus générateur' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Client[Client] ), "@ca", CALCULATE ( [CA clients identifiés] ) ) RETURN MAXX ( TOPN ( 1, T, [@ca], DESC ), Client[Client] )
+		displayFolder: 08 Analyse
+		lineageTag: bab52450-1c02-47e3-87e4-d5d8f02398d3
+
+	/// Annonceur au budget consomme le plus eleve.
+	measure 'Annonceur principal' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Annonceur[Annonceur] ), "@b", CALCULATE ( [Budget marketing consommé] ) ) RETURN MAXX ( TOPN ( 1, T, [@b], DESC ), Annonceur[Annonceur] )
+		displayFolder: 08 Analyse
+		lineageTag: b617038a-58e2-4b70-97f3-fc8fc768c023
+
+	/// Poids du premier annonceur dans le budget consomme.
+	measure 'Part de l’annonceur principal' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Annonceur[Annonceur] ), "@b", CALCULATE ( [Budget marketing consommé] ) ) RETURN DIVIDE ( MAXX ( TOPN ( 1, T, [@b], DESC ), [@b] ), SUMX ( T, [@b] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 0bcb311a-8274-45cc-aa6d-19e176a7b18d
+
+	/// Nature d intervention la plus couteuse sur le perimetre.
+	measure 'Poste d’entretien principal' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Entretien[TypeIntervention] ), "@c", CALCULATE ( [Coût entretien] ) ) RETURN MAXX ( TOPN ( 1, T, [@c], DESC ), Entretien[TypeIntervention] )
+		displayFolder: 08 Analyse
+		lineageTag: 760cec9c-e511-4fa3-b2bc-8331bfc3a5e2
+
+	/// Poids du premier poste dans les depenses d entretien.
+	measure 'Part du poste d’entretien principal' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Entretien[TypeIntervention] ), "@c", CALCULATE ( [Coût entretien] ) ) RETURN DIVIDE ( MAXX ( TOPN ( 1, T, [@c], DESC ), [@c] ), SUMX ( T, [@c] ) )
+		formatString: 0.0%
+		displayFolder: 08 Analyse
+		lineageTag: 3f1d123d-0906-49dd-97a5-39c2b3464f78
+
+	/// Marque au cout moyen par intervention le plus eleve.
+	measure 'Marque la plus coûteuse' = VAR T = ADDCOLUMNS ( ALLSELECTED ( Taxi[Marque] ), "@c", CALCULATE ( [Coût moyen par intervention] ) ) VAR Suivies = FILTER ( T, [@c] > 0 ) RETURN MAXX ( TOPN ( 1, Suivies, [@c], DESC ), Taxi[Marque] )
+		displayFolder: 08 Analyse
+		lineageTag: bdd089d2-f6c5-42bf-b8c6-db73413480b9
+
+	/// Titre du graphique combine de la page Synthese, actualise avec le realise, le taux d atteinte et l ecart a la cible.
+	measure 'Titre CA vs objectif' = VAR Reel = [Chiffre d’affaires] VAR Obj = [Objectif CA] VAR Taux = DIVIDE ( Reel, Obj ) VAR Ecart = Reel - Obj RETURN IF ( ISBLANK ( Obj ) || ISBLANK ( Reel ), "Chiffre d’affaires mensuel et objectif", "Chiffre d’affaires " & FORMAT ( Reel, "#,0 ""TND""" ) & " — " & FORMAT ( Taux, "0.0 %" ) & " de l’objectif, " & IF ( Ecart >= 0, "soit " & FORMAT ( Ecart, "#,0 ""TND""" ) & " au-dessus de la cible", "soit " & FORMAT ( ABS ( Ecart ), "#,0 ""TND""" ) & " a rattraper" ) )
+		displayFolder: 09 Titres
+		lineageTag: 2c56e86a-19f9-4160-94fa-b50f3722b5bd
+
+	/// Titre de la jauge d atteinte de l objectif de chiffre d’affaires.
+	measure 'Titre atteinte CA' = VAR Taux = [Atteinte objectif CA] RETURN IF ( ISBLANK ( Taux ), "Atteinte de l’objectif de chiffre d’affaires", IF ( Taux >= 1, "Objectif de chiffre d’affaires atteint a " & FORMAT ( Taux, "0.0 %" ), "Objectif de chiffre d’affaires realise a " & FORMAT ( Taux, "0.0 %" ) ) )
+		displayFolder: 09 Titres
+		lineageTag: c010fca1-f3dd-4865-88e0-7bfb14ed5d52
+
+	/// Titre du classement des villes, avec le poids du leader et du trio de tete.
+	measure 'Titre contribution villes' = VAR VL = [Ville la plus contributrice] VAR PL = [Part de la ville leader] VAR P3 = [Part des 3 premieres villes] RETURN IF ( ISBLANK ( VL ), "Chiffre d’affaires par ville", VL & " pese " & FORMAT ( PL, "0.0 %" ) & " du chiffre d’affaires, les trois premieres villes " & FORMAT ( P3, "0.0 %" ) )
+		displayFolder: 09 Titres
+		lineageTag: 9330691a-ac3f-40d1-b475-63f1e4163d9b
+
+	/// Titre du tableau de pilotage, avec le compte des objectifs atteints.
+	measure 'Titre pilotage objectifs' = VAR Suivis = [Indicateurs suivis] VAR Atteints = [Indicateurs atteints] RETURN IF ( ISBLANK ( Suivis ), "Suivi des objectifs par indicateur", FORMAT ( Atteints + 0, "#,0" ) & " objectifs atteints sur " & FORMAT ( Suivis, "#,0" ) & " indicateurs suivis" )
+		displayFolder: 09 Titres
+		lineageTag: 17f671c5-1c52-4fa2-a7a4-b9f498c38360
+
+	/// Titre du suivi de la completion, positionne par rapport a la cible.
+	measure 'Titre complétion' = VAR Reel = [Taux de complétion] VAR Obj = [Objectif taux de complétion] VAR Ecart = Reel - Obj RETURN IF ( ISBLANK ( Reel ), "Taux de completion et taux d’annulation", "Taux de completion de " & FORMAT ( Reel, "0.0 %" ) & ", " & IF ( Ecart >= 0, "au-dessus", "en dessous" ) & " de la cible de " & FORMAT ( Obj, "0.0 %" ) )
+		displayFolder: 09 Titres
+		lineageTag: a18c02a8-c800-4f11-92bb-cbfe19a4b1e3
+
+	/// Titre du profil mensuel des courses, avec le point haut et le point bas.
+	measure 'Titre saisonnalité' = VAR Best = [Meilleur mois] VAR Low = [Mois le plus faible] RETURN IF ( ISBLANK ( Best ), "Courses terminees par mois", "Activite maximale en " & Best & ", point bas en " & Low )
+		displayFolder: 09 Titres
+		lineageTag: 4f0b7856-66ed-447e-aae2-682322755814
+
+	/// Titre du classement des chauffeurs, avec la concentration du chiffre d’affaires.
+	measure 'Titre chauffeurs' = VAR Top = [Chauffeur le plus contributeur] VAR P5 = [Part des 5 premiers chauffeurs] RETURN IF ( ISBLANK ( Top ), "Performance des chauffeurs", "Les cinq premiers chauffeurs realisent " & FORMAT ( P5, "0.0 %" ) & " du chiffre d’affaires, " & Top & " en tete" )
+		displayFolder: 09 Titres
+		lineageTag: b91e46ee-932b-4524-a4bf-1874afee4ec7
+
+	/// Titre du suivi du cout d entretien, compare a son plafond cible.
+	measure 'Titre entretien' = VAR Part = [Coût entretien sur CA] VAR Obj = [Objectif coût flotte sur CA] RETURN IF ( ISBLANK ( Part ), "Cout d’entretien et poids dans le chiffre d’affaires", "L’entretien absorbe " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires pour un plafond de " & FORMAT ( Obj, "0.0 %" ) )
+		displayFolder: 09 Titres
+		lineageTag: 4efc68a8-dedd-4fbd-8b10-e8aa130f969f
+
+	/// Titre de la repartition des depenses d entretien par nature.
+	measure 'Titre postes d’entretien' = VAR P = [Poste d’entretien principal] VAR Part = [Part du poste d’entretien principal] RETURN IF ( ISBLANK ( P ), "Repartition des depenses d’entretien", P & " concentre " & FORMAT ( Part, "0.0 %" ) & " des depenses d’entretien" )
+		displayFolder: 09 Titres
+		lineageTag: 930b2834-864d-46c6-89ae-aa9367708d3a
+
+	/// Titre de la structure de marge, rappelant qu il s agit d une estimation.
+	measure 'Titre marge' = VAR Taux = [Taux de marge estimé] VAR Obj = [Objectif taux de marge] RETURN IF ( ISBLANK ( Taux ), "Structure de marge estimee par ville", "Marge estimee a " & FORMAT ( Taux, "0.0 %" ) & " pour une cible de " & FORMAT ( Obj, "0.0 %" ) & " — hypothese de retrocession incluse" )
+		displayFolder: 09 Titres
+		lineageTag: c535a214-17f1-41bd-a5af-212fbaec5c80
+
+	/// Titre du suivi des clients actifs et de la part de chiffre d’affaires tracee.
+	measure 'Titre clients actifs' = VAR N = [Clients actifs] VAR Part = [Part du CA tracée par client] RETURN IF ( ISBLANK ( N ), "Clients actifs par mois", FORMAT ( N, "#,0" ) & " clients identifies actifs, soit " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires trace" )
+		displayFolder: 09 Titres
+		lineageTag: 878adffb-425e-4a69-b168-2efd33588477
+
+	/// Titre du classement des clients, avec la concentration de la depense.
+	measure 'Titre concentration clients' = VAR Top = [Client le plus générateur] VAR P10 = [Part des 10 premiers clients] RETURN IF ( ISBLANK ( Top ), "Clients les plus generateurs de revenus", "Les dix premiers clients representent " & FORMAT ( P10, "0.0 %" ) & " de la depense identifiee, " & Top & " en tete" )
+		displayFolder: 09 Titres
+		lineageTag: fd71e945-3e08-49ab-9a0f-dd0215cd2a98
+
+	/// Titre du suivi budgetaire marketing, avec le taux de consommation.
+	measure 'Titre budget marketing' = VAR Taux = [Taux de consommation du budget] VAR Cons = [Budget marketing consommé] RETURN IF ( ISBLANK ( Cons ), "Budget marketing prevu et consomme", FORMAT ( Cons, "#,0 ""TND""" ) & " consommes, soit " & FORMAT ( Taux, "0.0 %" ) & " du budget prevu" )
+		displayFolder: 09 Titres
+		lineageTag: 58cb2676-bffb-43f5-877f-17e206a43170
+
+	/// Titre de la repartition du budget par annonceur.
+	measure 'Titre annonceurs' = VAR A = [Annonceur principal] VAR Part = [Part de l’annonceur principal] RETURN IF ( ISBLANK ( A ), "Poids des annonceurs dans le budget consomme", A & " represente " & FORMAT ( Part, "0.0 %" ) & " du budget consomme" )
+		displayFolder: 09 Titres
+		lineageTag: 12ce8200-aef0-4446-a9b6-a4bd07694893
+
+	/// Titre du budget par ville, replace face au plafond marketing.
+	measure 'Titre marketing sur CA' = VAR Part = [Coût marketing sur CA] VAR Obj = [Objectif coût marketing sur CA] RETURN IF ( ISBLANK ( Part ), "Budget consomme par ville ciblee", "Le marketing represente " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires pour un plafond de " & FORMAT ( Obj, "0.0 %" ) )
+		displayFolder: 09 Titres
+		lineageTag: dae4dc1e-7098-4231-bfe4-f8e1bc12a66b
+
+	/// Constat de la page Synthese : realise, objectif, dynamique annuelle et poids du leader.
+	measure 'Constat synthèse' = VAR Reel = [Chiffre d’affaires] VAR Taux = [Atteinte objectif CA] VAR Ecart = [Écart CA vs objectif] VAR Cro = [Croissance CA sur 12 mois] VAR VL = [Ville la plus contributrice] VAR PL = [Part de la ville leader] RETURN IF ( ISBLANK ( Reel ), "Aucune donnee sur la selection courante.", "Le chiffre d’affaires atteint " & FORMAT ( Reel, "#,0 ""TND""" ) & " pour un objectif de " & FORMAT ( [Objectif CA], "#,0 ""TND""" ) & " (" & FORMAT ( Taux, "0.0 %" ) & " d’atteinte). " & IF ( NOT ISBLANK ( Cro ), "La croissance sur douze mois ressort a " & FORMAT ( Cro, "0.0 %" ) & ". ", "" ) & IF ( NOT ISBLANK ( VL ), VL & " apporte " & FORMAT ( PL, "0.0 %" ) & " du total.", "" ) )
+		displayFolder: 10 Lecture
+		lineageTag: ad09df81-edf6-46a8-90e2-0c2aab5cb665
+
+	/// Alerte de la page Synthese : indicateurs sous les seuils declares dans les hypotheses.
+	measure 'Alerte synthèse' = VAR Hors = COALESCE ( [Indicateurs hors cible], 0 ) VAR Surv = COALESCE ( [Indicateurs à surveiller], 0 ) VAR Liste = [Liste indicateurs hors cible] RETURN IF ( Hors + Surv = 0, "Aucun indicateur sous les seuils : la trajectoire est conforme au plan.", IF ( Hors = 0, FORMAT ( Surv, "#,0" ) & " indicateur(s) entre le seuil d’alerte et le seuil de vigilance, a surveiller.", FORMAT ( Hors, "#,0" ) & " indicateur(s) hors cible : " & Liste ) )
+		displayFolder: 10 Lecture
+		lineageTag: dd298483-66ab-414f-ac33-1ded311fbc47
+
+	/// Action recommandee sur la page Synthese, chiffree a partir de l ecart a l objectif.
+	measure 'Action synthèse' = VAR Ecart = [Écart CA vs objectif] VAR EcartC = [Écart courses vs objectif] VAR VMin = [Ville la moins contributrice] VAR Panier = [Panier moyen] RETURN IF ( ISBLANK ( Ecart ), "Elargir la selection pour obtenir une recommandation.", IF ( Ecart >= 0, "Consolider l’avance : securiser le niveau de service et reinvestir la marge degagee sur " & VMin & ", la ville la moins contributrice.", "Rattraper " & FORMAT ( ABS ( Ecart ), "#,0 ""TND""" ) & " : viser " & FORMAT ( ABS ( EcartC ), "#,0" ) & " courses supplementaires au panier moyen de " & FORMAT ( Panier, "#,0 ""TND""" ) & ", en priorite sur " & VMin & "." ) )
+		displayFolder: 10 Lecture
+		lineageTag: 8a2826a0-620d-4b37-97b7-f3bb1b9f4ab8
+
+	/// Constat de la page Activite : volumes, completion, annulation et satisfaction.
+	measure 'Constat activité' = VAR Dem = [Courses demandées] VAR Ter = [Courses terminées] VAR TC = [Taux de complétion] VAR TA = [Taux de courses annulées] VAR Note = [Note moyenne client] RETURN IF ( ISBLANK ( Dem ), "Aucune course sur la selection courante.", FORMAT ( Dem, "#,0" ) & " courses demandees, " & FORMAT ( Ter, "#,0" ) & " terminees (" & FORMAT ( TC, "0.0 %" ) & "). " & "Le taux d’annulation ressort a " & FORMAT ( TA, "0.0 %" ) & " et la note moyenne a " & FORMAT ( Note, "0.00" ) & "." )
+		displayFolder: 10 Lecture
+		lineageTag: 4ed4da69-3823-4273-a301-bb80cd61b734
+
+	/// Alerte de la page Activite sur la completion, la satisfaction et les chauffeurs.
+	measure 'Alerte activité' = VAR TC = [Taux de complétion] VAR ObjC = [Objectif taux de complétion] VAR Note = [Note moyenne client] VAR ObjN = [Objectif note moyenne] VAR Ch = [Chauffeur à accompagner] VAR NoteCh = [Note du chauffeur à accompagner] RETURN IF ( ISBLANK ( TC ), "Aucune donnee d’activite a controler.", IF ( TC < ObjC, "Completion inferieure de " & FORMAT ( ( ObjC - TC ) * 100, "0.0 ""pt""" ) & " a la cible : " & FORMAT ( ( ObjC - TC ) * [Courses demandées], "#,0" ) & " courses perdues sur la periode.", IF ( Note < ObjN, "Note moyenne de " & FORMAT ( Note, "0.00" ) & " sous la cible de " & FORMAT ( ObjN, "0.00" ) & ".", "Completion et satisfaction au niveau attendu ; point de vigilance sur " & Ch & " (" & FORMAT ( NoteCh, "0.00" ) & ")." ) ) )
+		displayFolder: 10 Lecture
+		lineageTag: 45c9d3fa-b39d-41ec-b1ca-640f8c3b77d7
+
+	/// Action recommandee sur la page Activite.
+	measure 'Action activité' = VAR TC = [Taux de complétion] VAR ObjC = [Objectif taux de complétion] VAR Ch = [Chauffeur à accompagner] VAR Best = [Meilleur mois] RETURN IF ( ISBLANK ( TC ), "Elargir la selection pour obtenir une recommandation.", IF ( TC < ObjC, "Reduire les annulations : analyser les creneaux du mois le plus faible et accompagner " & Ch & " sur la qualite de service.", "Repliquer l’organisation de " & Best & " sur les mois creux et maintenir le plan de " & "formation des chauffeurs les moins bien notes." ) )
+		displayFolder: 10 Lecture
+		lineageTag: 8f6c66d8-edec-492f-9691-d7aa5a92b5e5
+
+	/// Constat de la page Flotte : cout d entretien, poids et marge estimee.
+	measure 'Constat flotte' = VAR Cout = [Coût entretien] VAR Part = [Coût entretien sur CA] VAR Marge = [Marge brute estimée] VAR TM = [Taux de marge estimé] VAR P = [Poste d’entretien principal] RETURN IF ( ISBLANK ( Cout ), "Aucune intervention sur la selection courante.", FORMAT ( Cout, "#,0 ""TND""" ) & " d’entretien, soit " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires. " & "La marge estimee ressort a " & FORMAT ( Marge, "#,0 ""TND""" ) & " (" & FORMAT ( TM, "0.0 %" ) & "), premier poste de depense : " & P & "." )
+		displayFolder: 10 Lecture
+		lineageTag: 885dfb51-960a-47bc-b42f-ffd1067a1339
+
+	/// Alerte de la page Flotte sur le poids de l entretien et la marge.
+	measure 'Alerte flotte' = VAR Part = [Coût entretien sur CA] VAR Obj = [Objectif coût flotte sur CA] VAR TM = [Taux de marge estimé] VAR ObjM = [Objectif taux de marge] VAR Marque = [Marque la plus coûteuse] RETURN IF ( ISBLANK ( Part ), "Aucun cout d’entretien a controler.", IF ( Part > Obj, "Le poids de l’entretien depasse le plafond de " & FORMAT ( ( Part - Obj ) * 100, "0.0 ""pt""" ) & " : " & FORMAT ( ( Part - Obj ) * [Chiffre d’affaires], "#,0 ""TND""" ) & " de depenses au-dela de la cible.", IF ( TM < ObjM, "Marge estimee inferieure de " & FORMAT ( ( ObjM - TM ) * 100, "0.0 ""pt""" ) & " a la cible.", "Couts maitrises ; surveiller la marque " & Marque & ", la plus couteuse par intervention." ) ) )
+		displayFolder: 10 Lecture
+		lineageTag: 762210f7-6b53-4650-8e5b-e33c994718da
+
+	/// Action recommandee sur la page Flotte.
+	measure 'Action flotte' = VAR Part = [Coût entretien sur CA] VAR Obj = [Objectif coût flotte sur CA] VAR P = [Poste d’entretien principal] VAR Marque = [Marque la plus coûteuse] VAR Age = [Âge moyen du parc] RETURN IF ( ISBLANK ( Part ), "Elargir la selection pour obtenir une recommandation.", IF ( Part > Obj, "Renegocier les forfaits " & P & " avec les garages et arbitrer le renouvellement des " & Marque & " (parc de " & FORMAT ( Age, "0.0" ) & " ans en moyenne).", "Maintenir le plan d’entretien preventif et cadencer le renouvellement du parc, " & "age moyen de " & FORMAT ( Age, "0.0" ) & " ans." ) )
+		displayFolder: 10 Lecture
+		lineageTag: a0c5bed0-2373-4954-aa10-3127affac740
+
+	/// Constat de la page Clients : base active, depense tracee et concentration.
+	measure 'Constat clients' = VAR N = [Clients actifs] VAR CAC = [CA clients identifiés] VAR Moy = [CA moyen par client actif] VAR Part = [Part du CA tracée par client] VAR P10 = [Part des 10 premiers clients] RETURN IF ( ISBLANK ( N ), "Aucun client identifie sur la selection courante.", FORMAT ( N, "#,0" ) & " clients actifs pour " & FORMAT ( CAC, "#,0 ""TND""" ) & " de depense tracee (" & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires), " & "soit " & FORMAT ( Moy, "#,0 ""TND""" ) & " par client. Les dix premiers pesent " & FORMAT ( P10, "0.0 %" ) & "." )
+		displayFolder: 10 Lecture
+		lineageTag: 99252816-1ab9-461e-9373-e11b3fe02364
+
+	/// Alerte de la page Clients sur la concentration et la tracabilite.
+	measure 'Alerte clients' = VAR Part = [Part du CA tracée par client] VAR P10 = [Part des 10 premiers clients] VAR Carte = [Part payee par carte] VAR ObjCarte = [Objectif part carte] RETURN IF ( ISBLANK ( Part ), "Aucune donnee client a controler.", IF ( P10 > 0.5, "Dependance elevee : " & FORMAT ( P10, "0.0 %" ) & " de la depense identifiee repose sur dix clients.", IF ( Carte < ObjCarte, "Paiement par carte a " & FORMAT ( Carte, "0.0 %" ) & " pour une cible de " & FORMAT ( ObjCarte, "0.0 %" ) & " : " & "la tracabilite des courses reste partielle.", "Base client equilibree ; " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires seulement est rattache a un client identifie." ) ) )
+		displayFolder: 10 Lecture
+		lineageTag: 6adbd760-9f55-4706-b2a8-b89a2eca6331
+
+	/// Action recommandee sur la page Clients.
+	measure 'Action clients' = VAR P10 = COALESCE ( [Part des 10 premiers clients], 0 ) VAR Top = COALESCE ( [Client le plus générateur], "le premier compte de la selection" ) VAR Carte = [Part payee par carte] VAR ObjCarte = [Objectif part carte] RETURN IF ( ISBLANK ( Carte ) || ISBLANK ( ObjCarte ), "Elargir la selection pour obtenir une recommandation.", IF ( Carte < ObjCarte, "Pousser le paiement par carte et l’inscription au programme de fidelite pour gagner " & FORMAT ( ( ObjCarte - Carte ) * 100, "0.0 ""pt""" ) & " de tracabilite.", "Securiser les comptes cles, a commencer par " & Top & ", et diversifier la base pour " & "reduire une concentration de " & FORMAT ( P10, "0.0 %" ) & "." ) )
+		displayFolder: 10 Lecture
+		lineageTag: 2546e486-8b7e-4a62-af84-46f93289b449
+
+	/// Constat de la page Marketing : budgets, consommation et poids dans le CA.
+	measure 'Constat marketing' = VAR Prevu = [Budget marketing prévu] VAR Cons = [Budget marketing consommé] VAR Taux = [Taux de consommation du budget] VAR Part = [Coût marketing sur CA] VAR Nb = [Campagnes actives] VAR A = [Annonceur principal] RETURN IF ( ISBLANK ( Prevu ), "Aucune campagne sur la selection courante.", FORMAT ( Cons, "#,0 ""TND""" ) & " consommes sur " & FORMAT ( Prevu, "#,0 ""TND""" ) & " prevus (" & FORMAT ( Taux, "0.0 %" ) & ") pour " & FORMAT ( Nb, "#,0" ) & " campagnes actives. " & "Le marketing pese " & FORMAT ( Part, "0.0 %" ) & " du chiffre d’affaires, premier annonceur : " & A & "." )
+		displayFolder: 10 Lecture
+		lineageTag: 9a65d28a-79bf-45e9-a228-4b84cb994fdb
+
+	/// Alerte de la page Marketing sur la consommation et le plafond de depense.
+	measure 'Alerte marketing' = VAR Taux = [Taux de consommation du budget] VAR Part = [Coût marketing sur CA] VAR Obj = [Objectif coût marketing sur CA] VAR Reste = [Budget marketing prévu] - [Budget marketing consommé] RETURN IF ( ISBLANK ( Taux ), "Aucun budget a controler.", IF ( Part > Obj, "Le poids du marketing depasse le plafond de " & FORMAT ( ( Part - Obj ) * 100, "0.0 ""pt""" ) & ".", IF ( Taux < 0.9, "Sous-consommation : " & FORMAT ( Reste, "#,0 ""TND""" ) & " de budget non engage.", IF ( Taux > 1, "Depassement de " & FORMAT ( - Reste, "#,0 ""TND""" ) & " sur le budget prevu.", "Consommation budgetaire conforme au plan de diffusion." ) ) ) )
+		displayFolder: 10 Lecture
+		lineageTag: d338b900-ace0-4c5a-9813-5544efb78ecf
+
+	/// Action recommandee sur la page Marketing.
+	measure 'Action marketing' = VAR Taux = [Taux de consommation du budget] VAR A = [Annonceur principal] VAR VMin = [Ville la moins contributrice] RETURN IF ( ISBLANK ( Taux ), "Elargir la selection pour obtenir une recommandation.", IF ( Taux < 0.9, "Reaffecter le budget non engage vers " & VMin & ", ou la demande reste a construire.", "Renegocier le contrat de " & A & " et repartir la pression publicitaire sur les villes " & "a plus faible notoriete, dont " & VMin & "." ) )
+		displayFolder: 10 Lecture
+		lineageTag: a54f453f-8f55-49d0-8baa-a60d47d6e782
+
+	/// Premier jour du mois d activite.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 71a236eb-375f-4f3e-b34b-7f4915fc228c
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Chauffeur concerne.
+	column ChauffeurID
+		dataType: string
+		isHidden
+		lineageTag: 7056c3fb-1730-45a5-a59a-c5b12858fcd7
+		summarizeBy: none
+		sourceColumn: ChauffeurID
+
+	/// Courses demandees sur le mois.
+	column CoursesDemandees
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: b565e0ff-d5cf-457c-acc7-d0fbfaed4aaf
+		summarizeBy: none
+		sourceColumn: CoursesDemandees
+
+	/// Courses terminees sur le mois.
+	column CoursesTerminees
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: ffb0b6c6-2b1c-4f5d-b20d-7a15cf9e54b4
+		summarizeBy: none
+		sourceColumn: CoursesTerminees
+
+	/// Courses annulees sur le mois.
+	column CoursesAnnulees
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 4f89a6eb-a8ce-40c7-9612-b1fc4d75010b
+		summarizeBy: none
+		sourceColumn: CoursesAnnulees
+
+	/// Chiffre d’affaires du mois, en TND.
+	column CA
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: f40afc59-bcc0-4bde-a70d-f01a58fd951d
+		summarizeBy: none
+		sourceColumn: CA
+
+	/// Kilometres parcourus sur le mois.
+	column Km
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 05abb997-4635-4a68-a92b-676767c07230
+		summarizeBy: none
+		sourceColumn: Km
+
+	/// Somme des notes clients, pour le calcul de la moyenne ponderee.
+	column SommeNotes
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 4d3a09fa-5762-438b-b1ab-b6268dd05578
+		summarizeBy: none
+		sourceColumn: SommeNotes
+
+	/// Chiffre d’affaires regle par carte, en TND.
+	column CA_Carte
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 9ee7a5c6-0d92-47fc-b7b4-4104b184cde3
+		summarizeBy: none
+		sourceColumn: CA_Carte
+
+	partition Courses = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\faits_courses.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"ChauffeurID", type text}, {"CoursesDemandees", Int64.Type}, {"CoursesTerminees", Int64.Type}, {"CoursesAnnulees", Int64.Type}, {"CA", type number}, {"Km", type number}, {"SommeNotes", type number}, {"CA_Carte", type number}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

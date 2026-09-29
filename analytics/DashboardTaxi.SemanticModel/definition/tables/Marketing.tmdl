@@ -1,0 +1,94 @@
+/// Consommation mensuelle des budgets publicitaires.
+table Marketing
+	lineageTag: 10a3a51e-d8c4-4c67-a9ff-dd04628af515
+
+	/// Budget publicitaire planifie sur la periode.
+	measure 'Budget marketing prévu' = SUM ( Marketing[BudgetPrevuMois] )
+		formatString: #,0 "TND"
+		lineageTag: d9189133-23ab-4086-8ea2-6fa847da808d
+
+	/// Budget publicitaire effectivement depense.
+	measure 'Budget marketing consommé' = SUM ( Marketing[BudgetConsommeMois] )
+		formatString: #,0 "TND"
+		lineageTag: 7dd174ea-46d4-42e3-82e0-8ff5972ee8cd
+
+	/// Part du budget prevu reellement consommee.
+	measure 'Taux de consommation du budget' = DIVIDE ( [Budget marketing consommé], [Budget marketing prévu] )
+		formatString: 0.0%
+		lineageTag: 230bc990-38fb-4f78-b053-d0840ae96909
+
+	/// Poids du marketing dans le chiffre d’affaires.
+	measure 'Coût marketing sur CA' = DIVIDE ( [Budget marketing consommé], [Chiffre d’affaires] )
+		formatString: 0.0%
+		lineageTag: 316c49a4-3f43-413c-af88-b0da9d3275aa
+
+	/// Nombre de campagnes en diffusion sur la periode.
+	measure 'Campagnes actives' = DISTINCTCOUNT ( Marketing[CampagneID] )
+		formatString: #,0
+		lineageTag: ec2a60cc-a2f2-4d61-ac8b-df374e9a7c7d
+
+	/// Mois de diffusion.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: bc72394b-ce2c-41a2-b314-3227c786b2b0
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Campagne concernee.
+	column CampagneID
+		dataType: string
+		isHidden
+		lineageTag: f327252e-ec25-4f5a-95c7-7b3494b96c03
+		summarizeBy: none
+		sourceColumn: CampagneID
+
+	/// Annonceur commanditaire.
+	column AnnonceurID
+		dataType: string
+		isHidden
+		lineageTag: 9927c3e3-305c-434e-80e8-7855f5f783b9
+		summarizeBy: none
+		sourceColumn: AnnonceurID
+
+	/// Ville ciblee.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: 3c3c493e-0c77-4e33-b052-41dc312c4430
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Budget planifie sur le mois, en TND.
+	column BudgetPrevuMois
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 55d8ca8e-6579-4a6c-b88b-20ccad05c31a
+		summarizeBy: none
+		sourceColumn: BudgetPrevuMois
+
+	/// Budget consomme sur le mois, en TND.
+	column BudgetConsommeMois
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: eb1a08b6-4152-4463-b174-3d5df42f5dfc
+		summarizeBy: none
+		sourceColumn: BudgetConsommeMois
+
+	partition Marketing = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\faits_marketing.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"CampagneID", type text}, {"AnnonceurID", type text}, {"Ville", type text}, {"BudgetPrevuMois", type number}, {"BudgetConsommeMois", type number}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

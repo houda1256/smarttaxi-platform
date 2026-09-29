@@ -1,0 +1,60 @@
+/// Hypotheses de gestion utilisees par le modele, explicitement declarees.
+table Hypothèses
+	lineageTag: dda6844c-6e86-424a-907b-b3ff95f85944
+
+	/// Part du chiffre d’affaires reversee aux chauffeurs, lue dans la table des hypotheses.
+	measure 'Taux de rétrocession' = CALCULATE ( MAX ( 'Hypothèses'[Valeur] ), REMOVEFILTERS ( 'Hypothèses' ), 'Hypothèses'[Parametre] = "Rétrocession chauffeurs" )
+		formatString: 0.0%
+		lineageTag: 3e1a8b1c-cd34-46bb-8512-7c5314ca33e0
+
+	/// Taux d atteinte en dessous duquel un indicateur passe en vigilance.
+	measure 'Seuil de vigilance' = CALCULATE ( MAX ( 'Hypothèses'[Valeur] ), REMOVEFILTERS ( 'Hypothèses' ), 'Hypothèses'[Parametre] = "Seuil de vigilance" )
+		formatString: 0.0%
+		lineageTag: afb831d9-d585-4e83-8e7f-4653e7396a15
+
+	/// Taux d atteinte en dessous duquel un indicateur est declare hors cible.
+	measure 'Seuil d’alerte' = CALCULATE ( MAX ( 'Hypothèses'[Valeur] ), REMOVEFILTERS ( 'Hypothèses' ), 'Hypothèses'[Parametre] = "Seuil d’alerte" )
+		formatString: 0.0%
+		lineageTag: 65b00b35-125d-408d-95da-a20ea2bf6c07
+
+	/// Nom de l hypothese.
+	column Parametre
+		dataType: string
+		lineageTag: ded2a4e9-7b2f-484d-a17e-07077027a323
+		summarizeBy: none
+		sourceColumn: Parametre
+
+	/// Valeur retenue.
+	column Valeur
+		dataType: double
+		formatString: #,0.00
+		lineageTag: deb39aa1-5b88-4a2c-89d2-4c585237c412
+		summarizeBy: none
+		sourceColumn: Valeur
+
+	/// Unite de l hypothese.
+	column Unite
+		dataType: string
+		lineageTag: 5ae70544-a377-4a96-bfce-4b9fd148dbaf
+		summarizeBy: none
+		sourceColumn: Unite
+
+	/// Origine et portee de l hypothese.
+	column Commentaire
+		dataType: string
+		lineageTag: 418f5f0a-44bd-41ac-8560-e25732fd4fdb
+		summarizeBy: none
+		sourceColumn: Commentaire
+
+	partition Hypothèses = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\hypotheses.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Parametre", type text}, {"Valeur", type number}, {"Unite", type text}, {"Commentaire", type text}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

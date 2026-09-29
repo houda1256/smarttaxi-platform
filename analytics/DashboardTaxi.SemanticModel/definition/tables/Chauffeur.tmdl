@@ -1,0 +1,59 @@
+/// Referentiel des chauffeurs.
+table Chauffeur
+	lineageTag: 72a23128-1772-46c7-a4c9-94bbea4fcf10
+
+	/// Nombre de chauffeurs presents au referentiel.
+	measure 'Chauffeurs référencés' = COUNTROWS ( Chauffeur )
+		formatString: #,0
+		lineageTag: 122b5c2a-e51a-4346-8daa-5aad307a2bba
+
+	/// Identifiant technique du chauffeur.
+	column ChauffeurID
+		dataType: string
+		isHidden
+		lineageTag: 4580e71e-e228-41d6-84d9-8397b08dc9aa
+		summarizeBy: none
+		sourceColumn: ChauffeurID
+
+	/// Nom du chauffeur.
+	column Chauffeur
+		dataType: string
+		lineageTag: 87c3355f-4bfe-45d7-8b4c-a49781995fac
+		summarizeBy: none
+		sourceColumn: Chauffeur
+
+	/// Ville de rattachement du chauffeur, doublon du referentiel Ville.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: 369fa73d-e4cd-4f7a-98c0-f22795f0d18a
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Statut administratif du chauffeur.
+	column Statut
+		dataType: string
+		lineageTag: 58760728-0a6d-4ade-9afa-92269b11a41e
+		summarizeBy: none
+		sourceColumn: Statut
+
+	/// Annee d entree en service.
+	column AnneeEntree
+		dataType: int64
+		formatString: #,0
+		lineageTag: 393f4d43-ca9c-4fbf-aa90-4573142a6d86
+		summarizeBy: none
+		sourceColumn: AnneeEntree
+
+	partition Chauffeur = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\chauffeur.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"ChauffeurID", type text}, {"Chauffeur", type text}, {"Ville", type text}, {"Statut", type text}, {"AnneeEntree", Int64.Type}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

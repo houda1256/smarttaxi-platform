@@ -1,0 +1,124 @@
+/// Table de dates continue de janvier 2025 a decembre 2026.
+table Calendrier
+	lineageTag: 19a4ee0f-8e2a-4e93-ac51-dbd2a13407c5
+
+	/// Date du jour.
+	column Date
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: a725f27e-e43e-4d70-8baf-0665b002c437
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: c384d30a-a256-48bc-a3b6-840ab13ca815
+			defaultHierarchy: LocalDateTable_5fcae81f-6e9d-42b4-b36e-169555aee3ad.'Hiérarchie de dates'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Annee civile.
+	column Annee
+		dataType: int64
+		formatString: #,0
+		lineageTag: 2e47bf55-69ec-4c1e-ab54-ed79c754c42d
+		summarizeBy: sum
+		sourceColumn: Annee
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Numero du mois dans l annee.
+	column MoisNum
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: ec10300b-ded5-44ba-ad87-e3eca3ed5239
+		summarizeBy: sum
+		sourceColumn: MoisNum
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Nom complet du mois.
+	column MoisNom
+		dataType: string
+		lineageTag: 6bffe45d-0b14-404d-a450-45bedd8fa8a5
+		summarizeBy: none
+		sourceColumn: MoisNom
+		sortByColumn: MoisNum
+
+	/// Nom abrege du mois.
+	column MoisAbrege
+		dataType: string
+		lineageTag: 9ee310f2-65be-4125-a89b-4c59aad1557e
+		summarizeBy: none
+		sourceColumn: MoisAbrege
+		sortByColumn: MoisNum
+
+	/// Cle annee-mois au format AAAA-MM.
+	column AnneeMois
+		dataType: string
+		isHidden
+		lineageTag: 2fad033d-05d4-48c8-94a3-6b89500c7f1d
+		summarizeBy: none
+		sourceColumn: AnneeMois
+
+	/// Libelle mois et annee, trie chronologiquement.
+	column LabelMois
+		dataType: string
+		lineageTag: 85ea8985-ffc8-47b5-9f02-e1fab03d3224
+		summarizeBy: none
+		sourceColumn: LabelMois
+		sortByColumn: MoisIndex
+
+	/// Trimestre civil.
+	column Trimestre
+		dataType: string
+		lineageTag: 8784eb9b-7e94-4dc1-af45-02ce171e4bd1
+		summarizeBy: none
+		sourceColumn: Trimestre
+
+	/// Trimestre prefixe de l annee.
+	column AnneeTrimestre
+		dataType: string
+		lineageTag: 61820f5b-7139-4384-9ab8-09eef3f246ee
+		summarizeBy: none
+		sourceColumn: AnneeTrimestre
+
+	/// Rang du mois depuis janvier 2025, base zero.
+	column MoisIndex
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 762fcdbd-107b-4a70-b201-9c1cf967cb99
+		summarizeBy: sum
+		sourceColumn: MoisIndex
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Oui si le mois est couvert par les donnees sources.
+	column DansHistorique
+		dataType: string
+		lineageTag: e9ea889b-c20f-4277-8c5a-2d6504909128
+		summarizeBy: none
+		sourceColumn: DansHistorique
+
+	/// Oui si la date est le premier jour du mois.
+	column DebutDeMois
+		dataType: string
+		isHidden
+		lineageTag: 42d8356a-fc4a-4ce9-9abf-d9188b65f45d
+		summarizeBy: none
+		sourceColumn: DebutDeMois
+
+	partition Calendrier = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\calendrier.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"Annee", Int64.Type}, {"MoisNum", Int64.Type}, {"MoisNom", type text}, {"MoisAbrege", type text}, {"AnneeMois", type text}, {"LabelMois", type text}, {"Trimestre", type text}, {"AnneeTrimestre", type text}, {"MoisIndex", Int64.Type}, {"DansHistorique", type text}, {"DebutDeMois", type text}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

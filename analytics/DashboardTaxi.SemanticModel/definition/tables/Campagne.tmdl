@@ -1,0 +1,107 @@
+/// Referentiel des campagnes publicitaires.
+table Campagne
+	lineageTag: 19d6ab70-df1e-4c20-b6b7-b0c583343f8a
+
+	/// Identifiant technique de la campagne.
+	column CampagneID
+		dataType: string
+		isHidden
+		lineageTag: 18077ace-02e2-4c4d-be4a-270e33bfd277
+		summarizeBy: none
+		sourceColumn: CampagneID
+
+	/// Nom de la campagne.
+	column Campagne
+		dataType: string
+		lineageTag: 9b49a93f-e6cf-4698-af9c-f59f63cbe465
+		summarizeBy: none
+		sourceColumn: Campagne
+
+	/// Annonceur commanditaire.
+	column AnnonceurID
+		dataType: string
+		isHidden
+		lineageTag: a2ceea82-8ae6-4f2b-ba69-c9cceb6665a4
+		summarizeBy: none
+		sourceColumn: AnnonceurID
+
+	/// Ville ciblee par la campagne, doublon du referentiel Ville.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: 7e449e60-f04b-48de-8b2b-f33af0a981d4
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Premier mois de diffusion.
+	column MoisDebut
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 248306c1-7511-459c-8b82-9493338b859f
+		summarizeBy: none
+		sourceColumn: MoisDebut
+
+		variation Variation
+			isDefault
+			relationship: 1011487f-78b7-491b-bed0-b0e364b34be8
+			defaultHierarchy: LocalDateTable_e6f42241-097b-4e70-99d1-ae3639fc83e8.'Hiérarchie de dates'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Dernier mois de diffusion.
+	column MoisFin
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 12832498-9d46-455c-9a4e-73c5d626407c
+		summarizeBy: none
+		sourceColumn: MoisFin
+
+		variation Variation
+			isDefault
+			relationship: 600c900c-425c-4222-b2ec-6ec2a6d2c7c9
+			defaultHierarchy: LocalDateTable_4a27599c-1755-429d-8376-9069fcef0cce.'Hiérarchie de dates'
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Duree de diffusion en mois.
+	column DureeMois
+		dataType: int64
+		formatString: #,0
+		lineageTag: c60b3d31-a488-4645-ac29-bcda49ada97d
+		summarizeBy: sum
+		sourceColumn: DureeMois
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Budget total planifie, en TND.
+	column BudgetPrevu
+		dataType: double
+		formatString: #,0.00
+		lineageTag: 9ee708d9-eb77-4e8b-bdb0-ed9d5322499a
+		summarizeBy: sum
+		sourceColumn: BudgetPrevu
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Budget total consomme, en TND.
+	column BudgetConsomme
+		dataType: double
+		formatString: #,0.00
+		lineageTag: ae6563f8-b9c1-4410-b53e-ec1d1a3f5257
+		summarizeBy: sum
+		sourceColumn: BudgetConsomme
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Campagne = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\campagne.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"CampagneID", type text}, {"Campagne", type text}, {"AnnonceurID", type text}, {"Ville", type text}, {"MoisDebut", type date}, {"MoisFin", type date}, {"DureeMois", Int64.Type}, {"BudgetPrevu", type number}, {"BudgetConsomme", type number}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+
