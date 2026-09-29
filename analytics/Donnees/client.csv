@@ -1,0 +1,381 @@
+ClientID,Client,Ville,MoisInscription,PointsFidelite
+CL0001,Anis Belhaj,Tunis,2024-12,150
+CL0002,Wassim Hamdi,Nabeul,2024-08,30
+CL0003,Sarra Jebali,Tunis,2025-01,20
+CL0004,Taoufik Jebali,Bizerte,2025-11,47
+CL0005,Nadia Slimani,Tunis,2025-02,113
+CL0006,Mariem Amri,Bizerte,2024-09,75
+CL0007,Ines Ben Salah,Kairouan,2026-04,9
+CL0008,Anis Maalej,Sousse,2024-09,14
+CL0009,Nour Bouazizi,Sousse,2025-01,0
+CL0010,Leila Mejri,Ariana,2024-09,65
+CL0011,Nizar Ferchichi,Tunis,2025-01,117
+CL0012,Nour Bouazizi,Manouba,2025-07,311
+CL0013,Chokri Chebbi,Mahdia,2025-01,535
+CL0014,Sarra Jebali,Tunis,2025-04,152
+CL0015,Sonia Mansouri,Tunis,2025-02,59
+CL0016,Anis Nasri,Nabeul,2024-08,83
+CL0017,Hedi Ktari,Sfax,2024-02,0
+CL0018,Nizar Baccouche,Sfax,2026-05,0
+CL0019,Amel Karoui,Sousse,2026-02,61
+CL0020,Fethi Dridi,Monastir,2025-03,70
+CL0021,Nadia Baccouche,Bizerte,2024-06,0
+CL0022,Sarra Jebali,Sousse,2026-03,41
+CL0023,Slim Nasri,Kairouan,2025-07,14
+CL0024,Hatem Ktari,Ariana,2025-04,210
+CL0025,Mohamed Hammami,Manouba,2024-01,0
+CL0026,Mohamed Ben Salah,Djerba,2026-01,0
+CL0027,Sarra Bouzid,Djerba,2025-09,55
+CL0028,Sarra Dridi,Tunis,2024-06,0
+CL0029,Leila Maalej,Tunis,2024-08,101
+CL0030,Youssef Guesmi,Sfax,2025-05,335
+CL0031,Dorra Guesmi,Ariana,2025-01,0
+CL0032,Sami Rekik,Sousse,2025-08,86
+CL0033,Ines Hamdi,Sfax,2024-09,166
+CL0034,Ridha Belhaj,Monastir,2026-04,63
+CL0035,Hedi Rekik,Sousse,2025-10,206
+CL0036,Sarra Jebali,Sfax,2025-08,129
+CL0037,Fethi Dridi,Manouba,2024-04,26
+CL0038,Sarra Mansouri,Sousse,2026-01,0
+CL0039,Amel Chebbi,Ariana,2025-12,13
+CL0040,Chokri Jaziri,Tunis,2025-03,0
+CL0041,Mohamed Dridi,Bizerte,2024-04,19
+CL0042,Youssef Amri,Djerba,2026-06,26
+CL0043,Mehdi Amri,Sousse,2025-10,38
+CL0044,Olfa Dridi,Sfax,2026-04,8
+CL0045,Anis Chebbi,Tunis,2025-05,46
+CL0046,Ines Ferchichi,Djerba,2026-05,0
+CL0047,Slim Bouzid,Sousse,2025-07,102
+CL0048,Nour Guesmi,Ben Arous,2025-10,42
+CL0049,Hela Zouari,Bizerte,2025-04,6
+CL0050,Amel Ferchichi,Sousse,2026-06,21
+CL0051,Chokri Ouertani,Sousse,2025-06,141
+CL0052,Nizar Rekik,Mahdia,2025-03,166
+CL0053,Mohamed Rekik,Tunis,2024-09,68
+CL0054,Anis Baccouche,Djerba,2025-12,272
+CL0055,Dorra Chebbi,Sousse,2025-07,12
+CL0056,Sami Dridi,Sousse,2025-03,59
+CL0057,Mariem Belhaj,Ben Arous,2025-07,136
+CL0058,Olfa Belhaj,Tunis,2025-05,77
+CL0059,Olfa Ben Salah,Sousse,2024-08,91
+CL0060,Sami Bouzid,Manouba,2026-06,25
+CL0061,Ali Sassi,Ben Arous,2024-10,12
+CL0062,Nour Amri,Monastir,2025-03,201
+CL0063,Mehdi Bouzid,Sfax,2025-10,33
+CL0064,Fethi Hamdi,Tunis,2025-11,50
+CL0065,Salma Belhaj,Ben Arous,2025-09,33
+CL0066,Mohamed Belhaj,Djerba,2025-10,0
+CL0067,Hela Slimani,Ariana,2025-02,240
+CL0068,Wassim Guesmi,Djerba,2024-07,53
+CL0069,Ridha Bouazizi,Tunis,2025-10,0
+CL0070,Nizar Maalej,Gabès,2026-02,39
+CL0071,Slim Mansouri,Ben Arous,2025-11,94
+CL0072,Hedi Jaziri,Manouba,2026-05,39
+CL0073,Anis Zouari,Sousse,2025-10,43
+CL0074,Slim Karoui,Nabeul,2026-05,0
+CL0075,Hela Bouzid,Djerba,2025-03,708
+CL0076,Wassim Khelifi,Gabès,2026-07,12
+CL0077,Slim Baccouche,Sfax,2025-06,0
+CL0078,Zied Jaziri,Ariana,2024-08,91
+CL0079,Anis Ben Salah,Sousse,2025-03,80
+CL0080,Wassim Karoui,Mahdia,2025-06,130
+CL0081,Ines Bouzid,Sfax,2025-07,72
+CL0082,Bilel Ktari,Djerba,2024-04,343
+CL0083,Ahmed Belhaj,Sfax,2024-09,93
+CL0084,Hedi Sassi,Tunis,2025-01,111
+CL0085,Bilel Bouzid,Nabeul,2024-02,142
+CL0086,Mehdi Chebbi,Sousse,2025-08,13
+CL0087,Nizar Jebali,Mahdia,2025-10,132
+CL0088,Karim Karoui,Gabès,2025-04,279
+CL0089,Anis Ktari,Tunis,2024-10,20
+CL0090,Anis Bouzid,Sousse,2026-02,9
+CL0091,Bilel Trabelsi,Tunis,2026-01,162
+CL0092,Hela Mansouri,Ben Arous,2025-04,10
+CL0093,Hatem Baccouche,Manouba,2024-11,11
+CL0094,Mourad Rekik,Bizerte,2024-01,138
+CL0095,Ridha Zouari,Sfax,2026-01,125
+CL0096,Youssef Jebali,Bizerte,2026-06,14
+CL0097,Wassim Trabelsi,Ariana,2026-01,0
+CL0098,Taoufik Jaziri,Nabeul,2025-04,51
+CL0099,Sami Guesmi,Nabeul,2025-01,319
+CL0100,Mourad Belhaj,Ben Arous,2025-02,45
+CL0101,Hela Belhaj,Djerba,2024-01,337
+CL0102,Hatem Zouari,Djerba,2024-09,283
+CL0103,Youssef Jaziri,Sousse,2024-10,0
+CL0104,Amel Dridi,Sousse,2025-09,233
+CL0105,Sami Ktari,Ben Arous,2025-06,12
+CL0106,Taoufik Mejri,Mahdia,2025-12,46
+CL0107,Leila Slimani,Tunis,2025-12,27
+CL0108,Sarra Hammami,Tunis,2025-12,55
+CL0109,Fethi Ayari,Monastir,2024-04,76
+CL0110,Hedi Slimani,Tunis,2026-07,0
+CL0111,Bilel Bouzid,Gabès,2025-06,99
+CL0112,Fethi Gharbi,Djerba,2026-06,48
+CL0113,Nizar Ferchichi,Tunis,2025-09,47
+CL0114,Fethi Belhaj,Ben Arous,2024-06,0
+CL0115,Chokri Ayari,Nabeul,2025-06,167
+CL0116,Karim Bouazizi,Tunis,2025-07,72
+CL0117,Mariem Belhaj,Mahdia,2026-02,0
+CL0118,Wassim Rekik,Manouba,2025-01,201
+CL0119,Ridha Sassi,Manouba,2025-09,25
+CL0120,Olfa Bouazizi,Manouba,2025-02,146
+CL0121,Hatem Gharbi,Sousse,2026-05,37
+CL0122,Youssef Ferchichi,Ben Arous,2024-09,0
+CL0123,Anis Dridi,Djerba,2026-01,49
+CL0124,Rim Dridi,Tunis,2026-04,0
+CL0125,Fethi Amri,Nabeul,2025-07,7
+CL0126,Nadia Baccouche,Sousse,2025-07,101
+CL0127,Ines Ben Salah,Sfax,2024-12,8
+CL0128,Mohamed Trabelsi,Nabeul,2025-12,172
+CL0129,Nizar Trabelsi,Kairouan,2025-07,6
+CL0130,Dorra Amri,Ben Arous,2026-03,27
+CL0131,Mohamed Rekik,Bizerte,2026-03,84
+CL0132,Ridha Hamdi,Bizerte,2025-08,32
+CL0133,Karim Ben Salah,Ben Arous,2024-02,24
+CL0134,Amel Chebbi,Sousse,2024-07,219
+CL0135,Mehdi Ayari,Kairouan,2025-11,7
+CL0136,Zied Jaziri,Tunis,2025-12,0
+CL0137,Nadia Mejri,Sousse,2026-05,24
+CL0138,Zied Zouari,Sfax,2026-03,75
+CL0139,Ali Guesmi,Tunis,2025-10,58
+CL0140,Fethi Hamdi,Ben Arous,2025-04,123
+CL0141,Chokri Nasri,Manouba,2026-04,31
+CL0142,Amel Chaabane,Bizerte,2025-11,254
+CL0143,Slim Ouertani,Bizerte,2025-08,75
+CL0144,Hedi Ktari,Tunis,2024-11,129
+CL0145,Youssef Mejri,Djerba,2024-10,13
+CL0146,Rim Guesmi,Sfax,2025-09,115
+CL0147,Nizar Nasri,Tunis,2025-07,61
+CL0148,Nadia Bouazizi,Kairouan,2025-04,90
+CL0149,Leila Dridi,Manouba,2026-06,6
+CL0150,Nizar Bouazizi,Bizerte,2025-04,81
+CL0151,Wassim Nasri,Manouba,2025-04,78
+CL0152,Dorra Khelifi,Mahdia,2024-09,29
+CL0153,Ridha Belhaj,Tunis,2024-11,15
+CL0154,Chokri Khelifi,Tunis,2025-06,559
+CL0155,Ridha Maalej,Ben Arous,2024-01,207
+CL0156,Mehdi Bouazizi,Tunis,2024-09,14
+CL0157,Yosra Belhaj,Tunis,2025-10,13
+CL0158,Nizar Hamdi,Tunis,2026-06,0
+CL0159,Ali Hammami,Gabès,2024-04,482
+CL0160,Nizar Bouzid,Tunis,2025-04,74
+CL0161,Mehdi Chaabane,Gabès,2025-09,83
+CL0162,Yosra Belhaj,Sousse,2024-03,37
+CL0163,Sonia Hamdi,Tunis,2024-07,65
+CL0164,Youssef Bouazizi,Tunis,2026-07,26
+CL0165,Dorra Sassi,Sfax,2024-12,36
+CL0166,Nizar Jebali,Ariana,2025-09,12
+CL0167,Salma Mansouri,Bizerte,2024-09,26
+CL0168,Olfa Ben Salah,Monastir,2024-04,63
+CL0169,Olfa Mansouri,Sousse,2024-11,11
+CL0170,Ridha Guesmi,Ben Arous,2025-11,88
+CL0171,Mariem Maalej,Djerba,2025-02,59
+CL0172,Wassim Gharbi,Sousse,2024-09,13
+CL0173,Hatem Bouzid,Ariana,2024-05,24
+CL0174,Mourad Zouari,Tunis,2025-06,175
+CL0175,Ahmed Jaziri,Sousse,2026-06,9
+CL0176,Mourad Trabelsi,Sousse,2025-10,260
+CL0177,Yosra Chaabane,Nabeul,2026-06,0
+CL0178,Nadia Ayari,Tunis,2026-03,135
+CL0179,Salma Ben Salah,Tunis,2024-05,43
+CL0180,Nizar Khelifi,Tunis,2025-04,49
+CL0181,Mehdi Ouertani,Tunis,2024-09,186
+CL0182,Sami Rekik,Tunis,2024-07,22
+CL0183,Ridha Baccouche,Gabès,2025-03,13
+CL0184,Anis Hamdi,Ariana,2025-02,38
+CL0185,Salma Gharbi,Nabeul,2024-05,0
+CL0186,Ali Sassi,Ben Arous,2026-04,13
+CL0187,Mariem Sassi,Tunis,2026-07,13
+CL0188,Ridha Maalej,Tunis,2024-01,119
+CL0189,Hedi Rekik,Bizerte,2025-12,103
+CL0190,Mohamed Chaabane,Tunis,2025-01,72
+CL0191,Yosra Gharbi,Mahdia,2025-05,63
+CL0192,Dorra Zouari,Sousse,2026-07,9
+CL0193,Hatem Jebali,Sfax,2025-01,8
+CL0194,Olfa Chebbi,Bizerte,2024-06,18
+CL0195,Salma Ben Salah,Tunis,2024-04,22
+CL0196,Mourad Chaabane,Sfax,2026-03,29
+CL0197,Leila Slimani,Ben Arous,2025-10,33
+CL0198,Yosra Belhaj,Sousse,2025-08,48
+CL0199,Ali Dridi,Nabeul,2026-07,11
+CL0200,Dorra Mejri,Ben Arous,2025-11,215
+CL0201,Youssef Ktari,Tunis,2026-03,148
+CL0202,Wassim Slimani,Bizerte,2025-11,14
+CL0203,Yosra Nasri,Ariana,2024-09,128
+CL0204,Ahmed Chaabane,Tunis,2024-12,19
+CL0205,Nadia Karoui,Tunis,2026-05,24
+CL0206,Ahmed Sassi,Sfax,2024-07,0
+CL0207,Leila Rekik,Tunis,2026-07,0
+CL0208,Hedi Mansouri,Monastir,2025-06,26
+CL0209,Mourad Maalej,Gabès,2026-06,13
+CL0210,Chokri Dridi,Tunis,2025-01,82
+CL0211,Sami Mejri,Ben Arous,2025-10,29
+CL0212,Nadia Ben Salah,Sousse,2025-09,87
+CL0213,Rim Dridi,Bizerte,2025-04,120
+CL0214,Ridha Guesmi,Sfax,2024-11,247
+CL0215,Bilel Slimani,Tunis,2024-10,106
+CL0216,Nizar Mansouri,Tunis,2024-10,6
+CL0217,Sonia Rekik,Nabeul,2025-07,127
+CL0218,Nour Khelifi,Djerba,2024-01,46
+CL0219,Ahmed Ayari,Mahdia,2026-02,25
+CL0220,Hedi Trabelsi,Bizerte,2026-06,9
+CL0221,Olfa Ferchichi,Sfax,2024-01,11
+CL0222,Karim Rekik,Sfax,2025-01,59
+CL0223,Amel Dridi,Tunis,2024-08,31
+CL0224,Hela Ouertani,Djerba,2024-01,36
+CL0225,Chokri Maalej,Tunis,2024-08,10
+CL0226,Leila Ktari,Ariana,2025-05,67
+CL0227,Salma Ben Salah,Sousse,2025-08,23
+CL0228,Chokri Baccouche,Nabeul,2024-09,0
+CL0229,Ahmed Trabelsi,Tunis,2026-03,0
+CL0230,Olfa Ferchichi,Kairouan,2026-01,34
+CL0231,Amel Khelifi,Nabeul,2025-05,96
+CL0232,Zied Bouzid,Tunis,2025-11,138
+CL0233,Amel Jebali,Tunis,2025-12,0
+CL0234,Leila Khelifi,Monastir,2025-06,122
+CL0235,Wassim Amri,Ben Arous,2024-04,9
+CL0236,Ines Khelifi,Tunis,2025-08,42
+CL0237,Slim Nasri,Ariana,2025-01,66
+CL0238,Hela Zouari,Tunis,2024-06,20
+CL0239,Zied Chaabane,Nabeul,2024-05,46
+CL0240,Nour Ferchichi,Ariana,2026-02,11
+CL0241,Yosra Nasri,Sfax,2024-11,161
+CL0242,Bilel Ktari,Djerba,2025-11,0
+CL0243,Nour Jebali,Ariana,2025-05,31
+CL0244,Mohamed Ktari,Ben Arous,2025-01,24
+CL0245,Hedi Jaziri,Tunis,2026-03,20
+CL0246,Dorra Zouari,Tunis,2024-06,549
+CL0247,Anis Ktari,Tunis,2025-05,10
+CL0248,Hela Bouzid,Tunis,2026-01,44
+CL0249,Hela Mejri,Tunis,2026-06,8
+CL0250,Hela Ben Salah,Ariana,2026-06,8
+CL0251,Zied Khelifi,Sfax,2026-01,212
+CL0252,Mariem Mansouri,Nabeul,2026-07,10
+CL0253,Sarra Chebbi,Ariana,2026-07,6
+CL0254,Leila Ouertani,Sousse,2026-02,619
+CL0255,Karim Belhaj,Tunis,2024-12,0
+CL0256,Fethi Amri,Monastir,2025-03,1083
+CL0257,Ahmed Sassi,Djerba,2026-03,97
+CL0258,Youssef Bouazizi,Monastir,2025-01,44
+CL0259,Wassim Zouari,Ben Arous,2025-11,8
+CL0260,Mehdi Bouzid,Ariana,2026-03,0
+CL0261,Mourad Ktari,Ariana,2024-03,65
+CL0262,Sarra Hamdi,Sfax,2024-07,112
+CL0263,Slim Chaabane,Ariana,2025-10,0
+CL0264,Leila Guesmi,Tunis,2024-03,103
+CL0265,Olfa Jaziri,Sfax,2024-01,56
+CL0266,Ali Baccouche,Sfax,2025-02,9
+CL0267,Salma Ben Salah,Djerba,2024-12,7
+CL0268,Ines Chaabane,Tunis,2024-12,0
+CL0269,Taoufik Rekik,Nabeul,2024-04,13
+CL0270,Sami Ferchichi,Mahdia,2024-02,24
+CL0271,Nizar Ben Salah,Tunis,2025-01,99
+CL0272,Hela Guesmi,Sfax,2024-01,24
+CL0273,Taoufik Maalej,Ben Arous,2024-05,218
+CL0274,Nadia Hamdi,Tunis,2025-12,59
+CL0275,Sami Ayari,Sousse,2025-04,112
+CL0276,Fethi Dridi,Sfax,2026-02,0
+CL0277,Salma Rekik,Kairouan,2026-05,37
+CL0278,Amel Sassi,Kairouan,2026-06,0
+CL0279,Olfa Mejri,Sousse,2026-05,0
+CL0280,Nadia Mejri,Nabeul,2025-02,162
+CL0281,Mohamed Hamdi,Tunis,2025-07,35
+CL0282,Leila Ben Salah,Sfax,2026-07,13
+CL0283,Chokri Bouzid,Sfax,2024-02,54
+CL0284,Chokri Ayari,Sfax,2024-03,327
+CL0285,Taoufik Khelifi,Tunis,2024-04,55
+CL0286,Chokri Rekik,Tunis,2024-09,15
+CL0287,Mehdi Ben Salah,Djerba,2025-04,11
+CL0288,Wassim Guesmi,Tunis,2025-03,145
+CL0289,Youssef Gharbi,Mahdia,2024-04,8
+CL0290,Bilel Baccouche,Djerba,2026-01,54
+CL0291,Rim Karoui,Sfax,2024-10,146
+CL0292,Karim Khelifi,Ben Arous,2025-08,0
+CL0293,Mariem Hammami,Tunis,2025-11,49
+CL0294,Amel Rekik,Manouba,2024-09,71
+CL0295,Mariem Chaabane,Ben Arous,2025-12,226
+CL0296,Mehdi Mansouri,Mahdia,2025-04,48
+CL0297,Taoufik Hammami,Tunis,2026-06,10
+CL0298,Zied Slimani,Tunis,2025-08,23
+CL0299,Mehdi Zouari,Bizerte,2024-06,49
+CL0300,Leila Jebali,Mahdia,2025-02,282
+CL0301,Slim Bouzid,Tunis,2026-07,75
+CL0302,Ines Hamdi,Manouba,2024-06,206
+CL0303,Sami Ben Salah,Ariana,2025-11,38
+CL0304,Hela Chaabane,Mahdia,2025-04,46
+CL0305,Fethi Ouertani,Nabeul,2025-07,30
+CL0306,Wassim Ferchichi,Sfax,2025-02,133
+CL0307,Taoufik Bouzid,Tunis,2024-07,0
+CL0308,Nizar Jebali,Ariana,2024-03,162
+CL0309,Dorra Khelifi,Tunis,2025-02,0
+CL0310,Fethi Ouertani,Sfax,2026-01,0
+CL0311,Ali Jebali,Tunis,2025-11,58
+CL0312,Yosra Jaziri,Tunis,2025-05,24
+CL0313,Sami Chaabane,Ben Arous,2025-09,60
+CL0314,Slim Sassi,Sousse,2025-04,76
+CL0315,Ali Karoui,Sfax,2025-03,55
+CL0316,Karim Ktari,Tunis,2025-09,20
+CL0317,Ines Zouari,Ben Arous,2026-05,125
+CL0318,Hatem Hammami,Ariana,2024-03,188
+CL0319,Hedi Belhaj,Tunis,2025-05,48
+CL0320,Salma Baccouche,Kairouan,2026-05,25
+CL0321,Ridha Chaabane,Tunis,2026-02,271
+CL0322,Mourad Mansouri,Nabeul,2026-02,91
+CL0323,Karim Bouzid,Monastir,2025-04,0
+CL0324,Sonia Guesmi,Djerba,2024-10,0
+CL0325,Wassim Sassi,Sousse,2024-07,482
+CL0326,Karim Jaziri,Ariana,2025-12,21
+CL0327,Chokri Khelifi,Sousse,2024-09,128
+CL0328,Taoufik Mejri,Sousse,2026-04,94
+CL0329,Mariem Hammami,Bizerte,2025-04,101
+CL0330,Bilel Ktari,Mahdia,2024-02,118
+CL0331,Mohamed Baccouche,Tunis,2025-08,67
+CL0332,Olfa Sassi,Ariana,2025-05,55
+CL0333,Ines Jebali,Ben Arous,2024-06,0
+CL0334,Mourad Ktari,Tunis,2026-03,118
+CL0335,Chokri Mansouri,Mahdia,2025-09,1669
+CL0336,Youssef Amri,Tunis,2024-04,0
+CL0337,Nour Karoui,Tunis,2026-05,34
+CL0338,Chokri Belhaj,Tunis,2025-08,13
+CL0339,Leila Hammami,Ariana,2025-11,77
+CL0340,Zied Hammami,Mahdia,2025-05,22
+CL0341,Anis Jebali,Sousse,2025-03,21
+CL0342,Mourad Amri,Nabeul,2026-03,0
+CL0343,Nadia Khelifi,Manouba,2025-02,0
+CL0344,Nour Dridi,Sfax,2026-06,26
+CL0345,Mourad Bouzid,Ariana,2025-05,32
+CL0346,Ines Ktari,Djerba,2025-06,185
+CL0347,Sami Belhaj,Sfax,2025-02,12
+CL0348,Rim Bouzid,Sfax,2024-05,155
+CL0349,Nizar Ben Salah,Mahdia,2025-11,0
+CL0350,Youssef Ben Salah,Nabeul,2025-03,26
+CL0351,Mohamed Jebali,Tunis,2024-01,62
+CL0352,Nadia Hammami,Nabeul,2026-06,12
+CL0353,Nour Ayari,Sfax,2024-11,0
+CL0354,Nadia Maalej,Manouba,2026-05,63
+CL0355,Sami Dridi,Tunis,2024-12,68
+CL0356,Sonia Chaabane,Monastir,2025-03,131
+CL0357,Salma Baccouche,Ben Arous,2025-09,11
+CL0358,Ali Hamdi,Gabès,2024-05,14
+CL0359,Youssef Dridi,Tunis,2024-03,129
+CL0360,Amel Guesmi,Bizerte,2026-06,0
+CL0361,Sonia Zouari,Tunis,2024-02,93
+CL0362,Hela Slimani,Kairouan,2026-03,567
+CL0363,Ines Ouertani,Ariana,2024-04,54
+CL0364,Karim Ben Salah,Bizerte,2024-12,171
+CL0365,Taoufik Mansouri,Ben Arous,2024-06,0
+CL0366,Hela Amri,Manouba,2025-02,335
+CL0367,Ali Hammami,Tunis,2026-01,24
+CL0368,Nizar Sassi,Tunis,2024-08,169
+CL0369,Nour Belhaj,Tunis,2026-06,0
+CL0370,Salma Belhaj,Tunis,2024-07,221
+CL0371,Leila Belhaj,Tunis,2025-09,0
+CL0372,Nizar Rekik,Sousse,2025-10,48
+CL0373,Dorra Baccouche,Sousse,2024-11,57
+CL0374,Sami Ktari,Tunis,2024-08,90
+CL0375,Taoufik Ktari,Sfax,2025-08,180
+CL0376,Bilel Amri,Mahdia,2026-02,0
+CL0377,Mourad Slimani,Ben Arous,2025-11,105
+CL0378,Sonia Bouzid,Monastir,2024-09,600
+CL0379,Leila Ferchichi,Ariana,2025-01,151
+CL0380,Rim Guesmi,Sfax,2026-04,26

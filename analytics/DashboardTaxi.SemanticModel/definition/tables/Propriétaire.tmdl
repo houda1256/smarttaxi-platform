@@ -1,0 +1,38 @@
+/// Referentiel des proprietaires de vehicules.
+table Propriétaire
+	lineageTag: fdba09a8-bd6f-4076-91a1-8f1207601884
+
+	/// Identifiant technique du proprietaire.
+	column ProprietaireID
+		dataType: string
+		isHidden
+		lineageTag: 854e640a-4d13-40dd-a70b-6d8a7fb9499f
+		summarizeBy: none
+		sourceColumn: ProprietaireID
+
+	/// Nom du proprietaire.
+	column Proprietaire
+		dataType: string
+		lineageTag: 596dd79d-0593-40b2-856b-7cec2ff636aa
+		summarizeBy: none
+		sourceColumn: Proprietaire
+
+	/// Ville du proprietaire.
+	column Ville
+		dataType: string
+		lineageTag: eba12b69-8b73-4538-9b57-72913610a957
+		summarizeBy: none
+		sourceColumn: Ville
+
+	partition Propriétaire = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\proprietaire.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"ProprietaireID", type text}, {"Proprietaire", type text}, {"Ville", type text}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

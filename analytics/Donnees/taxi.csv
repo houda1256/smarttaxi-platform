@@ -1,0 +1,63 @@
+TaxiID,ChauffeurID,Ville,Marque,Modele,MarqueModele,Immatriculation,ProprietaireID,AnneeVehicule
+TX001,CH001,Sousse,Dacia,Logan,Dacia Logan,164 TU 9435,PRO005,2016
+TX002,CH002,Bizerte,Volkswagen,Polo,Volkswagen Polo,180 TU 5293,PRO005,2017
+TX003,CH003,Sousse,Kia,Rio,Kia Rio,151 TU 4938,PRO023,2021
+TX004,CH004,Monastir,Skoda,Fabia,Skoda Fabia,220 TU 9146,PRO020,2021
+TX005,CH005,Tunis,Volkswagen,Polo,Volkswagen Polo,148 TU 7278,PRO021,2015
+TX006,CH006,Nabeul,Kia,Rio,Kia Rio,203 TU 3225,PRO025,2014
+TX007,CH007,Bizerte,Fiat,Tipo,Fiat Tipo,148 TU 8428,PRO010,2021
+TX008,CH008,Ben Arous,Renault,Symbol,Renault Symbol,177 TU 9929,PRO015,2019
+TX009,CH009,Tunis,Kia,Rio,Kia Rio,223 TU 2616,PRO007,2020
+TX010,CH010,Sousse,Hyundai,Accent,Hyundai Accent,137 TU 1155,PRO013,2020
+TX011,CH011,Kairouan,Skoda,Fabia,Skoda Fabia,208 TU 4101,PRO006,2018
+TX012,CH012,Sousse,Renault,Symbol,Renault Symbol,100 TU 2148,PRO010,2018
+TX013,CH013,Manouba,Fiat,Tipo,Fiat Tipo,206 TU 5810,PRO024,2020
+TX014,CH014,Sousse,Dacia,Logan,Dacia Logan,223 TU 5211,PRO006,2018
+TX015,CH015,Sousse,Kia,Rio,Kia Rio,146 TU 4733,PRO010,2017
+TX016,CH016,Ariana,Fiat,Tipo,Fiat Tipo,179 TU 4821,PRO002,2016
+TX017,CH017,Djerba,Peugeot,301,Peugeot 301,211 TU 1999,PRO009,2020
+TX018,CH018,Tunis,Hyundai,Accent,Hyundai Accent,190 TU 3523,PRO023,2014
+TX019,CH019,Tunis,Hyundai,Accent,Hyundai Accent,214 TU 1227,PRO010,2015
+TX020,CH020,Sfax,Kia,Rio,Kia Rio,171 TU 1077,PRO009,2020
+TX021,CH021,Sousse,Renault,Symbol,Renault Symbol,178 TU 6420,PRO022,2018
+TX022,CH022,Tunis,Peugeot,301,Peugeot 301,159 TU 2432,PRO002,2015
+TX023,CH023,Nabeul,Skoda,Fabia,Skoda Fabia,194 TU 5675,PRO020,2014
+TX024,CH024,Tunis,Peugeot,301,Peugeot 301,169 TU 5499,PRO013,2018
+TX025,CH025,Ben Arous,Kia,Rio,Kia Rio,119 TU 8385,PRO021,2016
+TX026,CH026,Ariana,Kia,Rio,Kia Rio,160 TU 9571,PRO025,2015
+TX027,CH027,Mahdia,Fiat,Tipo,Fiat Tipo,211 TU 1789,PRO014,2016
+TX028,CH028,Ariana,Peugeot,301,Peugeot 301,197 TU 7482,PRO009,2021
+TX029,CH029,Tunis,Hyundai,Accent,Hyundai Accent,110 TU 7942,PRO025,2018
+TX030,CH030,Ben Arous,Dacia,Logan,Dacia Logan,221 TU 8076,PRO010,2021
+TX031,CH031,Ben Arous,Volkswagen,Polo,Volkswagen Polo,138 TU 7793,PRO013,2017
+TX032,CH032,Ariana,Kia,Rio,Kia Rio,178 TU 6224,PRO002,2014
+TX033,CH033,Tunis,Volkswagen,Polo,Volkswagen Polo,101 TU 4965,PRO019,2019
+TX034,CH034,Manouba,Renault,Symbol,Renault Symbol,114 TU 9999,PRO006,2019
+TX035,CH035,Sousse,Peugeot,301,Peugeot 301,184 TU 6369,PRO012,2019
+TX036,CH036,Sfax,Hyundai,Accent,Hyundai Accent,160 TU 6262,PRO007,2014
+TX037,CH037,Monastir,Kia,Rio,Kia Rio,230 TU 8293,PRO018,2017
+TX038,CH038,Ariana,Renault,Symbol,Renault Symbol,171 TU 3516,PRO009,2021
+TX039,CH039,Ben Arous,Renault,Symbol,Renault Symbol,203 TU 9920,PRO005,2021
+TX040,CH040,Nabeul,Renault,Symbol,Renault Symbol,178 TU 4699,PRO025,2015
+TX041,CH041,Ariana,Kia,Rio,Kia Rio,122 TU 3581,PRO012,2020
+TX042,CH042,Tunis,Renault,Symbol,Renault Symbol,187 TU 4782,PRO026,2014
+TX043,CH043,Tunis,Renault,Symbol,Renault Symbol,216 TU 2185,PRO002,2018
+TX044,CH044,Sousse,Volkswagen,Polo,Volkswagen Polo,112 TU 9922,PRO016,2021
+TX045,CH045,Nabeul,Renault,Symbol,Renault Symbol,168 TU 3194,PRO009,2018
+TX046,CH046,Djerba,Peugeot,301,Peugeot 301,149 TU 4557,PRO016,2020
+TX047,CH047,Gabès,Volkswagen,Polo,Volkswagen Polo,222 TU 4939,PRO014,2020
+TX048,CH048,Sousse,Peugeot,301,Peugeot 301,161 TU 7509,PRO023,2019
+TX049,CH049,Tunis,Renault,Symbol,Renault Symbol,170 TU 5208,PRO017,2021
+TX050,CH050,Djerba,Renault,Symbol,Renault Symbol,208 TU 5273,PRO014,2017
+TX051,CH051,Tunis,Kia,Rio,Kia Rio,132 TU 4744,PRO009,2020
+TX052,CH052,Monastir,Dacia,Logan,Dacia Logan,153 TU 4758,PRO020,2020
+TX053,CH053,Sfax,Volkswagen,Polo,Volkswagen Polo,108 TU 3379,PRO012,2019
+TX054,CH054,Monastir,Renault,Symbol,Renault Symbol,125 TU 2499,PRO014,2019
+TX055,CH055,Ben Arous,Hyundai,Accent,Hyundai Accent,103 TU 2313,PRO016,2015
+TX056,CH056,Sfax,Volkswagen,Polo,Volkswagen Polo,136 TU 8340,PRO019,2017
+TX057,CH057,Sfax,Kia,Rio,Kia Rio,174 TU 3209,PRO007,2019
+TX058,CH058,Gabès,Fiat,Tipo,Fiat Tipo,230 TU 2138,PRO026,2014
+TX059,CH059,Nabeul,Kia,Rio,Kia Rio,200 TU 2563,PRO008,2019
+TX060,CH060,Djerba,Hyundai,Accent,Hyundai Accent,200 TU 5477,PRO013,2016
+TX061,CH061,Monastir,Fiat,Tipo,Fiat Tipo,168 TU 4144,PRO001,2021
+TX062,CH062,Sfax,Fiat,Tipo,Fiat Tipo,193 TU 4633,PRO010,2014

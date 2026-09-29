@@ -1,0 +1,78 @@
+/// Table de faits mensuelle de la consommation par client identifie.
+table 'Activité clients'
+	lineageTag: 4a866491-5f18-4c5d-b182-07b032893345
+
+	/// Chiffre d’affaires rattache a un client nominatif.
+	measure 'CA clients identifiés' = SUM ( 'Activité clients'[CA_Client] )
+		formatString: #,0 "TND"
+		lineageTag: e2a6e0fb-6928-4188-b54d-75c912809a28
+
+	/// Courses rattachees a un client nominatif.
+	measure 'Courses clients identifiés' = SUM ( 'Activité clients'[Courses_Client] )
+		formatString: #,0
+		lineageTag: 1eb30303-ff4e-4dc0-9629-1c35a16d0bc1
+
+	/// Clients ayant consomme au moins une course sur la periode.
+	measure 'Clients actifs' = DISTINCTCOUNT ( 'Activité clients'[ClientID] )
+		formatString: #,0
+		lineageTag: 5a0b5004-a9a1-4e06-bff3-9b146b73e694
+
+	/// Depense moyenne par client actif.
+	measure 'CA moyen par client actif' = DIVIDE ( [CA clients identifiés], [Clients actifs] )
+		formatString: #,0.00 "TND"
+		lineageTag: 14bb469d-c287-4f14-bb3a-1a63ff9029f0
+
+	/// Part du chiffre d’affaires rattachable a un client identifie.
+	measure 'Part du CA tracée par client' = DIVIDE ( [CA clients identifiés], [Chiffre d’affaires] )
+		formatString: 0.0%
+		lineageTag: 90b22b9d-be60-48fe-81a3-03a4ea5e490c
+
+	/// Premier jour du mois d activite.
+	column Date
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		lineageTag: 7e37c39d-ef0b-47c9-b8fa-a392d8a6524a
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Client concerne.
+	column ClientID
+		dataType: string
+		isHidden
+		lineageTag: a0e198f0-dfd9-41b9-8031-02cffeb31cae
+		summarizeBy: none
+		sourceColumn: ClientID
+
+	/// Depense du client sur le mois, en TND.
+	column CA_Client
+		dataType: double
+		isHidden
+		formatString: #,0.00
+		lineageTag: 62565a00-7f2f-4b3c-8a47-19bb5074b08a
+		summarizeBy: none
+		sourceColumn: CA_Client
+
+	/// Courses consommees par le client sur le mois.
+	column Courses_Client
+		dataType: int64
+		isHidden
+		formatString: #,0
+		lineageTag: 22267269-5f70-4bac-9d9d-78630fe35041
+		summarizeBy: none
+		sourceColumn: Courses_Client
+
+	partition 'Activité clients' = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\faits_client.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"Date", type date}, {"ClientID", type text}, {"CA_Client", type number}, {"Courses_Client", Int64.Type}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+

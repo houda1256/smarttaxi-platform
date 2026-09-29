@@ -1,0 +1,8 @@
+Parametre,Valeur,Unite,Commentaire
+Rétrocession chauffeurs,0.74,Part du CA,Hypothèse de gestion — non présente dans les sources
+Objectif CA 2026,96000.0,TND,Cible annuelle déclarée
+Objectif courses 2026,4620,Nombre,Cible annuelle déclarée
+Devise,0,TND,Toutes les valeurs monétaires
+Profondeur historique,19,Mois,Janvier 2025 → Juillet 2026
+Seuil de vigilance,0.98,Taux d’atteinte,"En dessous de ce taux, l’indicateur est signalé « à surveiller »"
+Seuil d’alerte,0.95,Taux d’atteinte,"En dessous de ce taux, l’indicateur est signalé « hors cible »"

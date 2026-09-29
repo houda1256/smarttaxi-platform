@@ -1,0 +1,99 @@
+/// Referentiel du parc de vehicules.
+table Taxi
+	lineageTag: b5da0e1f-7a97-491a-bd50-f04b016ded3e
+
+	/// Effectif du parc de vehicules.
+	measure 'Nombre de taxis' = COUNTROWS ( Taxi )
+		formatString: #,0
+		lineageTag: 3268c830-11c1-45f3-a13b-4794e90a6b1e
+
+	/// Anciennete moyenne des vehicules, en annees.
+	measure 'Âge moyen du parc' = AVERAGEX ( Taxi, YEAR ( TODAY () ) - Taxi[AnneeVehicule] )
+		formatString: 0.0
+		lineageTag: 5a41103d-c940-442f-b05f-7b6b933c7c3d
+
+	/// Chiffre d’affaires moyen par vehicule du parc.
+	measure 'CA par taxi' = DIVIDE ( [Chiffre d’affaires], [Nombre de taxis] )
+		formatString: #,0 "TND"
+		lineageTag: 275c6a83-d866-4623-a013-f383743b4bdb
+
+	/// Identifiant technique du vehicule.
+	column TaxiID
+		dataType: string
+		isHidden
+		lineageTag: ce1ebbdd-b322-4fcd-9c8c-5556e246de46
+		summarizeBy: none
+		sourceColumn: TaxiID
+
+	/// Chauffeur affecte au vehicule.
+	column ChauffeurID
+		dataType: string
+		isHidden
+		lineageTag: 0257c491-0a54-49aa-87fe-cafba4219daf
+		summarizeBy: none
+		sourceColumn: ChauffeurID
+
+	/// Ville d exploitation du vehicule, doublon du referentiel Chauffeur.
+	column Ville
+		dataType: string
+		isHidden
+		lineageTag: 126448c6-7a35-4461-83df-1800801a5620
+		summarizeBy: none
+		sourceColumn: Ville
+
+	/// Marque du vehicule.
+	column Marque
+		dataType: string
+		lineageTag: c7548da2-88cc-45f6-a7f5-e6cd8954cbd3
+		summarizeBy: none
+		sourceColumn: Marque
+
+	/// Modele du vehicule.
+	column Modele
+		dataType: string
+		lineageTag: 915efc37-ff31-4799-a4dd-f3e3fb97ff77
+		summarizeBy: none
+		sourceColumn: Modele
+
+	/// Marque et modele concatenes.
+	column MarqueModele
+		dataType: string
+		lineageTag: c69c4110-3a87-44b2-8858-39ac9a9efb26
+		summarizeBy: none
+		sourceColumn: MarqueModele
+
+	/// Plaque d immatriculation.
+	column Immatriculation
+		dataType: string
+		lineageTag: 5490a454-ead1-43f2-9776-367e6c9f7daa
+		summarizeBy: none
+		sourceColumn: Immatriculation
+
+	/// Proprietaire du vehicule.
+	column ProprietaireID
+		dataType: string
+		isHidden
+		lineageTag: d76abb6e-09a9-4978-8dfc-676482cf6e74
+		summarizeBy: none
+		sourceColumn: ProprietaireID
+
+	/// Annee de mise en circulation.
+	column AnneeVehicule
+		dataType: int64
+		formatString: #,0
+		lineageTag: 48b570b3-7643-4619-98b6-7e5ea4160654
+		summarizeBy: none
+		sourceColumn: AnneeVehicule
+
+	partition Taxi = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(CheminDonnees & "\taxi.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Entetes = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Types = Table.TransformColumnTypes(Entetes, {{"TaxiID", type text}, {"ChauffeurID", type text}, {"Ville", type text}, {"Marque", type text}, {"Modele", type text}, {"MarqueModele", type text}, {"Immatriculation", type text}, {"ProprietaireID", type text}, {"AnneeVehicule", Int64.Type}}, "en-US")
+				in
+				    Types
+
+	annotation PBI_ResultType = Table
+
